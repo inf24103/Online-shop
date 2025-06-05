@@ -101,12 +101,19 @@ footer {
 }
 .bestseller_layout {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    background-color: rgb(240, 240, 240);
-    gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 80px);
+    gap: 20px;
 }
 .product_card {
-    padding: 2rem;
+    background-color: white;
+    color: black;
+    padding: 15px;
+    border: black solid 1px;
+    border-radius: 5px;
     text-align: center;
-    border-radius: 10px;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
