@@ -11,15 +11,17 @@ const pool = new Pool({
     database: 'postgres',
     password: '1234',
     port: 5432,
+    max: 20,
+    idleTimeout: 30000,
+    connectionTimeout: 2000,
 });
 
 export const query = async (text, params) => {
-    await pool.connect();
     try {
         const start = Date.now()
         const res = await pool.query(text, params)
         const duration = Date.now() - start
-        console.log('executed query', { text, params, duration, rows: res.rowCount})
+        console.log('DB: executed query', { text, params, duration, rows: res.rowCount})
         return res.rows;
     } catch (err) {
         console.error('Query error', err);
