@@ -1,6 +1,6 @@
 import express from 'express';
 import {getAllUsers, getUserById} from "../backend/datenbank/user_verwaltung/userDRL.js";
-import {authenticateToken, requireRole} from "../middleware/middleware.js";
+import {authenticateAndRequireRole} from "../middleware/middleware.js";
 
 const router = express.Router();
 
@@ -12,7 +12,7 @@ router.get('/all', async (req, res) => {
     res.send(rows)
 })
 
-router.get('/:id', authenticateToken, requireRole( 'admin'),async (req, res) => {
+router.get('/:id', authenticateAndRequireRole( 'admin'),async (req, res) => {
     const id = parseInt(req.params.id)
     const rows = await getUserById(id)
     res.send(rows)

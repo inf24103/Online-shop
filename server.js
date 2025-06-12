@@ -10,7 +10,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // configure logging before each api call
 morgan.token('source', function () {
-    return 'Morgan logging:';
+    return 'Morgan:';
 });
 const customFormat = ':source :method :url :status :res[content-length] - :response-time ms';
 app.use(morgan(customFormat));
