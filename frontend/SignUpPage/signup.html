@@ -5,18 +5,18 @@
     <link rel="stylesheet" href="../public/navbar.css">
     <link rel="stylesheet" href="../public/page_layout.css">
     <link rel="stylesheet" href="../public/footer.css">
-    <link rel="stylesheet" href="signupstyle.css">
+    <link rel="stylesheet" href="../SignUpPage/signupstyle.css">
     <title>SignUp</title>
 </head>
 <body>
 <header>
     <ul class="navbar">
         <li><img class="logo" src="../pictures/fitura_logo.png" alt="logo"></li>
-        <li class="navitem"><a href="#signin">Sign in</a></li>
-        <li class="navitem"><a href="#signup">Sign up</a></li>
+        <li class="navitem"><a href="../LoginPage/loginpage.html">Sign in</a></li>
+        <li class="navitem"><a href="../SignUpPage/signup.html">Sign up</a></li>
         <li class="navitem"><a href="#products">Products</a></li>
         <li class="navitem"><a href="#about">About</a></li>
-        <li class="navitem"><a href="#home">Home</a></li>
+        <li class="navitem"><a href="../user/index.html">Home</a></li>
     </ul>
 </header>
     <div class="signup-form">
@@ -26,10 +26,12 @@
                 <form action="" method="post">
                     <input type="text" placeholder="First Name" name="firstname" required>
                     <input type="text" placeholder="Last Name" name="lastname" required>
+                    <input type="text" placeholder="Username" name="username" required>
                     <input type="email" placeholder="Email Address" name="email" required>
+                    <input type="tel" placeholder="Number" name="telephone">
+                    <input type="text" placeholder="Adress" name="address" required>
                     <input type="password" placeholder="Password" name="password" required>
-                    <input type="password" placeholder="Confirm Password" name="password" required>
-                    <button class="btn">Sign Up</button>
+                    <button id="button">Sign Up</button>
                 </form>
             </div>
             <div class="form-img">
