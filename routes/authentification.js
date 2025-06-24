@@ -20,7 +20,7 @@ router.post('/login', async (req, res) => {
         const { username, password} = req.body;
         const user = await getUserByUsername(username);
 
-        if (!user || !(await bcrypt.compare(password, user.password))) {
+        if (!user || !(await bcrypt.compare(password, user[0].passwordhash))) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
@@ -28,6 +28,7 @@ router.post('/login', async (req, res) => {
         res.cookie('token', token);
         res.json({ message: 'Login successful' });
     } catch (error) {
+        console.log("Login error: " + error);
         res.status(500).json({ error: 'Login failed' });
     }
 });
@@ -35,19 +36,6 @@ router.post('/login', async (req, res) => {
 router.post('/register', async (req, res) => {
     try {
         const { username, password, firstname, lastname, email, telephone, village, zipcode, street, housenumber } = req.body;
-        console.log(req.body);
-        console.log({
-            username,
-            lastname,
-            firstname,
-            email,
-            password,
-            zipcode,
-            village,
-            street,
-            housenumber,
-            telephone
-        });
         if (!username || !lastname || !firstname || !email || !password || !zipcode || !village || !street || !housenumber || !telephone) {
             return res.status(400).json({ error: 'All fields are required: username, lastname, firstname, email, password, zipcode, village, street, housenumber, telephone' });
         }

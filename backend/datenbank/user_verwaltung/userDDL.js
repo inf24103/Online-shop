@@ -33,7 +33,7 @@ export const createBenutzerTable = async () => {
             strasse VARCHAR(100) NOT NULL,
             hausnummer VARCHAR(10) NOT NULL,
             telefonnr VARCHAR(15),
-            erstelldatum TIMESTAMP,
+            erstelldatum TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             rolle VARCHAR(20),
             kontostatus VARCHAR(20),
             authentifizierung BOOLEAN DEFAULT FALSE
