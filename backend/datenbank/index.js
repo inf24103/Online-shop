@@ -25,7 +25,9 @@ export const query = async (text, params) => {
         const start = Date.now()
         const res = await pool.query(text, params)
         const duration = Date.now() - start
-        console.log('DB: executed query', {text, params, duration, rows: res.rowCount})
+
+        //uncomment for advanced logging
+        //console.log('DB: executed query', {text, params, duration, rows: res.rowCount})
         return res.rows;
     } catch (err) {
         console.error('Query error', err);
