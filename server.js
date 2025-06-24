@@ -2,6 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import {mountRoutes} from "./routes/router.js";
 import cookieParser from "cookie-parser";
+import {createBenutzerTable, deleteBenutzerTable} from "./backend/datenbank/user_verwaltung/userDDL.js";
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -30,4 +31,10 @@ app.use((err, req, res, next) => {
 
 app.listen(port, () => {
     console.log(`Server läuft auf http://localhost:${port}`)
+    createSmapelData()
 })
+
+async function createSmapelData () {
+    await deleteBenutzerTable();
+    await createBenutzerTable();
+}

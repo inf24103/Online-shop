@@ -1,7 +1,9 @@
 import express from "express";
 import jwt from 'jsonwebtoken';
 import dotenv from "dotenv";
-import {getUserById} from "../backend/datenbank/user_verwaltung/userDRL.js";
+import {createBenutzer} from "../backend/datenbank/user_verwaltung/userDML.js";
+import bcrypt from 'bcrypt';
+import {getUserByUsername} from "../backend/datenbank/user_verwaltung/userDRL.js";
 
 dotenv.config()
 const router = express.Router();
@@ -15,7 +17,7 @@ const createJWTToken = (user) => {
 
 router.post('/login', async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { username, password} = req.body;
         const user = await getUserByUsername(username);
 
         if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -32,12 +34,27 @@ router.post('/login', async (req, res) => {
 
 router.post('/register', async (req, res) => {
     try {
-        const { username, password } = req.body;
-        if (!username || !password) {
-            return res.status(400).json({ error: 'Username and password required' });
+        const { username, password, firstname, lastname, email, telephone, village, zipcode, street, housenumber } = req.body;
+        console.log(req.body);
+        console.log({
+            username,
+            lastname,
+            firstname,
+            email,
+            password,
+            zipcode,
+            village,
+            street,
+            housenumber,
+            telephone
+        });
+        if (!username || !lastname || !firstname || !email || !password || !zipcode || !village || !street || !housenumber || !telephone) {
+            return res.status(400).json({ error: 'All fields are required: username, lastname, firstname, email, password, zipcode, village, street, housenumber, telephone' });
         }
+        const passwordHashed = await bcrypt.hash(password, 12);
 
-        const user = users[1];
+        const user = createBenutzer(username, lastname, firstname, email, passwordHashed, zipcode, village, street, housenumber, telephone);
+
         const token = createJWTToken(user);
         res.cookie('token', token);
         res.json({ message: 'Register successful', user: user });

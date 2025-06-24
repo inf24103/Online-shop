@@ -11,3 +11,7 @@ export const getAllUsers = async () => {
 export const getUserById = async (id) => {
     return await query('SELECT * FROM benutzer WHERE benutzerid = $1', [id]);
 };
+
+export const getUserByUsername = async (username) => {
+    return await query('SELECT * FROM benutzer WHERE benutzername = $1', [username]);
+};
