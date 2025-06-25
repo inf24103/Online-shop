@@ -1,0 +1,26 @@
+meta {
+  name: register
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:3000/api/auth/register
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "username": "oe",
+    "lastname": "Doe",
+    "firstname": "John",
+    "email": "jdoexample.com",
+    "password": "5f4d%cc3b5aa765d61d8327deb882cf99",
+    "zipcode": "12345",
+    "village": "Sampleville",
+    "street": "Main Street",
+    "housenumber": "42",
+    "telephone": "+1234567890"
+  }
+}
