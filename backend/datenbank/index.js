@@ -20,7 +20,8 @@ const pool = new Pool({
 });
 
 export const query = async (text, params) => {
-    console.log('DB: next query', {text, params});
+    //uncomment for advanced logging
+    //console.log('DB: next query', {text, params});
     try {
         const start = Date.now()
         const res = await pool.query(text, params)

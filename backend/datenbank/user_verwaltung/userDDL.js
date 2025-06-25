@@ -23,10 +23,10 @@ export const createBenutzerTable = async () => {
     const sql = `
         CREATE TABLE IF NOT EXISTS Benutzer (
             benutzerid SERIAL PRIMARY KEY,
-            benutzername VARCHAR(25) NOT NULL,
+            benutzername VARCHAR(25) NOT NULL UNIQUE,
             nachname VARCHAR(50) NOT NULL,
             vorname VARCHAR(50) NOT NULL,
-            email VARCHAR(100),
+            email VARCHAR(100) NOT NULL UNIQUE,
             passwordhash VARCHAR(60) NOT NULL,
             plz VARCHAR(10) NOT NULL,
             ort VARCHAR(50) NOT NULL,
@@ -34,8 +34,8 @@ export const createBenutzerTable = async () => {
             hausnummer VARCHAR(10) NOT NULL,
             telefonnr VARCHAR(15),
             erstelldatum TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            rolle VARCHAR(20),
-            kontostatus VARCHAR(20),
+            rolle VARCHAR(20) NOT NULL,
+            kontostatus VARCHAR(20) NOT NULL,
             authentifizierung BOOLEAN DEFAULT FALSE
             );
   `;

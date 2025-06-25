@@ -22,7 +22,7 @@ mountRoutes(app);
 
 // Globales abfangen unbehandelter Fehler
 app.use((err, req, res, next) => {
-    console.error("Server: Es ist ein unbehandelter Fehler aufgetreten: " + err.stack);
+    console.error("Server: Es ist ein unbehandelter Fehler aufgetreten:\n " + err.stack);
     res.status(500).json({
         error: 'Ein Fehler ist aufgetreten!'
     });

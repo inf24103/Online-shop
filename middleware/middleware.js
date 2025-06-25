@@ -9,8 +9,8 @@ export const authenticateTokenAndAuthorizeRole = (accessRoles) => {
             if (req.jwtpayload && accessRoles.includes(req.jwtpayload.role)) {
                 next();
             } else {
-                console.warn(`Middleware: Unauthorized call ${req.method} ${req.url}`);
-                res.status(403).send(`Access denied.`);
+                console.warn(`Middleware: Unauthorized call ${req.method} ${req.url} ${req.jwtpayload.username}`);
+                res.status(403).json({message: `Access denied.`});
             }
         });
     }
@@ -20,14 +20,14 @@ export const authenticateToken = (req, res, next) => {
     const token = req.cookies.token;
 
     if (token) {
-        jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {
-            if (err) {
-                return res.status(403).json({error: 'Token ist ungültig'});
-            }
-            req.jwtpayload = payload;
+        try {
+            req.jwtpayload = jwt.verify(token, process.env.JWT_SECRET);
             next();
-        });
+        } catch (error) {
+            console.error('Fehler bei der Verifizierung des JWT:', error);
+            res.status(401).json({message: 'Token konnte nicht verifiziert werden'});
+        }
     } else {
-        res.status(401).json({error: 'Token fehlt. Bitte einloggen.'});
+        res.status(401).json({message: 'Token fehlt. Bitte einloggen.'});
     }
 }
