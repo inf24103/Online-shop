@@ -1,0 +1,102 @@
+body {
+    background-color: #f0f2f5;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+.main {
+    display: flex;
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+.signup-form {
+    padding: 50px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    background-color: #ffffff;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 10px;
+    padding: 40px;
+    align-items: center;
+    justify-content: center;
+}
+.content {
+    flex: 1 1 400px;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+}
+
+.content h2 {
+    font-size: 24px;
+    color: #0a75c2;
+    margin-bottom: 12px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.content form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.content input {
+    padding: 14px 18px;
+    border-radius: 30px;
+    border: 1px solid #b0d4ec;
+    font-size: 16px;
+    transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+
+.content input:focus {
+    padding: 14px 18px;
+    border: 1px solid #ffffff;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+
+.content input:focus {
+    border-color: #0a75c2;
+    box-shadow: 0 0 4px rgba(10, 117, 194, 0.4);
+    outline: none;
+}
+
+#button {
+    background-color: #0a75c2;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 14px 24px;
+    font-size: 16px;
+    transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.form-img {
+    flex: 1 1 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e6f2fb;
+    padding: 20px;
+    border-radius: 10px;
+}
+.form-img img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#button:hover {
+    background-color: #095a94;
+}
