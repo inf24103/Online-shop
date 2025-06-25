@@ -45,9 +45,35 @@ export const createWarenkorbTable = async () => {
     await query(sql);
 };
 
+export const createProductWarenkorbTable = async () => {
+    const sql = `
+    CREATE TABLE IF NOT EXISTS Product_Warenkorb (
+      id SERIAL PRIMARY KEY,
+      warenkorbid INTEGER NOT NULL REFERENCES Warenkorb(warenkorbid),
+      produktid INTEGER NOT NULL REFERENCES Produkt(produktid),
+      anzahl INTEGER NOT NULL CHECK (anzahl > 0)
+    );
+  `;
+    await query(sql);
+};
+
 export const deleteProductTable = async () => {
     const sql = `
-        DROP TABLE IF EXISTS Produkt;
+        DROP TABLE IF EXISTS Produkt CASCADE;
+    `;
+    await query(sql);
+};
+
+export const deleteWarenkorbTable = async () => {
+    const sql = `
+        DROP TABLE IF EXISTS Warenkorb CASCADE;
+    `;
+    await query(sql);
+};
+
+export const deleteWarenkorbProduktTable = async () => {
+    const sql = `
+        DROP TABLE IF EXISTS Product_zu_Warenkorb CASCADE;
     `;
     await query(sql);
 };

@@ -25,9 +25,9 @@ export const authenticateToken = (req, res, next) => {
             next();
         } catch (error) {
             console.error('Fehler bei der Verifizierung des JWT:', error);
-            res.status(401).json({message: 'Token konnte nicht verifiziert werden'});
+            return res.status(401).json({message: 'Token konnte nicht verifiziert werden. Bitte einloggen.'});
         }
     } else {
-        res.status(401).json({message: 'Token fehlt. Bitte einloggen.'});
+        return res.status(401).json({message: 'Token fehlt. Bitte einloggen.'});
     }
 }

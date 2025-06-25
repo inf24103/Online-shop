@@ -35,7 +35,7 @@ export const deleteProdukt = async (produktid) => {
 };
 
 /* Produkt aktualisieren */
-export const updateProdukt = async (produktname, preis, menge, kategorie, kurzbeschreibung, beschreibung, produktid) => {
+export const updateProdukt = async (produktname, preis, menge, kategorie, kurzbeschreibung, beschreibung, bild, produktid) => {
     const sql = `
     UPDATE Produkt
     SET produktname = $1,
@@ -43,11 +43,27 @@ export const updateProdukt = async (produktname, preis, menge, kategorie, kurzbe
         menge = $3,
         kategorie = $4,
         kurzbeschreibung = $5,
-        beschreibung = $6
-    WHERE produktid = $7;
+        beschreibung = $6,
+        bild = $7
+    WHERE produktid = $8;
   `;
-    return await query(sql, [produktname, preis, menge, kategorie, kurzbeschreibung, beschreibung, produktid]);
+    return await query(sql, [produktname, preis, menge, kategorie, kurzbeschreibung, beschreibung, bild, produktid]);
 };
 
+export const createWarenkorb = async (benutzerid) => {
+    const sql = `
+    INSERT INTO Warenkorb (benutzerid)
+    VALUES ($1)
+    RETURNING warenkorbid, erstellt;
+  `;
+    return await query(sql, [benutzerid]);
+};
 
-
+export const addProductToWarenkorb = async (warenkorbid, produktid, anzahl) => {
+    const sql = `
+    INSERT INTO Product_Warenkorb (warenkorbid, produktid, anzahl)
+    VALUES ($1, $2, $3)
+    RETURNING id, warenkorbid, produktid, anzahl;
+  `;
+    return await query(sql, [warenkorbid, produktid, anzahl]);
+};

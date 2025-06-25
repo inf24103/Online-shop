@@ -32,13 +32,13 @@ VALUES (
 import {query} from '../index.js';
 
 /* Benutzer anlegen */
-export const createBenutzer = async (benutzername, nachname, vorname, email, passwordhash, plz, ort, strasse, hausnummer, telefonnr) => {
+export const createBenutzer = async (benutzername, nachname, vorname, email, passwordhash, plz, ort, strasse, hausnummer, telefonnr, rolle) => {
     const sql = `
         INSERT INTO Benutzer (benutzername, nachname, vorname, email, passwordhash, plz, ort, strasse, hausnummer,
                               telefonnr, rolle, kontostatus)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'admin', 'aktiv');
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'aktiv');
     `;
-    return await query(sql, [benutzername, nachname, vorname, email, passwordhash, plz, ort, strasse, hausnummer, telefonnr]);
+    return await query(sql, [benutzername, nachname, vorname, email, passwordhash, plz, ort, strasse, hausnummer, telefonnr, rolle]);
 };
 
 /* Benutzer löschen */

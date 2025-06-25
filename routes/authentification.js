@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import {createBenutzer} from "../backend/datenbank/user_verwaltung/userDML.js";
 import bcrypt from 'bcrypt';
 import {getUserByEmail, getUserByUsername} from "../backend/datenbank/user_verwaltung/userDRL.js";
+import {createWarenkorb} from "../backend/datenbank/produkt_verwaltung/produktDML.js";
 
 dotenv.config()
 const router = express.Router();
@@ -50,9 +51,12 @@ router.post('/register', async (req, res) => {
             return res.status(401).json({ error: 'Email already exists' });
         }
 
-        await createBenutzer(username, lastname, firstname, email, passwordHashed, zipcode, village, street, housenumber, telephone);
+        await createBenutzer(username, lastname, firstname, email, passwordHashed, zipcode, village, street, housenumber, telephone, 'admin');
         const user = await getUserByUsername(username);
         const token = createJWTToken(user);
+
+        await createWarenkorb(user[0].benutzerid);
+
         res.cookie('token', token);
         return res.json({ message: 'Register successful', user: user });
     } catch (error) {
