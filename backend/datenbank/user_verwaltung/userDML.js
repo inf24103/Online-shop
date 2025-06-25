@@ -36,7 +36,7 @@ export const createBenutzer = async (benutzername, nachname, vorname, email, pas
     const sql = `
         INSERT INTO Benutzer (benutzername, nachname, vorname, email, passwordhash, plz, ort, strasse, hausnummer,
                               telefonnr, rolle, kontostatus)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'user', 'aktiv');
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'admin', 'aktiv');
     `;
     return await query(sql, [benutzername, nachname, vorname, email, passwordhash, plz, ort, strasse, hausnummer, telefonnr]);
 };

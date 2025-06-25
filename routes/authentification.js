@@ -53,9 +53,6 @@ router.post('/register', async (req, res) => {
         await createBenutzer(username, lastname, firstname, email, passwordHashed, zipcode, village, street, housenumber, telephone);
         const user = await getUserByUsername(username);
         const token = createJWTToken(user);
-
-        console.log(jwt.verify(token, process.env.JWT_SECRET));
-
         res.cookie('token', token);
         return res.json({ message: 'Register successful', user: user });
     } catch (error) {
@@ -65,9 +62,4 @@ router.post('/register', async (req, res) => {
         console.log(error);
         return res.status(400).json({ error: 'Fehler beim Erstellen des Benutzers' });
     }
-});
-
-router.use((err, req, res) => {
-    console.error("Error in authentification routing: " + err.message);
-    return res.status(500).json({message: "Internal Server Error"});
 });

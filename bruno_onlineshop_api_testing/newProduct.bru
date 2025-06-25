@@ -1,0 +1,23 @@
+meta {
+  name: newProduct
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:3000/api/inv/product/new
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "produktname": "Mercedes-Benz Sonnenbrille",
+    "preis": 99.99,
+    "menge": 20,
+    "bild": gh,
+    "kategorie": "Accessoires",
+    "kurzbeschreibung": "Stylische Sonnenbrille",
+    "beschreibung": "Eine stylische Sonnenbrille mit dem Mercedes-Benz Logo. Ideal für sonnige Tage."
+  }
+}

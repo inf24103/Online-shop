@@ -3,6 +3,7 @@ import morgan from "morgan";
 import {mountRoutes} from "./routes/router.js";
 import cookieParser from "cookie-parser";
 import {createBenutzerTable, deleteBenutzerTable} from "./backend/datenbank/user_verwaltung/userDDL.js";
+import {createProduktTable, deleteProductTable} from "./backend/datenbank/produkt_verwaltung/produktDDL.js";
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -37,4 +38,7 @@ app.listen(port, () => {
 async function createSampleData () {
     await deleteBenutzerTable();
     await createBenutzerTable();
+
+    await deleteProductTable();
+    await createProduktTable();
 }

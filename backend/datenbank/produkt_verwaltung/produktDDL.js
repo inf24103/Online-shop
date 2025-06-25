@@ -25,7 +25,6 @@ export const createProduktTable = async () => {
       produktname VARCHAR(30),
       preis DECIMAL(10,2),
       menge INTEGER,
-      preis_pro_menge DECIMAL(10,2),
       bild BYTEA,
       kategorie VARCHAR(50),
       kurzbeschreibung VARCHAR(100),
@@ -43,5 +42,12 @@ export const createWarenkorbTable = async () => {
       erstellt TIMESTAMP DEFAULT NOW()
     );
   `;
+    await query(sql);
+};
+
+export const deleteProductTable = async () => {
+    const sql = `
+        DROP TABLE IF EXISTS Produkt;
+    `;
     await query(sql);
 };
