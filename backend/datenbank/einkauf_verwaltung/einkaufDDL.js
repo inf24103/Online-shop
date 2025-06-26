@@ -1,10 +1,3 @@
-/*CREATE TABLE Einkauf (
-    einkaufid SERIAL PRIMARY KEY,
-    benutzerid INTEGER NOT NULL REFERENCES benutzer(benutzerid),
-    datum DATE,
-    bestätigung BOOLEAN,
-);*/
-
 import { query } from './db.js'; // deine DB-Verbindung und query-Funktion
 
 export const createTables = async () => {
@@ -24,6 +17,4 @@ export const createTables = async () => {
         anzahl INTEGER,
     );
   `);
-
-    // ...weitere Tabellen hier
 };

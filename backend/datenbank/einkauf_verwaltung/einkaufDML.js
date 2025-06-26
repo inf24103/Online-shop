@@ -1,13 +1,3 @@
-/*
-//Einkauf erstellen
-INSERT INTO Einkauf (benutzerid, datum)
-VALUES ($1, NOW(), TRUE)
-RETURNING einkaufid;
-
-//Produkt zu Einkauf hinzufügen
-INSERT INTO Einkauf_Produkt (einkaufid, produktid, menge)
-VALUES ($1, $2, $3);*/
-
 import { query } from "../index.js";
 
 // Neuen Einkauf anlegen
