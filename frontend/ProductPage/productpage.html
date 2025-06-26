@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <title>Product Page</title>
     <link rel="stylesheet" href="../public/navbar.css">
-    <link rel="stylesheet" href="../ProductPage/productstyle.css">
+    <link rel="stylesheet" href="../public/page_layout.css">
+    <link rel="stylesheet" href="../public/footer.css">
+    <link rel="stylesheet" href="productstyle.css">
 </head>
 <body>
 <ul class="navbar">
@@ -15,5 +17,39 @@
     <li class="navitem"><a href="#about">About</a></li>
     <li class="navitem"><a href="../user/index.html">Home</a></li>
 </ul>
+<h1>All Products</h1>
+<div class="filter">
+    <form action="" method="get">
+        <input type="search" name="search" placeholder="Search Products">
+        <select name="category" id="kat_filter">
+            <option value="Category">Category</option>
+            <option value="All">All</option>
+            <option value="Category 1">Supplements</option>
+            <option value="Category 2">Clothing</option>
+            <option value="Category 3">Style</option>
+        </select>
+        <input type="number" name="price" min="1" max="100" value="Preis" placeholder="Price €">
+        <button type="submit">Filter</button>
+    </form>
+</div>
+<div class="product-card">
+    <!-- Hier werden die Produkte eingefügt -->
+</div>
+<div class="product-modal" id="product-detail-modal"><!--nochmal abtippen-->
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <div class="modal-image-area">
+            <img src="" alt="" id="modal-product-image">
+        </div>
+        <div class="modal-info-area">
+            <h2 id="modal-product-name"></h2>
+            <p class="description" id="modal-product-description"></p>
+            <p class="category" id="modal-product-category"></p>
+            <p class="price" id="modal-product-price"></p>
+            <button class="add-to-cart-modal">In den Warenkorb</button>
+        </div>
+    </div>
+</div> <!--nochmal abtippen-->
+<script src="../ProductPage/Product.js"></script>
 </body>
 </html>
