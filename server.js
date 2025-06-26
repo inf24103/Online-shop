@@ -9,6 +9,7 @@ import {
     createWarenkorbTable,
     deleteProductTable, deleteWarenkorbProduktTable, deleteWarenkorbTable
 } from "./backend/datenbank/produkt_verwaltung/produktDDL.js";
+import cors from "cors";
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -16,6 +17,7 @@ const port = process.env.PORT || 3000
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(cors());
 
 // configure logging before each api call
 morgan.token('source', function () {
