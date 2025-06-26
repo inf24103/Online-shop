@@ -5,6 +5,8 @@ import {createBenutzer} from "../backend/datenbank/user_verwaltung/userDML.js";
 import bcrypt from 'bcrypt';
 import {getUserByEmail, getUserByUsername} from "../backend/datenbank/user_verwaltung/userDRL.js";
 import {createWarenkorb} from "../backend/datenbank/produkt_verwaltung/produktDML.js";
+import mailservice from "nodemailer/lib/mail-composer/index.js";
+import {mail} from "../backend/mailservice.js";
 
 dotenv.config()
 const router = express.Router();
@@ -55,6 +57,8 @@ router.post('/register', async (req, res) => {
         const token = createJWTToken(user);
 
         await createWarenkorb(user[0].benutzerid);
+
+        await mail(user[0].email, "ersteMail Subjext", "ersteMail text", "hier ist html")
 
         res.cookie('token', token);
         return res.json({ message: 'Register successful', user: user });
