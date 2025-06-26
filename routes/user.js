@@ -9,7 +9,6 @@ import {
     deleteWarenkorb
 } from "../backend/datenbank/produkt_verwaltung/produktDML.js";
 import {
-    getProdukteByWarenkorbid,
     getWarenkorbByBenutzerId
 } from "../backend/datenbank/produkt_verwaltung/produktDRL.js";
 
@@ -36,15 +35,28 @@ router.get('/me', authenticateToken, async (req, res) => {
     res.send(user);
 })
 
+router.get('/:id', authenticateTokenAndAuthorizeRole(['admin']), async (req, res) => {
+    if(isNaN(req.params.id)){
+        return res.status(403).json({message: 'Ungültige userid'})
+    }
+    const userid= req.params.id;
+    const user = await getUserById(userid);
+    res.status(200).json({user});
+})
+
 router.delete('/:id', authenticateTokenAndAuthorizeRole(['admin']), async (req, res) => {
     const userid = parseInt(req.params.id);
     if(isNaN(userid)){
-        res.status(403).json({message: 'Invalid id'})
+        return res.status(403).json({message: 'Invalid id'})
     }
     if(userid === req.jwtpayload.userid){
         return res.status(401).json({message: 'Can not delete your self.'})
     }
     try {
+        const user = await getUserById(userid);
+        if(user.length === 0){
+            return res.status(403).json({message: 'No user found.'})
+        }
         const warenkorb = await getWarenkorbByBenutzerId(userid);
         const warenkorbid = warenkorb[0].warenkorbid;
         await deleteProdukteWarenkorb(warenkorbid);
@@ -52,7 +64,7 @@ router.delete('/:id', authenticateTokenAndAuthorizeRole(['admin']), async (req, 
         await deleteBenutzer(userid);
         const benuterNachLoeschung = await getUserById(userid);
         if(benuterNachLoeschung.length > 0) {
-            const warenkorb = await createWarenkorb(benuterNachLoeschung.benutzerid);
+            const warenkorb = await createWarenkorb(benuterNachLoeschung[0].benutzerid);
             return res.status(400).json({message: 'Benutzer konnte nicht gelöscht werden', warenkorb: warenkorb});
         }
         if (benuterNachLoeschung.length === 0) {
@@ -69,6 +81,9 @@ router.delete('/:id', authenticateTokenAndAuthorizeRole(['admin']), async (req, 
 router.put('/block/:id', authenticateTokenAndAuthorizeRole(['admin']),async (req, res) => {
     try {
         const userId = req.params.id;
+        if(isNaN(userid)){
+            return res.status(403).json({message: 'Invalid id'})
+        }
         const user = await getUserById(userId);
 
         if (!user) {
@@ -101,6 +116,9 @@ router.put('/block/:id', authenticateTokenAndAuthorizeRole(['admin']),async (req
 router.put('/unblock/:id', authenticateTokenAndAuthorizeRole(['admin']),async (req, res) => {
     try {
         const userId = req.params.id;
+        if(isNaN(userid)){
+            return res.status(403).json({message: 'Invalid id'})
+        }
         const user = await getUserById(userId);
 
         if (!user) {
@@ -133,6 +151,9 @@ router.put('/unblock/:id', authenticateTokenAndAuthorizeRole(['admin']),async (r
 router.put('/createadmin/:id', authenticateTokenAndAuthorizeRole(['admin']), async (req, res) => {
     try {
         const userId = req.params.id;
+        if(isNaN(userId)){
+            return res.status(403).json({message: 'Ungültige userid'})
+        }
         const user = await getUserById(userId);
 
         if (!user) {
