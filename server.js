@@ -29,15 +29,14 @@ mountRoutes(app);
 // Globales abfangen unbehandelter Fehler
 app.use((err, req, res, next) => {
     console.error("Server: Es ist ein unbehandelter Fehler aufgetreten:\n " + err.stack);
-    res.status(500).json({
+    return res.status(500).json({
         error: 'Ein Fehler ist aufgetreten!'
     });
-    next();
 });
 
 app.listen(port, () => {
     console.log(`Server läuft auf http://localhost:${port}`)
-    createSampleData()
+    //createSampleData()
 })
 
 async function createSampleData() {

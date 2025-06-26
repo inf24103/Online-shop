@@ -49,8 +49,7 @@ export const getWarenkorbByBenutzerId = async (benutzerID) => {
 
 export const getProdukteByWarenkorbid = async (warenkorbid) => {
     const sql = `
-        SELECT p.produktid, p.produktname, p.preis, p.kategorie, pw.anzahl
-        FROM Produkt p
+        SELECT * FROM Produkt p
                  JOIN Product_Warenkorb pw ON p.produktid = pw.produktid
         WHERE pw.warenkorbid = $1;
     `;

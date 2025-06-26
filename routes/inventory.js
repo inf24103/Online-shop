@@ -182,14 +182,14 @@ router.delete('/warenkorb/:id', authenticateToken, async (req, res) => {
             return res.status(404).json({ message: 'Produkt nicht im Warenkorb gefunden' });
         }
 
-        const currentQuantity = productInCart.menge;
+        const currentQuantity = productInCart.anzahl;
         const newQuantity = currentQuantity - 1;
 
         if (newQuantity > 0) {
-            await updateProductQuantity(warenkorb[0].warenkorbid, produktId, newQuantity);
+            await updateProductQuantity(warenkorb[0].warenkorbid, produktId, -1);
             res.status(200).json({ message: 'Produktanzahl im Warenkorb verringert' });
         } else {
-            await deleteProductInWarenkorb(warenkorb[0].warenkorbid, produktId);
+            await deleteProductInWarenkorb( produktId, warenkorb[0].warenkorbid);
             res.status(200).json({ message: 'Produkt aus dem Warenkorb entfernt' });
         }
     } catch (error) {
@@ -227,4 +227,10 @@ router.get('/warenkorb/myproducts',authenticateToken, async (req, res) => {
         console.error('Fehler beim Ermitteln des Warenkorbs:', error);
         res.status(500).json({ error: 'Interner Serverfehler' });
     }
+})
+
+router.get("/kaufen", authenticateToken, async (req, res) => {
+    const userid = req.jwtpayload.userid
+    const warenkorb = await getWarenkorbByBenutzerId(userid);
+    const products = await getProdukteByWarenkorbid(warenkorb[0].warenkorbid);
 })

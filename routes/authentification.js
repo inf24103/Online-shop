@@ -51,7 +51,7 @@ router.post('/register', async (req, res) => {
             return res.status(401).json({ error: 'Email already exists' });
         }
 
-        await createBenutzer(username, lastname, firstname, email, passwordHashed, zipcode, village, street, housenumber, telephone, 'admin');
+        await createBenutzer(username, lastname, firstname, email, passwordHashed, zipcode, village, street, housenumber, telephone, 'user');
         const user = await getUserByUsername(username);
         const token = createJWTToken(user);
 
