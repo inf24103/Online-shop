@@ -25,8 +25,3 @@ router.get('/me', authenticateToken, async (req, res) => {
     }
     return res.send(user);
 })
-
-router.use((err, req, res) => {
-    console.error("Error in user routing: " + err.message);
-    res.status(500).send("Internal Server Error");
-});

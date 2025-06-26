@@ -25,7 +25,6 @@ export const createProduktTable = async () => {
       produktname VARCHAR(30),
       preis DECIMAL(10,2),
       menge INTEGER,
-      preis_pro_menge DECIMAL(10,2),
       bild BYTEA,
       kategorie VARCHAR(50),
       kurzbeschreibung VARCHAR(100),
@@ -43,5 +42,38 @@ export const createWarenkorbTable = async () => {
       erstellt TIMESTAMP DEFAULT NOW()
     );
   `;
+    await query(sql);
+};
+
+export const createProductWarenkorbTable = async () => {
+    const sql = `
+    CREATE TABLE IF NOT EXISTS Product_Warenkorb (
+      id SERIAL PRIMARY KEY,
+      warenkorbid INTEGER NOT NULL REFERENCES Warenkorb(warenkorbid),
+      produktid INTEGER NOT NULL REFERENCES Produkt(produktid),
+      anzahl INTEGER NOT NULL CHECK (anzahl > 0)
+    );
+  `;
+    await query(sql);
+};
+
+export const deleteProductTable = async () => {
+    const sql = `
+        DROP TABLE IF EXISTS Produkt CASCADE;
+    `;
+    await query(sql);
+};
+
+export const deleteWarenkorbTable = async () => {
+    const sql = `
+        DROP TABLE IF EXISTS Warenkorb CASCADE;
+    `;
+    await query(sql);
+};
+
+export const deleteWarenkorbProduktTable = async () => {
+    const sql = `
+        DROP TABLE IF EXISTS Product_zu_Warenkorb CASCADE;
+    `;
     await query(sql);
 };
