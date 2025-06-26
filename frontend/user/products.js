@@ -12,21 +12,20 @@ const products = [
 ];
 
 async function renderProducts() {
-    const container = document.querySelector('.product-card');
+    const container = document.querySelector(".product-card");
     container.innerHTML = '';
 
-    products.forEach(product => {
-        const card = document.createElement('div');
-        card.classList.add('product');
+    for (let i = 0; i < 2; i++) {
+        const card = document.createElement("div");
+        card.classList.add("product");
         card.innerHTML = `
-            ${product.pic ? `<img src="${product.pic}" alt="${product.pic}">` : ''}
-            <h3>${product.name}</h3>
-            <p>${product.price}</p>
-            <p>${product.category}</p>
-            <button>Add to card</button>
+        ${products[i].pic ? `<img src="${products[i].pic}" alt="${products[i].pic}">` : ''}
+            <h3>${products[i].name}</h3>
+            <p>${products[i].price}</p>
+            <p>${products[i].category}</p>
             `;
         container.appendChild(card);
-    })
+    }
 }
 
-window.addEventListener('DOMContentLoaded', renderProducts)
+window.addEventListener("DOMContentLoaded", renderProducts);
