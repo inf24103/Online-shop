@@ -1,0 +1,19 @@
+meta {
+  name: searchProduct
+  type: http
+  seq: 3
+}
+
+get {
+  url: http://localhost:3000/api/inv/product/search/?name=es&maxPreis=1000&minMenge=5&kategorie=Accessoires&sortierung=preis_asc
+  body: none
+  auth: inherit
+}
+
+params:query {
+  name: es
+  maxPreis: 1000
+  minMenge: 5
+  kategorie: Accessoires
+  sortierung: preis_asc
+}

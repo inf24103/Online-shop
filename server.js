@@ -3,6 +3,13 @@ import morgan from "morgan";
 import {mountRoutes} from "./routes/router.js";
 import cookieParser from "cookie-parser";
 import {createBenutzerTable, deleteBenutzerTable} from "./backend/datenbank/user_verwaltung/userDDL.js";
+import {
+    createProductWarenkorbTable,
+    createProduktTable,
+    createWarenkorbTable,
+    deleteProductTable, deleteWarenkorbProduktTable, deleteWarenkorbTable
+} from "./backend/datenbank/produkt_verwaltung/produktDDL.js";
+import cors from "cors";
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -10,6 +17,7 @@ const port = process.env.PORT || 3000
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(cors());
 
 // configure logging before each api call
 morgan.token('source', function () {
@@ -31,10 +39,19 @@ app.use((err, req, res, next) => {
 
 app.listen(port, () => {
     console.log(`Server läuft auf http://localhost:${port}`)
-    createSampleData()
+    //createSampleData()
 })
 
-async function createSampleData () {
+async function createSampleData() {
+    // Lösche abhängige Tabellen zuerst
+    await deleteWarenkorbProduktTable();
+    await deleteWarenkorbTable();
+    await deleteProductTable();
     await deleteBenutzerTable();
+
+    // Erstelle Tabellen in der richtigen Reihenfolge
     await createBenutzerTable();
+    await createProduktTable();
+    await createWarenkorbTable();
+    await createProductWarenkorbTable();
 }

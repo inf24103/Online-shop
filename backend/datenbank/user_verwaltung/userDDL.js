@@ -44,7 +44,7 @@ export const createBenutzerTable = async () => {
 
 export const deleteBenutzerTable = async () => {
     const sql = `
-        DROP TABLE IF EXISTS Benutzer;
+        DROP TABLE IF EXISTS Benutzer CASCADE;
     `;
     await query(sql);
 };
