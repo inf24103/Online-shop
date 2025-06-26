@@ -12,9 +12,10 @@
 
 CREATE TABLE Warenkorb (
     warenkorbid SERIAL PRIMARY KEY,
-    benutzerid INTEGER NOT NULL REFERENCES beuntzer(benutzerid),
+    benutzerid INTEGER NOT NULL REFERENCES benutzer(benutzerid),
     erstellt TIMESTAMP,
-)*/
+);
+*/
 
 import { query } from '../index.js';
 
