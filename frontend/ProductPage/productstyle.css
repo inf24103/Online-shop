@@ -155,7 +155,7 @@ button:hover {
     transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.4s ease-out;
 }
 
-.product-modal.is-expanded .modal-content{ /*Endzustand der Animation*/
+.product-modal.is-expanded .modal-content{ /*Endzustand der Animation.*/
     transform: translateY(0);
     opacity: 1;
 }
@@ -226,7 +226,7 @@ button:hover {
     border: none;
     line-height: 1;
     padding: 5px;
-    z-index: 1001; /*über modal inhalt*/
+    z-index: 1001; /*über Modal inhalt*/
 }
 
 @media (max-width: 768px) { /*Einstellung für kleinere Bildschirme*/
