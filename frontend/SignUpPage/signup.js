@@ -6,16 +6,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         //Form Daten einlesen
         const data = {
-            username: form.username.value,
-            lastname: form.lastname.value,
-            firstname: form.firstname.value,
-            email: form.email.value,
-            password: form.password.value,
-            zipcode: form.zipcode.value,
-            village: form.village.value,
-            street: form.street.value,
-            housenumber: form.housenumber.value,
-            telephone: form.telephone.value
+            username: form.querySelector("input[name='username']").value,
+            lastname: form.querySelector("input[name='lastname']").value,
+            firstname: form.querySelector("input[name='firstname']").value,
+            email: form.querySelector("input[name='email']").value,
+            password: form.querySelector("input[name='password']").value,
+            zipcode: form.querySelector("input[name='zipcode']").value,
+            village: form.querySelector("input[name='village']").value,
+            street: form.querySelector("input[name='street']").value,
+            housenumber: form.querySelector("input[name='housenumber']").value,
+            telephone: form.querySelector("input[name='telephone']").value
         };
 
         try {
@@ -24,10 +24,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(data)
             });
-            if(!res.ok) throw new Error("Fehler beim Senden der Daten");
-
-            alert("Registrierung erfolgreich. Bitte bestätige deine Email");
-            form.reset();
+            if(!res.ok) {
+                if(res.status === 401) {
+                    alert("Es existiert bereits ein Account");
+                } else {
+                    throw new Error("Fehler beim Senden der Daten")
+                }
+            } else {
+                alert("Registrierung erfolgreich. Bitte bestätige deine Email");
+                form.reset();
+            }
         } catch (e) {
             console.error(e);
             alert("Es ist ein Fehler aufgetreten!");
