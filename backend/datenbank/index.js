@@ -3,7 +3,7 @@ Code for accessing the db on an abstract level
 */
 
 import dotenv from 'dotenv';
-import { Pool } from 'pg'
+import {Pool} from 'pg'
 
 dotenv.config()
 
@@ -20,16 +20,15 @@ const pool = new Pool({
 });
 
 export const query = async (text, params) => {
-    console.log('DB: next query', {text, params});
-    if (checkForSQLInjection(text, params)) {
-        console.error('SQL Injection detected');
-        throw new Error('SQL Injection detected. Your request has been logged and reported.');
-    }
+    //uncomment for advanced logging
+    //console.log('DB: next query', {text, params});
     try {
         const start = Date.now()
         const res = await pool.query(text, params)
         const duration = Date.now() - start
-        console.log('DB: executed query', { text, params, duration, rows: res.rowCount})
+
+        //uncomment for advanced logging
+        //console.log('DB: executed query', {text, params, duration, rows: res.rowCount})
         return res.rows;
     } catch (err) {
         console.error('Query error', err);
@@ -40,10 +39,6 @@ export const query = async (text, params) => {
 export const endConnection = async () => {
     pool.end;
     console.log('Connection to database closed');
-}
-
-function checkForSQLInjection(text, params) {
-    return false
 }
 
 // Listener for idling client errors
