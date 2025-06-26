@@ -67,3 +67,8 @@ export const addProductToWarenkorb = async (warenkorbid, produktid, anzahl) => {
   `;
     return await query(sql, [warenkorbid, produktid, anzahl]);
 };
+
+export const deleteProductInWarenkorb = async (produktid,warenkorbid) => {
+    const sql = `DELETE FROM Product_Warenkorb WHERE produktid = $1 AND warenkorbid = $2;`;
+    return await query(sql, [produktid, warenkorbid]);
+};

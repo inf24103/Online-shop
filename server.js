@@ -37,7 +37,7 @@ app.use((err, req, res, next) => {
 
 app.listen(port, () => {
     console.log(`Server läuft auf http://localhost:${port}`)
-    //createSampleData()
+    createSampleData()
 })
 
 async function createSampleData() {

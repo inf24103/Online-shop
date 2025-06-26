@@ -1,7 +1,7 @@
 import {authenticateToken, authenticateTokenAndAuthorizeRole} from "../middleware/middleware.js";
 import {
     addProductToWarenkorb,
-    createProdukt,
+    createProdukt, deleteProductInWarenkorb,
     deleteProdukt,
     updateProdukt
 } from "../backend/datenbank/produkt_verwaltung/produktDML.js";
@@ -9,7 +9,7 @@ import express from "express";
 import {
     getAllProdukte,
     getProduktById, getProdukteByWarenkorbid,
-    getWarenkorbByBenutzerId,
+    getWarenkorbByBenutzerId, updateProductQuantity,
     searchProdukte
 } from "../backend/datenbank/produkt_verwaltung/produktDRL.js";
 
@@ -137,15 +137,63 @@ router.post('/warenkorb/add', authenticateToken,async (req, res) => {
 
     try {
         const product = await getProduktById(produktid);
-        if (product.length === 0 || product.menge < 1) {
+        if (product.length === 0 ) {
+            return res.status(404).json({message: "product not found"})
+        }
+
+        if (product.menge < 1) {
             return res.status(404).json({message: "product out of stock"})
         }
 
+        if(product.menge < anzahlInt) {
+            return res.status(400).json({message: 'Not enough products in stock'})
+        }
+
         const warenkorbid = await getWarenkorbByBenutzerId(req.jwtpayload.userid);
-        const newEntry = await addProductToWarenkorb(warenkorbid[0].warenkorbid, productidInt, anzahlInt);
-        res.status(200).json(newEntry);
+        const existingProduct = await getProdukteByWarenkorbid(warenkorbid[0].warenkorbid);
+        const productInCart = existingProduct.find(p => p.produktid === productidInt);
+
+        if (productInCart) {
+            await updateProductQuantity(warenkorbid[0].warenkorbid, productidInt, anzahlInt);
+            res.status(200).json({ message: 'Produktanzahl im Warenkorb erhöht' });
+        } else {
+            const newEntry = await addProductToWarenkorb(warenkorbid[0].warenkorbid, productidInt, anzahlInt);
+            res.status(200).json(newEntry);
+        }
     } catch (error) {
         console.error('Fehler beim Hinzufügen des Produkts zum Warenkorb:', error);
+        res.status(500).json({ error: 'Interner Serverfehler' });
+    }
+});
+
+router.delete('/warenkorb/:id', authenticateToken, async (req, res) => {
+    const produktId = parseInt(req.params.id);
+    if (isNaN(produktId) || produktId.length <= 0) {
+        return res.status(400).json({ message: 'Ungültige Produkt-ID' });
+    }
+
+    try {
+        const warenkorb = await getWarenkorbByBenutzerId(req.jwtpayload.userid);
+
+        const productsInCart = await getProdukteByWarenkorbid(warenkorb[0].warenkorbid);
+        const productInCart = productsInCart.find(p => p.produktid === produktId);
+
+        if (!productInCart) {
+            return res.status(404).json({ message: 'Produkt nicht im Warenkorb gefunden' });
+        }
+
+        const currentQuantity = productInCart.menge;
+        const newQuantity = currentQuantity - 1;
+
+        if (newQuantity > 0) {
+            await updateProductQuantity(warenkorb[0].warenkorbid, produktId, newQuantity);
+            res.status(200).json({ message: 'Produktanzahl im Warenkorb verringert' });
+        } else {
+            await deleteProductInWarenkorb(warenkorb[0].warenkorbid, produktId);
+            res.status(200).json({ message: 'Produkt aus dem Warenkorb entfernt' });
+        }
+    } catch (error) {
+        console.error('Fehler beim Verringern der Produktanzahl im Warenkorb:', error);
         res.status(500).json({ error: 'Interner Serverfehler' });
     }
 });

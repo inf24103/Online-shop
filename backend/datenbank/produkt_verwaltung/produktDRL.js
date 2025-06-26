@@ -56,3 +56,13 @@ export const getProdukteByWarenkorbid = async (warenkorbid) => {
     `;
     return await query(sql, [warenkorbid]);
 };
+
+export const updateProductQuantity = async (warenkorbid, produktid, increment) => {
+    const sql = `
+        UPDATE Product_Warenkorb
+        SET anzahl = anzahl + $3
+        WHERE warenkorbid = $1 AND produktid = $2;
+    `;
+    return await query(sql, [warenkorbid, produktid, increment]);
+};
+
