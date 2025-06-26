@@ -20,8 +20,7 @@ router.post('/login', async (req, res) => {
     try {
         const { username, password} = req.body;
         const user = await getUserByUsername(username);
-
-        if (!user || !(await bcrypt.compare(password, user[0].passwordhash))) {
+        if (user[0] === undefined || !(await bcrypt.compare(password, user[0].passwordhash))) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
@@ -51,7 +50,7 @@ router.post('/register', async (req, res) => {
             return res.status(401).json({ error: 'Email already exists' });
         }
 
-        await createBenutzer(username, lastname, firstname, email, passwordHashed, zipcode, village, street, housenumber, telephone, 'user');
+        await createBenutzer(username, lastname, firstname, email, passwordHashed, zipcode, village, street, housenumber, telephone, 'admin');
         const user = await getUserByUsername(username);
         const token = createJWTToken(user);
 
