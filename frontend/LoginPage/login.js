@@ -20,8 +20,8 @@
                     alert("Benutzername oder Passwort ungültig");
                 }
                 if(res.status === 200) {
-                    alert("Login erfolgreich");
                     form.reset();
+                    window.location.href = "/Webshop/Online-shop/frontend/user/index.html";
                 }
             } catch (e) {
                 console.error(e);
