@@ -1,0 +1,94 @@
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+    height: 410px;
+    /*text-align: center;*/
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: row;
+    margin: 2rem auto;
+    transition: max-width 1s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.card:hover{
+    max-width: 700px;
+}
+
+.card .main-content{
+    flex-shrink: 0;
+    width: 300px;
+    text-align: center;
+}
+
+.card .main-content .p{
+    font-size: 40px;
+}
+
+.card .img{
+    width: 100%;
+}
+
+.card .more-info{
+    opacity: 0;
+    width: 300px;
+    padding: 0;
+    overflow: hidden;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+
+.card:hover .more-info{
+    opacity: 1;
+    visibility: visible;
+    width: 300px;
+    padding: 1rem;
+    /*transition-delay: 1s;-->*/
+    transition: opacity 0.3s ease 0.7s, visibility 0s linear 0.7s;
+}
+
+/*.hover-window {
+    position: absolute;
+    top: 0;
+    left: 100%; /* rechts neben der Karte *//*
+    width: 300px;
+    height: 100%;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    padding: 1rem;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0.3s;
+    z-index: 10;
+}
+
+.card:hover .hover-window {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition-delay: 0s;
+}*/
+
+.price {
+    color: black;
+    font-size: 22px;
+}
+
+.card button {
+    border: none;
+    outline: 0;
+    padding: 12px;
+    color: white;
+    background-color: #000;
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+    font-size: 18px;
+    margin-top: auto;
+}
+
+.card button:hover {
+    opacity: 0.7;
+}
