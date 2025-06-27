@@ -5,9 +5,17 @@ aka. getting data
 import {query} from "../index.js";
 
 export const getAllUsers = async () => {
-    return await query('SELECT * FROM kunden');
+    return await query('SELECT * FROM benutzer');
 };
 
 export const getUserById = async (id) => {
-    return await query('SELECT * FROM kunden WHERE kunden_id = $1', [id]);
+    return await query('SELECT * FROM benutzer WHERE benutzerid = $1', [id]);
+};
+
+export const getUserByUsername = async (username) => {
+    return await query('SELECT * FROM benutzer WHERE benutzername = $1', [username]);
+};
+
+export const getUserByEmail = async (username) => {
+    return await query('SELECT * FROM benutzer WHERE email = $1', [username]);
 };
