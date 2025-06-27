@@ -103,7 +103,8 @@ router.put('/block/:id', authenticateTokenAndAuthorizeRole(['admin']),async (req
             user[0].ort,
             user[0].strasse,
             user[0].hausnummer,
-            user[0].telefonnr
+            user[0].telefonnr,
+            user[0].authentifizierung
         );
 
         return res.status(200).json({ message: 'User blocked successfully' });
@@ -138,7 +139,8 @@ router.put('/unblock/:id', authenticateTokenAndAuthorizeRole(['admin']),async (r
             user[0].ort,
             user[0].strasse,
             user[0].hausnummer,
-            user[0].telefonnr
+            user[0].telefonnr,
+            user[0].authentifizierung
         );
 
         return res.status(200).json({ message: 'User unblocked successfully' });
@@ -173,7 +175,8 @@ router.put('/createadmin/:id', authenticateTokenAndAuthorizeRole(['admin']), asy
             user[0].ort,
             user[0].strasse,
             user[0].hausnummer,
-            user[0].telefonnr
+            user[0].telefonnr,
+            user[0].authentifizierung
         );
 
         return res.status(200).json({ message: 'User successfully admin' });

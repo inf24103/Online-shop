@@ -30,6 +30,9 @@ export const authenticateToken = async (req, res, next) => {
             if(user[0].kontostatus === 'gesperrt'){
                 return res.status(403).json({message: `Konto von Admin gesperrt.`});
             }
+            if(user[0].authentifizierung === false){
+                return res.status(403).json({message: `Konto nicht bestätigt. Bitte auf bestätigungslink klicken`});
+            }
             next();
         } catch (error) {
             console.error('Fehler bei der Verifizierung des JWT:', error);

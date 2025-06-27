@@ -27,7 +27,7 @@ export const deleteBenutzer = async (benutzerid) => {
 /* Benutzer aktualisieren (flexibel) */
 export const updateBenutzer = async (
     benutzerid, benutzername, nachname, vorname, email,
-    rolle, kontostatus, plz, ort, strasse, hausnummer, telefonnr
+    rolle, kontostatus, plz, ort, strasse, hausnummer, telefonnr,authentifizierung
 ) => {
     const sql = `
         UPDATE Benutzer
@@ -41,12 +41,13 @@ export const updateBenutzer = async (
             ort          = COALESCE($9, ort),
             strasse      = COALESCE($10, strasse),
             hausnummer   = COALESCE($11, hausnummer),
-            telefonnr    = $12
+            telefonnr    = COALESCE($12, telefonnr),
+            authentifizierung = COALESCE($13, authentifizierung)
         WHERE benutzerid = $1;
     `;
     return await query(sql, [
         benutzerid, benutzername, nachname, vorname, email,
-        rolle, kontostatus, plz, ort, strasse, hausnummer, telefonnr
+        rolle, kontostatus, plz, ort, strasse, hausnummer, telefonnr,authentifizierung
     ]);
 };
 
