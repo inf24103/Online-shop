@@ -14,6 +14,7 @@ import {mail} from "./backend/mailService/mailservice.js";
 import {generateRegistrationConfirmationTemplate} from "./backend/mailService/regestrierungsBestaetigung.js";
 import {generateOneTimeLoginCodeTemplate} from "./backend/mailService/oneTimeLoginCode.js";
 import {generateOneTimeLoginLinkTemplate} from "./backend/mailService/oneTimeLoginLink.js";
+import {createOneTimeLoginTable, dropOneTimeLoginTable} from "./backend/datenbank/auth/authAllMethods.js";
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -52,11 +53,13 @@ async function createSampleData() {
     await deleteWarenkorbProduktTable();
     await deleteWarenkorbTable();
     await deleteProductTable();
-    await deleteBenutzerTable();
+    await deleteBenutzerTable()
+    await dropOneTimeLoginTable();
 
     // Erstelle Tabellen in der richtigen Reihenfolge
     await createBenutzerTable();
     await createProduktTable();
     await createWarenkorbTable();
     await createProductWarenkorbTable();
+    await createOneTimeLoginTable();
 }
