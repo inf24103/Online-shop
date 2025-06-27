@@ -1,17 +1,9 @@
-/*CREATE TABLE Wunschliste (
-    wunschlisteid SERIAL PRIMARY KEY,
-    benutzerid INTEGER NOT NULL REFERENCES benutzer(benutzerid),
-    beschreibung VARCHAR(250),
-
-)*/
-
 import { query } from '../index.js';
 
 export const createWunschlisteTables = async () => {
     const sqlWunschliste = `
     CREATE TABLE IF NOT EXISTS Wunschliste (
       wunschlisteid SERIAL PRIMARY KEY,
-      benutzerid INTEGER NOT NULL REFERENCES Benutzer(benutzerid),
       beschreibung VARCHAR(250)
     );
   `;

@@ -1,20 +1,10 @@
-/*
-//Einkauf erstellen
-INSERT INTO Einkauf (benutzerid, datum, bestätigung)
-VALUES ($1, NOW(), TRUE)
-RETURNING einkaufid;
-
-//Produkt zu Einkauf hinzufügen
-INSERT INTO Einkauf_Produkt (einkaufid, produktid, menge)
-VALUES ($1, $2, $3);*/
-
 import { query } from "../index.js";
 
 // Neuen Einkauf anlegen
 export const createEinkauf = async (benutzerid) => {
     const text = `
-    INSERT INTO Einkauf (benutzerid, datum, bestätigung)
-    VALUES ($1, NOW(), TRUE)
+    INSERT INTO Einkauf (benutzerid, datum)
+    VALUES ($1, NOW())
     RETURNING einkaufid;
   `;
     const values = [benutzerid];
@@ -23,11 +13,11 @@ export const createEinkauf = async (benutzerid) => {
 };
 
 // Produkt zu Einkauf hinzufügen
-export const addProduktToEinkauf = async (einkaufid, produktid, menge) => {
+export const addProduktToEinkauf = async (einkaufid, produktid, anzahl) => {
     const text = `
-    INSERT INTO Einkauf_Produkt (einkaufid, produktid, menge)
+    INSERT INTO Einkauf_Produkt (einkaufid, produktid, anzahl)
     VALUES ($1, $2, $3);
   `;
-    const values = [einkaufid, produktid, menge];
+    const values = [einkaufid, produktid, anzahl];
     return await query(text, values);
 };

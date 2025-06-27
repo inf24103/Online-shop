@@ -1,15 +1,3 @@
-/*
-//Alle Einkäufe (diese werden mit einkaufid angezeigt) eines Benutzers %1
-SELECT einkaufid
-FROM Einkauf
-WHERE benutzerid = $1;
-
-//Produkte zu einem Einkauf
-SELECT p.*, ep.menge
-FROM Produkt p
-JOIN Einkauf_Produkt ep ON p.produktid = ep.produktid
-WHERE ep.einkaufid = $1;*/
-
 import { query } from "../index.js";
 
 // Alle Einkäufe eines Benutzers (nur IDs)
