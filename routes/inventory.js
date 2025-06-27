@@ -12,6 +12,10 @@ import {
     getWarenkorbByBenutzerId, updateProductQuantity,
     searchProdukte
 } from "../backend/datenbank/produkt_verwaltung/produktDRL.js";
+import {addProduktToEinkauf, createEinkauf} from "../backend/datenbank/einkauf_verwaltung/einkaufDML.js";
+import {mail} from "../backend/mailService/mailservice.js";
+import {getUserById} from "../backend/datenbank/user_verwaltung/userDRL.js";
+import {generateOrderConfirmationTemplate} from "../backend/mailService/orderConfirmation.js";
 
 const router = express.Router();
 
@@ -230,7 +234,26 @@ router.get('/warenkorb/myproducts',authenticateToken, async (req, res) => {
 })
 
 router.get("/kaufen", authenticateToken, async (req, res) => {
-    const userid = req.jwtpayload.userid
-    const warenkorb = await getWarenkorbByBenutzerId(userid);
-    const products = await getProdukteByWarenkorbid(warenkorb[0].warenkorbid);
+    try {
+        const userid = req.jwtpayload.userid;
+        const warenkorb = await getWarenkorbByBenutzerId(userid);
+        const products = await getProdukteByWarenkorbid(warenkorb[0].warenkorbid);
+        const user = await getUserById(userid);
+
+        if (products.length === 0) {
+            return res.status(400).json({message: "No products in the cart"});
+        }
+
+        const einkauf = await createEinkauf(userid);
+        let gesamtpreis = 0;
+        for (let i = 0; i < products.length; i++) {
+            gesamtpreis += products[i].preis * products[i].anzahl;
+            await addProduktToEinkauf(einkauf[0].einkaufid, products[i].produktid, products[i].anzahl);
+        }
+        mail(user[0].email, "Fitura: Kaufbestätigung", generateOrderConfirmationTemplate(user[0].benutzerid, products,gesamtpreis));
+        return res.status(200).json({message: "Produkte gekauft"});
+    } catch (error) {
+        console.error("Error in /kaufen:\n"+error);
+        res.status(500).json({ error: 'Interner Serverfehler' });
+    }
 })

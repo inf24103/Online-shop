@@ -2,7 +2,6 @@ import express from "express";
 import morgan from "morgan";
 import {mountRoutes} from "./routes/router.js";
 import cookieParser from "cookie-parser";
-import crypto from "crypto";
 import {createBenutzerTable, deleteBenutzerTable} from "./backend/datenbank/user_verwaltung/userDDL.js";
 import {
     createProductWarenkorbTable,
@@ -15,6 +14,7 @@ import {generateRegistrationConfirmationTemplate} from "./backend/mailService/re
 import {generateOneTimeLoginCodeTemplate} from "./backend/mailService/oneTimeLoginCode.js";
 import {generateOneTimeLoginLinkTemplate} from "./backend/mailService/oneTimeLoginLink.js";
 import {createOneTimeLoginTable, dropOneTimeLoginTable} from "./backend/datenbank/auth/authAllMethods.js";
+import {createEinkaufTables, deleteEinkaufTables} from "./backend/datenbank/einkauf_verwaltung/einkaufDDL.js";
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -45,7 +45,7 @@ app.listen(port, () => {
     //mail("mc8000@gmx.de", "Regestrierungsbestätigung", generateRegistrationConfirmationTemplate("mc8000", "http://localhost:3000/api/auth/register/"+crypto.createHash('sha256').update("mc8000").digest('hex')));
     //mail("mc8000@gmx.de", "Einmal login code", generateOneTimeLoginCodeTemplate("mc8000", "56738453"));
     //mail("mc8000@gmx.de", "Einmal login code", generateOneTimeLoginLinkTemplate("mc8000", "google.com"));
-    //createSampleData()
+    createSampleData()
 })
 
 async function createSampleData() {
@@ -54,6 +54,7 @@ async function createSampleData() {
     await deleteWarenkorbTable();
     await deleteProductTable();
     await deleteBenutzerTable()
+    await deleteEinkaufTables();
     await dropOneTimeLoginTable();
 
     // Erstelle Tabellen in der richtigen Reihenfolge
@@ -61,5 +62,6 @@ async function createSampleData() {
     await createProduktTable();
     await createWarenkorbTable();
     await createProductWarenkorbTable();
+    await createEinkaufTables();
     await createOneTimeLoginTable();
 }

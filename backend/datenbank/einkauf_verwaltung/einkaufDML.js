@@ -8,8 +8,7 @@ export const createEinkauf = async (benutzerid) => {
     RETURNING einkaufid;
   `;
     const values = [benutzerid];
-    const result = await query(text, values);
-    return result.rows[0].einkaufid;
+    return await query(text, values);
 };
 
 // Produkt zu Einkauf hinzufügen

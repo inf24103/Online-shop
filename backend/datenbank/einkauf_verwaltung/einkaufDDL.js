@@ -1,11 +1,11 @@
-import { query } from './db.js'; // deine DB-Verbindung und query-Funktion
+import {query} from "../index.js";
 
-export const createTables = async () => {
+export const createEinkaufTables = async () => {
     await query(`
     CREATE TABLE IF NOT EXISTS Einkauf (
         einkaufid SERIAL PRIMARY KEY,
         benutzerid INTEGER NOT NULL REFERENCES benutzer(benutzerid),
-        datum DATE,
+        datum DATE DEFAULT CURRENT_DATE
     );
   `);
 
@@ -14,7 +14,17 @@ export const createTables = async () => {
         einkauf_produktid SERIAL PRIMARY KEY,
         einkaufid INTEGER NOT NULL REFERENCES Einkauf(einkaufid),
         produktid INTEGER NOT NULL REFERENCES Produkt(produktid),
-        anzahl INTEGER,
+        anzahl INTEGER
     );
   `);
+};
+
+export const deleteEinkaufTables = async () => {
+    await query(`
+        DROP TABLE IF EXISTS Einkauf_Produkt;
+    `);
+
+    await query(`
+        DROP TABLE IF EXISTS Einkauf;
+    `);
 };
