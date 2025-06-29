@@ -5,7 +5,7 @@ export const createEinkaufTables = async () => {
     CREATE TABLE IF NOT EXISTS Einkauf (
         einkaufid SERIAL PRIMARY KEY,
         benutzerid INTEGER NOT NULL REFERENCES benutzer(benutzerid),
-        datum DATE DEFAULT CURRENT_DATE
+        datum TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
   `);
 

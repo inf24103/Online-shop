@@ -45,7 +45,7 @@ app.listen(port, () => {
     //mail("mc8000@gmx.de", "Regestrierungsbestätigung", generateRegistrationConfirmationTemplate("mc8000", "http://localhost:3000/api/auth/register/"+crypto.createHash('sha256').update("mc8000").digest('hex')));
     //mail("mc8000@gmx.de", "Einmal login code", generateOneTimeLoginCodeTemplate("mc8000", "56738453"));
     //mail("mc8000@gmx.de", "Einmal login code", generateOneTimeLoginLinkTemplate("mc8000", "google.com"));
-    createSampleData()
+    //createSampleData()
 })
 
 async function createSampleData() {

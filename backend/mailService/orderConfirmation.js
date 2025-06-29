@@ -1,12 +1,10 @@
 export function generateOrderConfirmationTemplate(username, products, totalPrice) {
     const productListHTML = products.map(product => `
         <li>
-            <h2>${product.name}</h2>
-            <p><strong>Preis:</strong> ${product.price} €</p>
-            <p><strong>Menge:</strong> ${product.quantity}</p>
-            <p><strong>Kategorie:</strong> ${product.category}</p>
-            <p><strong>Kurzbeschreibung:</strong> ${product.shortDescription}</p>
-            <p><strong>Beschreibung:</strong> ${product.description}</p>
+            <h2>${product.produktname}</h2>
+            <p><strong>Preis:</strong> ${product.preis} €</p>
+            <p><strong>Anzahl:</strong> ${product.anzahl}</p>
+            <p><strong>Kategorie:</strong> ${product.kategorie}</p>
         </li>
     `).join('');
 

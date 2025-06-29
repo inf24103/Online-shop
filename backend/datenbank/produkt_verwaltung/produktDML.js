@@ -51,7 +51,7 @@ export const deleteWarenkorb = async (benutzerid) => {
     return await query(sql, [benutzerid]);
 };
 
-export const deleteProdukteWarenkorb = async (warenkorbid) => {
+export const deleteAllProductsInWarenkorb = async (warenkorbid) => {
     const sql = `
         DELETE FROM Product_Warenkorb
         WHERE warenkorbid = $1
@@ -59,7 +59,6 @@ export const deleteProdukteWarenkorb = async (warenkorbid) => {
     `;
     return await query(sql, [warenkorbid]);
 };
-
 
 export const addProductToWarenkorb = async (warenkorbid, produktid, anzahl) => {
     const sql = `

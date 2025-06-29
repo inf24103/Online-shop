@@ -5,7 +5,7 @@ import {getAllUsers, getUserById} from "../backend/datenbank/user_verwaltung/use
 import {deleteBenutzer, updateBenutzer} from "../backend/datenbank/user_verwaltung/userDML.js";
 import {
     createWarenkorb,
-    deleteProdukteWarenkorb,
+    deleteAllProductsInWarenkorb,
     deleteWarenkorb
 } from "../backend/datenbank/produkt_verwaltung/produktDML.js";
 import {
@@ -59,7 +59,7 @@ router.delete('/:id', authenticateTokenAndAuthorizeRole(['admin']), async (req, 
         }
         const warenkorb = await getWarenkorbByBenutzerId(userid);
         const warenkorbid = warenkorb[0].warenkorbid;
-        await deleteProdukteWarenkorb(warenkorbid);
+        await deleteAllProductsInWarenkorb(warenkorbid);
         await deleteWarenkorb(userid);
         await deleteBenutzer(userid);
         const benuterNachLoeschung = await getUserById(userid);
