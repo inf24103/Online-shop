@@ -11,6 +11,7 @@ import {
 import {
     getWarenkorbByBenutzerId
 } from "../backend/datenbank/produkt_verwaltung/produktDRL.js";
+import {deleteEinkaeufeByBenutzer} from "../backend/datenbank/einkauf_verwaltung/einkaufDML.js";
 
 const router = express.Router();
 
@@ -24,7 +25,6 @@ router.get('/all', authenticateTokenAndAuthorizeRole(['admin']), async (req, res
 
 router.get('/me', authenticateToken, async (req, res) => {
     const id = req.jwtpayload.userid;
-    console.log(req.jwtpayload);
     const user = await getUserById(id);
 
     if(user.length === 0){
@@ -61,6 +61,7 @@ router.delete('/:id', authenticateTokenAndAuthorizeRole(['admin']), async (req, 
         const warenkorbid = warenkorb[0].warenkorbid;
         await deleteAllProductsInWarenkorb(warenkorbid);
         await deleteWarenkorb(userid);
+        await deleteEinkaeufeByBenutzer(userid);
         await deleteBenutzer(userid);
         const benuterNachLoeschung = await getUserById(userid);
         if(benuterNachLoeschung.length > 0) {

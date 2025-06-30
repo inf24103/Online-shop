@@ -15,6 +15,10 @@ import {generateOneTimeLoginCodeTemplate} from "./backend/mailService/oneTimeLog
 import {generateOneTimeLoginLinkTemplate} from "./backend/mailService/oneTimeLoginLink.js";
 import {createOneTimeLoginTable, dropOneTimeLoginTable} from "./backend/datenbank/auth/authAllMethods.js";
 import {createEinkaufTables, deleteEinkaufTables} from "./backend/datenbank/einkauf_verwaltung/einkaufDDL.js";
+import {
+    createWunschlisteTables,
+    deleteWunschlisteTables
+} from "./backend/datenbank/wunschliste_verwaltung/wunschlisteDDL.js";
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -55,6 +59,7 @@ async function createSampleData() {
     await deleteProductTable();
     await deleteBenutzerTable()
     await deleteEinkaufTables();
+    await deleteWunschlisteTables();
     await dropOneTimeLoginTable();
 
     // Erstelle Tabellen in der richtigen Reihenfolge
@@ -63,5 +68,6 @@ async function createSampleData() {
     await createWarenkorbTable();
     await createProductWarenkorbTable();
     await createEinkaufTables();
+    await createWunschlisteTables();
     await createOneTimeLoginTable();
 }

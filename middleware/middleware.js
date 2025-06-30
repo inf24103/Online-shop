@@ -24,7 +24,8 @@ export const authenticateToken = async (req, res, next) => {
         try {
             req.jwtpayload = jwt.verify(token, process.env.JWT_SECRET);
             const user = await getUserById(req.jwtpayload.userid);
-            if(user.length < 0){
+
+            if(user.length === 0){
                 return res.status(403).json({message: `Old token. User does not exist.`});
             }
             if(user[0].kontostatus === 'gesperrt'){

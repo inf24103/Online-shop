@@ -1,0 +1,19 @@
+meta {
+  name: addProdukt
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:3000/api/wun/update
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "productID": "1",
+    "aktion": "add",
+    "wunschlisteid": "1"
+  }
+}

@@ -297,13 +297,11 @@ router.get('/kaeufe/:einkaufid', authenticateToken, async (req, res) => {
             return res.status(404).json({message: "Einkauf nicht gefunden"})
         }
         for (let i = 0; i < einkauefe.length; i++) {
-            console.log("EinkaufID: ",einkauefe[i].einkaufid)
             if (einkauefe[i].einkaufid === einkaufid) {
                 found = true;
                 break;
             }
         }
-        console.log(found, " ", einkaufid, " ", benutzerid, " ", einkauefe);
         if (!found) {
             return res.status(403).json({message: "Der Einkauf gehört nicht dir!"});
         }
