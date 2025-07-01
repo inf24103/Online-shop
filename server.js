@@ -17,7 +17,10 @@ const port = process.env.PORT || 3000
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:63342",
+    credentials: true
+}));
 
 // configure logging before each api call
 morgan.token('source', function () {

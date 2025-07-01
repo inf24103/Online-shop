@@ -14,7 +14,8 @@
                 const res = await fetch("http://localhost:3000/api/auth/login", {
                     method: "POST",
                     body: JSON.stringify(data),
-                    headers: {"Content-Type": "application/json"},
+                    credentials: "include",
+                    headers: {"Content-Type": "application/json"}
                 })
                 if(res.status === 401) {
                     alert("Benutzername oder Passwort ungültig");
