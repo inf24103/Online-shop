@@ -12,9 +12,10 @@
 
 CREATE TABLE Warenkorb (
     warenkorbid SERIAL PRIMARY KEY,
-    benutzerid INTEGER NOT NULL REFERENCES beuntzer(benutzerid),
+    benutzerid INTEGER NOT NULL REFERENCES benutzer(benutzerid),
     erstellt TIMESTAMP,
-)*/
+);
+*/
 
 import { query } from '../index.js';
 
@@ -73,7 +74,7 @@ export const deleteWarenkorbTable = async () => {
 
 export const deleteWarenkorbProduktTable = async () => {
     const sql = `
-        DROP TABLE IF EXISTS Product_zu_Warenkorb CASCADE;
+        DROP TABLE IF EXISTS Product_Warenkorb CASCADE;
     `;
     await query(sql);
 };

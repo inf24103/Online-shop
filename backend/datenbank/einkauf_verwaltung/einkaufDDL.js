@@ -1,30 +1,30 @@
-/*CREATE TABLE Einkauf (
-    einkaufid SERIAL PRIMARY KEY,
-    benutzerid INTEGER NOT NULL REFERENCES benutzer(benutzerid),
-    datum DATE,
-    bestätigung BOOLEAN,
-);*/
+import {query} from "../index.js";
 
-import { query } from './db.js'; // deine DB-Verbindung und query-Funktion
-
-export const createTables = async () => {
+export const createEinkaufTables = async () => {
     await query(`
     CREATE TABLE IF NOT EXISTS Einkauf (
-      einkaufid SERIAL PRIMARY KEY,
-      benutzerid INTEGER NOT NULL REFERENCES benutzer(benutzerid),
-      datum DATE,
-      bestätigung BOOLEAN
+        einkaufid SERIAL PRIMARY KEY,
+        benutzerid INTEGER NOT NULL REFERENCES benutzer(benutzerid),
+        datum TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
   `);
 
     await query(`
     CREATE TABLE IF NOT EXISTS Einkauf_Produkt (
-      einkaufid INTEGER NOT NULL REFERENCES Einkauf(einkaufid),
-      produktid INTEGER NOT NULL REFERENCES Produkt(produktid),
-      menge INTEGER,
-      PRIMARY KEY (einkaufid, produktid)
+        einkauf_produktid SERIAL PRIMARY KEY,
+        einkaufid INTEGER NOT NULL REFERENCES Einkauf(einkaufid),
+        produktid INTEGER NOT NULL REFERENCES Produkt(produktid),
+        anzahl INTEGER
     );
   `);
+};
 
-    // ...weitere Tabellen hier
+export const deleteEinkaufTables = async () => {
+    await query(`
+        DROP TABLE IF EXISTS Einkauf_Produkt;
+    `);
+
+    await query(`
+        DROP TABLE IF EXISTS Einkauf;
+    `);
 };

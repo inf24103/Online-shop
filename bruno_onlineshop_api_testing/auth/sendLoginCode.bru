@@ -1,0 +1,11 @@
+meta {
+  name: sendLoginCode
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:3000/api/auth/login/withcode/mc
+  body: none
+  auth: inherit
+}

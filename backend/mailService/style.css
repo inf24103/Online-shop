@@ -1,0 +1,86 @@
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.header {
+    background-color: #007BFF;
+    color: #ffffff;
+    text-align: center;
+    padding: 20px 0;
+    border-radius: 8px 8px 0 0;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.content {
+    padding: 20px;
+}
+
+.content p {
+    font-size: 16px;
+    color: #333333;
+    line-height: 1.6;
+    margin: 0 0 10px;
+}
+
+.code {
+    display: block;
+    width: fit-content;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.footer {
+    text-align: center;
+    padding: 20px 0;
+    font-size: 14px;
+    color: #777777;
+    border-top: 1px solid #dddddd;
+}
+
+.footer p {
+    margin: 0;
+}
+
+.product-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.product-list li {
+    background-color: #f4f4f4;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.total-price {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: right;
+    margin-top: 20px;
+}

@@ -2,32 +2,7 @@
 INSERT, UPDATE, DELETE
 aka. manipulating the data
 */
-/* Benutzer anlegen
-INSERT INTO Benutzer (benutzername, email, passwordhash, rolle, kontostatus)
-VALUES ($1, $2, $3, 'user', 'aktiv');
 
-// Benutzer löschen
-DELETE FROM Benutzer WHERE benutzerid = $1;
-
-// Benutzer aktualisieren (flexibel)
-UPDATE Benutzer
-SET benutzername = COALESCE($2, benutzername),
-    email = COALESCE($3, email),
-    rolle = COALESCE($4, rolle),
-    kontostatus = COALESCE($5, kontostatus)
-WHERE benutzerid = $1;
-
-
-//Warenkorb für Benutzer erstellen
-INSERT INTO Warenkorb (benutzerid, erstellt) VALUES ($1, NOW());
-
-//Produkt in Warenkorb hinzufügen
-INSERT INTO Produkt_Zu_Warenkorb (warenkorbid, produktid, menge)
-VALUES (
-    (SELECT warenkorbid FROM Warenkorb WHERE benutzerid = $1),
-    $2,
-    $3
-);*/
 
 import {query} from '../index.js';
 
@@ -36,7 +11,7 @@ export const createBenutzer = async (benutzername, nachname, vorname, email, pas
     const sql = `
         INSERT INTO Benutzer (benutzername, nachname, vorname, email, passwordhash, plz, ort, strasse, hausnummer,
                               telefonnr, rolle, kontostatus)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'aktiv');
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'entsperrt');
     `;
     return await query(sql, [benutzername, nachname, vorname, email, passwordhash, plz, ort, strasse, hausnummer, telefonnr, rolle]);
 };
@@ -52,7 +27,7 @@ export const deleteBenutzer = async (benutzerid) => {
 /* Benutzer aktualisieren (flexibel) */
 export const updateBenutzer = async (
     benutzerid, benutzername, nachname, vorname, email,
-    rolle, kontostatus, plz, ort, strasse, hausnummer, telefonnr
+    rolle, kontostatus, plz, ort, strasse, hausnummer, telefonnr,authentifizierung
 ) => {
     const sql = `
         UPDATE Benutzer
@@ -66,12 +41,13 @@ export const updateBenutzer = async (
             ort          = COALESCE($9, ort),
             strasse      = COALESCE($10, strasse),
             hausnummer   = COALESCE($11, hausnummer),
-            telefonnr    = $12
+            telefonnr    = COALESCE($12, telefonnr),
+            authentifizierung = COALESCE($13, authentifizierung)
         WHERE benutzerid = $1;
     `;
     return await query(sql, [
         benutzerid, benutzername, nachname, vorname, email,
-        rolle, kontostatus, plz, ort, strasse, hausnummer, telefonnr
+        rolle, kontostatus, plz, ort, strasse, hausnummer, telefonnr,authentifizierung
     ]);
 };
 
