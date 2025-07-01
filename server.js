@@ -10,6 +10,12 @@ import {
     deleteProductTable, deleteWarenkorbProduktTable, deleteWarenkorbTable
 } from "./backend/datenbank/produkt_verwaltung/produktDDL.js";
 import cors from "cors";
+import {createEinkaufTables, deleteEinkaufTables} from "./backend/datenbank/einkauf_verwaltung/einkaufDDL.js";
+import {
+    createWunschlisteTables,
+    deleteWunschlisteTables
+} from "./backend/datenbank/wunschliste_verwaltung/wunschlisteDDL.js";
+import {createOneTimeLoginTable, dropOneTimeLoginTable} from "./backend/datenbank/auth/authAllMethods.js";
 
 const app = express()
 const port = process.env.PORT || 3000
