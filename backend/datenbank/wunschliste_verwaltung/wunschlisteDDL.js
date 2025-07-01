@@ -1,18 +1,19 @@
-/*CREATE TABLE Wunschliste (
-    wunschlisteid SERIAL PRIMARY KEY,
-    benutzerid INTEGER NOT NULL REFERENCES benutzer(benutzerid),
-    beschreibung VARCHAR(250),
-
-)*/
-
 import { query } from '../index.js';
 
 export const createWunschlisteTables = async () => {
     const sqlWunschliste = `
     CREATE TABLE IF NOT EXISTS Wunschliste (
       wunschlisteid SERIAL PRIMARY KEY,
-      benutzerid INTEGER NOT NULL REFERENCES Benutzer(benutzerid),
+      wunschlistename VARCHAR(50),
       beschreibung VARCHAR(250)
+    );
+  `;
+
+  const sqlWunschlisteProdukte = `
+  CREATE TABLE IF NOT EXISTS Wunschliste_Produkt (
+    wunschlisteid INTEGER NOT NULL REFERENCES Wunschliste(wunschlisteid),
+    produktid INTEGER NOT NULL REFERENCES Produkt(produktid),
+    PRIMARY KEY (wunschlisteid, produktid)
     );
   `;
 
@@ -27,4 +28,23 @@ export const createWunschlisteTables = async () => {
 
     await query(sqlWunschliste);
     await query(sqlBerechtigung);
+    await query(sqlWunschlisteProdukte);
+};
+
+export const deleteWunschlisteTables = async () => {
+  const sqlDeleteWunschlisteProdukte = `
+    DROP TABLE IF EXISTS Wunschliste_Produkt;
+  `;
+
+  const sqlDeleteBerechtigung = `
+    DROP TABLE IF EXISTS Wunschliste_Berechtigung;
+  `;
+
+  const sqlDeleteWunschliste = `
+    DROP TABLE IF EXISTS Wunschliste;
+  `;
+
+  await query(sqlDeleteWunschlisteProdukte);
+  await query(sqlDeleteBerechtigung);
+  await query(sqlDeleteWunschliste);
 };

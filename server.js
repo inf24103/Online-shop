@@ -31,10 +31,9 @@ mountRoutes(app);
 // Globales abfangen unbehandelter Fehler
 app.use((err, req, res, next) => {
     console.error("Server: Es ist ein unbehandelter Fehler aufgetreten:\n " + err.stack);
-    res.status(500).json({
+    return res.status(500).json({
         error: 'Ein Fehler ist aufgetreten!'
     });
-    next();
 });
 
 app.listen(port, () => {
@@ -47,11 +46,17 @@ async function createSampleData() {
     await deleteWarenkorbProduktTable();
     await deleteWarenkorbTable();
     await deleteProductTable();
-    await deleteBenutzerTable();
+    await deleteBenutzerTable()
+    await deleteEinkaufTables();
+    await deleteWunschlisteTables();
+    await dropOneTimeLoginTable();
 
     // Erstelle Tabellen in der richtigen Reihenfolge
     await createBenutzerTable();
     await createProduktTable();
     await createWarenkorbTable();
     await createProductWarenkorbTable();
+    await createEinkaufTables();
+    await createWunschlisteTables();
+    await createOneTimeLoginTable();
 }
