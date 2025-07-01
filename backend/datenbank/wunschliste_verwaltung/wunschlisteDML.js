@@ -60,3 +60,19 @@ export const deleteWunschliste = async (wunschlisteid) => {
   `;
     return await query(sql, [wunschlisteid]);
 };
+
+export const deleteAllProductsFromWunschliste = async (wunschlisteId) => {
+    const sqlDeleteProducts = `
+    DELETE FROM Wunschliste_Produkt
+    WHERE wunschlisteid = $1;
+  `;
+    await query(sqlDeleteProducts, [wunschlisteId]);
+};
+
+export const deleteAllPermissionsFromWunschliste = async (wunschlisteId) => {
+    const sqlDeletePermissions = `
+    DELETE FROM Wunschliste_Berechtigung
+    WHERE wunschlisteid = $1;
+  `;
+    await query(sqlDeletePermissions, [wunschlisteId]);
+};

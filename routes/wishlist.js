@@ -1,8 +1,13 @@
 import express from "express";
 import {authenticateToken} from "../middleware/middleware.js";
 import {
-    addBerechtigung, addProduktToWunschliste,
-    createWunschliste, deleteProduktFromWunschliste,
+    addBerechtigung,
+    addProduktToWunschliste,
+    createWunschliste,
+    deleteAllPermissionsFromWunschliste,
+    deleteAllProductsFromWunschliste,
+    deleteProduktFromWunschliste,
+    deleteWunschliste,
     updateBerechtigung
 } from "../backend/datenbank/wunschliste_verwaltung/wunschlisteDML.js";
 import {getUserByUsername} from "../backend/datenbank/user_verwaltung/userDRL.js";
@@ -188,7 +193,35 @@ router.post("/update", authenticateToken, async (req, res) => {
 
 router.delete("/delete", authenticateToken, async (req, res) => {
     const userid = req.jwtpayload.userid;
+    let {wunschlisteid} = req.body;
+    if (!wunschlisteid) {
+        return res.status(400).json({
+            error: 'All fields are required: productID, aktion, wunschlisteid'
+        });
+    }
+    wunschlisteid = parseInt(wunschlisteid);
+    if(isNaN(wunschlisteid)){
+        return res.status(400).json({message: "Ungültige WUnschlistenID"})
+    }
     try {
+        const eigeneWishlists = await getEigeneWunschlistenByBenutzerId(userid)
+        if(eigeneWishlists.length === 0){
+            return res.status(403).json({message: "Kein Owner"})
+        }
+        let found = false;
+        for (let i = 0; i < eigeneWishlists.length; i++) {
+            if(eigeneWishlists[0].wunschlisteid === wunschlisteid){
+                found = true;
+                break;
+            }
+        }
+        if(!found){
+            return res.status(403).json({message: "Wunschliste nicht gefundens"})
+        }
+        await deleteAllProductsFromWunschliste(wunschlisteid);
+        await deleteAllPermissionsFromWunschliste(wunschlisteid);
+        await deleteWunschliste(wunschlisteid);
+        res.status(200).json({message: "Wunschliste erfolgreich entfernt"})
 
     }catch(err) {
         console.log("Error deleting wunschliste:\n",err);

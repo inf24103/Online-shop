@@ -9,10 +9,6 @@ import {
     createWarenkorbTable,
     deleteProductTable, deleteWarenkorbProduktTable, deleteWarenkorbTable
 } from "./backend/datenbank/produkt_verwaltung/produktDDL.js";
-import {mail} from "./backend/mailService/mailservice.js";
-import {generateRegistrationConfirmationTemplate} from "./backend/mailService/regestrierungsBestaetigung.js";
-import {generateOneTimeLoginCodeTemplate} from "./backend/mailService/oneTimeLoginCode.js";
-import {generateOneTimeLoginLinkTemplate} from "./backend/mailService/oneTimeLoginLink.js";
 import {createOneTimeLoginTable, dropOneTimeLoginTable} from "./backend/datenbank/auth/authAllMethods.js";
 import {createEinkaufTables, deleteEinkaufTables} from "./backend/datenbank/einkauf_verwaltung/einkaufDDL.js";
 import {
