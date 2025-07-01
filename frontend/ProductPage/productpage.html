@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>Product Page</title>
     <link rel="stylesheet" href="../public/navbar.css">
+    <link rel="stylesheet" href="../public/page_layout.css">
+    <link rel="stylesheet" href="../public/footer.css">
     <link rel="stylesheet" href="../ProductPage/productstyle.css">
 </head>
 <body>
@@ -15,5 +17,24 @@
     <li class="navitem"><a href="#about">About</a></li>
     <li class="navitem"><a href="../user/index.html">Home</a></li>
 </ul>
+<h1>All Products</h1>
+<div class="filter">
+<form action="" method="get">
+    <input type="search" name="search" placeholder="Search Products">
+    <select name="category" id="kat_filter">
+        <option value="Category">Category</option>
+        <option value="All">All</option>
+        <option value="Category 1">Supplements</option>
+        <option value="Category 2">Clothing</option>
+        <option value="Category 3">Style</option>
+    </select>
+    <input type="number" name="price" min="1" max="100" value="Preis" placeholder="Price €">
+    <button type="submit">Filter</button>
+</form>
+</div>
+<div class="product-card">
+<!-- Hier werden die Produkte eingefügt -->
+</div>
+<script src="../ProductPage/products.js"></script>
 </body>
 </html>

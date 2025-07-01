@@ -9,12 +9,7 @@ import {
     createWarenkorbTable,
     deleteProductTable, deleteWarenkorbProduktTable, deleteWarenkorbTable
 } from "./backend/datenbank/produkt_verwaltung/produktDDL.js";
-import {createOneTimeLoginTable, dropOneTimeLoginTable} from "./backend/datenbank/auth/authAllMethods.js";
-import {createEinkaufTables, deleteEinkaufTables} from "./backend/datenbank/einkauf_verwaltung/einkaufDDL.js";
-import {
-    createWunschlisteTables,
-    deleteWunschlisteTables
-} from "./backend/datenbank/wunschliste_verwaltung/wunschlisteDDL.js";
+import cors from "cors";
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -22,6 +17,7 @@ const port = process.env.PORT || 3000
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(cors());
 
 // configure logging before each api call
 morgan.token('source', function () {
@@ -42,9 +38,6 @@ app.use((err, req, res, next) => {
 
 app.listen(port, () => {
     console.log(`Server läuft auf http://localhost:${port}`)
-    //mail("mc8000@gmx.de", "Regestrierungsbestätigung", generateRegistrationConfirmationTemplate("mc8000", "http://localhost:3000/api/auth/register/"+crypto.createHash('sha256').update("mc8000").digest('hex')));
-    //mail("mc8000@gmx.de", "Einmal login code", generateOneTimeLoginCodeTemplate("mc8000", "56738453"));
-    //mail("mc8000@gmx.de", "Einmal login code", generateOneTimeLoginLinkTemplate("mc8000", "google.com"));
     //createSampleData()
 })
 
