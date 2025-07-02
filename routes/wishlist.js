@@ -14,7 +14,7 @@ import {getUserByUsername} from "../backend/datenbank/user_verwaltung/userDRL.js
 import {
     getAlleWunschlistenByBenutzer,
     getBerechtigungenByWunschlisteId,
-    getEigeneWunschlistenByBenutzerId, getProdukteByWunschliste
+    getEigeneWunschlistenByBenutzerId, getFremdeWunschlistenByBenutzer, getProdukteByWunschliste
 } from "../backend/datenbank/wunschliste_verwaltung/wunschlisteDRL.js";
 import {getProduktById} from "../backend/datenbank/produkt_verwaltung/produktDRL.js";
 
@@ -106,6 +106,20 @@ router.post("/authorize", authenticateToken, async (req, res) => {
 
 router.get("/my", authenticateToken, async (req, res) => {
     const wunschlisten = await getEigeneWunschlistenByBenutzerId(req.jwtpayload.userid);
+    return res.send(wunschlisten);
+})
+
+router.get("/others", authenticateToken, async (req, res) => {
+    const wunschlisten = await getFremdeWunschlistenByBenutzer(req.jwtpayload.userid);
+    for (let i = 0; i < wunschlisten.length; i++) {
+        const berechtigungen = await getBerechtigungenByWunschlisteId(wunschlisten[i].wunschlisteid)
+        for (let j = 0; j < berechtigungen.length; j++) {
+            if(berechtigungen[j].berechtigung === 'owner') {
+                wunschlisten[i].ownerUserId = berechtigungen[j].benutzerid;
+                break
+            }
+        }
+    }
     return res.send(wunschlisten);
 })
 

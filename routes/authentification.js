@@ -17,6 +17,7 @@ import {
     saveLoginCode,
     saveLoginToken
 } from "../backend/datenbank/auth/authAllMethods.js";
+import {authenticateTokenAndAuthorizeRole} from "../middleware/middleware.js";
 
 dotenv.config()
 
@@ -133,6 +134,39 @@ router.post('/register', async (req, res) => {
             return res.status(401).json({ error: 'Email already exists' });
         }
 
+        await createBenutzer(username, lastname, firstname, email, passwordHashed, zipcode, village, street, housenumber, telephone, 'user');
+        const user = await getUserByUsername(username);
+        const token = createJWTToken(user);
+        await createWarenkorb(user[0].benutzerid);
+
+        mail(email, "Regestrierungsbestätigung", generateRegistrationConfirmationTemplate(username, "http://localhost:3000/api/auth/register/confirm/"+user[0].benutzerid));
+
+        res.cookie('token', token);
+        return res.json({ message: 'Register successful', user: user });
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ error: 'Fehler beim Erstellen des Benutzers' });
+    }
+});
+
+router.post('/registeradmin', authenticateTokenAndAuthorizeRole(['admin']) ,async (req, res) => {
+    try {
+        const { username, password, firstname, lastname, email, telephone, village, zipcode, street, housenumber } = req.body;
+        if (!username || !lastname || !firstname || !email || !password || !zipcode || !village || !street || !housenumber || !telephone) {
+            return res.status(400).json({ error: 'All fields are required: username, lastname, firstname, email, password, zipcode, village, street, housenumber, telephone' });
+        }
+
+        const passwordHashed = await bcrypt.hash(password, 12);
+        const usernameCheck = await getUserByUsername(username);
+        const emailCheck = await getUserByEmail(email);
+        if (emailCheck.length > 0 && usernameCheck.length > 0) {
+            return res.status(401).json({ error: 'Email and username already exist' });
+        } else if (usernameCheck.length > 0) {
+            return res.status(401).json({ error: 'Username already exists' });
+        } else if (emailCheck.length > 0) {
+            return res.status(401).json({ error: 'Email already exists' });
+        }
+
         await createBenutzer(username, lastname, firstname, email, passwordHashed, zipcode, village, street, housenumber, telephone, 'admin');
         const user = await getUserByUsername(username);
         const token = createJWTToken(user);
@@ -143,9 +177,6 @@ router.post('/register', async (req, res) => {
         res.cookie('token', token);
         return res.json({ message: 'Register successful', user: user });
     } catch (error) {
-        if (error.code === '23505') { // PostgreSQL unique violation error code
-            return res.status(401).json({ error: 'Benutzername oder E-Mail-Adresse bereits vorhanden' });
-        }
         console.log(error);
         return res.status(400).json({ error: 'Fehler beim Erstellen des Benutzers' });
     }
