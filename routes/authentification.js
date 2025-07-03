@@ -47,7 +47,7 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/logout', authenticateToken, async (req, res) => {
-    res.cookie('jwt', '', { expires: new Date(0), httpOnly: true });
+    res.cookie('token', '', { expires: new Date(0), httpOnly: true });
     res.status(200).send("Logout erfolgreich");
 })
 
