@@ -17,7 +17,7 @@ import {
     saveLoginCode,
     saveLoginToken
 } from "../backend/datenbank/auth/authAllMethods.js";
-import {authenticateTokenAndAuthorizeRole} from "../middleware/middleware.js";
+import {authenticateToken, authenticateTokenAndAuthorizeRole} from "../middleware/middleware.js";
 
 dotenv.config()
 
@@ -45,6 +45,11 @@ router.post('/login', async (req, res) => {
         return res.status(500).json({ message: 'Login failed' });
     }
 });
+
+router.post('/logout', authenticateToken, async (req, res) => {
+    res.cookie('token', '', { expires: new Date(0), httpOnly: true });
+    res.status(200).send("Logout erfolgreich");
+})
 
 router.post('/login/code/:code/:username', async (req, res) => {
     try {
