@@ -56,9 +56,16 @@ document.addEventListener("DOMContentLoaded", () => {
             //Onclick Event
             document.getElementById("logout").addEventListener("click", async (e) => {
                 e.preventDefault();
-                await fetch("");
+                try {
+                    const res = await fetch("http://localhost:3000/api/auth/logout", {
+                        method: "POST",
+                        credentials: "include"
+                    });
+                } catch (e) {
+                    console.log(e);
+                }
                 location.reload();
-            })
+            });
         } else {
             menu.innerHTML = `
             <li><a href="../LoginPage/loginpage.html">Login</a></li>

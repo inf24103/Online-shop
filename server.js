@@ -19,7 +19,6 @@ import {
 import {createOneTimeLoginTable, dropOneTimeLoginTable} from "./backend/datenbank/auth/authAllMethods.js";
 import {createBenutzer, updateBenutzer} from "./backend/datenbank/user_verwaltung/userDML.js";
 import {getUserById, getUserByUsername} from "./backend/datenbank/user_verwaltung/userDRL.js";
-import {createBenutzer} from "./backend/datenbank/user_verwaltung/userDML.js";
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -53,7 +52,7 @@ app.use((err, req, res, next) => {
 // Docker wieder löschen: docker compose down -v
 
 app.listen(port, () => {
-    init()
+    //init()
     console.log(`Server läuft auf http://localhost:${port}`)
 })
 
