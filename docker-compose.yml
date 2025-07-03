@@ -1,0 +1,37 @@
+version: '1.0'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fitura_online-shop
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=db
+      - DB_USER=postgres
+      - DB_PASSWORD=1234
+      - DB_NAME=postgres
+      - DB_PORT=5432
+    depends_on:
+      - db
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+  db:
+    image: postgres:14-alpine
+    container_name: fitura_db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=1234
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      #- ./backend/datenbank/init.js:/docker-entrypoint-initdb.d/init.js # init.sql wird in docker-entrypoint-initdb.d/init.sql kopiert. die Postgres-image führt alle Dateien in diesem Verzeichnis aus. Diese datei wird vor start automatisch einmal ausgeführt - sehr praktisch
+    restart: unless-stopped
+
+volumes:
+  postgres_data: 

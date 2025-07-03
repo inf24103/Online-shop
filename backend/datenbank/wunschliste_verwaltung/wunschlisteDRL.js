@@ -19,6 +19,16 @@ export const getEigeneWunschlistenByBenutzerId = async (benutzerid) => {
     return await query(sql, [benutzerid]);
 };
 
+export const getFremdeWunschlistenByBenutzer = async (benutzerid) => {
+    const sql = `
+        SELECT w.wunschlisteid, w.wunschlistename, w.beschreibung, b.berechtigung
+        FROM Wunschliste w
+        JOIN Wunschliste_Berechtigung b ON w.wunschlisteid = b.wunschlisteid
+        WHERE b.benutzerid = $1 AND b.berechtigung != 'owner';
+    `;
+    return await query(sql, [benutzerid]);
+}
+
 export const getAlleWunschlistenByBenutzer = async (benutzerid) => {
     const sql = `
         SELECT w.wunschlisteid, w.wunschlistename, w.beschreibung, b.berechtigung

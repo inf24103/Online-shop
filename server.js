@@ -2,14 +2,22 @@ import express from "express";
 import morgan from "morgan";
 import {mountRoutes} from "./routes/router.js";
 import cookieParser from "cookie-parser";
-import {createBenutzerTable, deleteBenutzerTable} from "./backend/datenbank/user_verwaltung/userDDL.js";
+import cors from "cors";
 import {
     createProductWarenkorbTable,
-    createProduktTable,
-    createWarenkorbTable,
-    deleteProductTable, deleteWarenkorbProduktTable, deleteWarenkorbTable
+    createProduktTable, createWarenkorbTable,
+    deleteProductTable,
+    deleteWarenkorbProduktTable,
+    deleteWarenkorbTable
 } from "./backend/datenbank/produkt_verwaltung/produktDDL.js";
+import {createBenutzerTable, deleteBenutzerTable} from "./backend/datenbank/user_verwaltung/userDDL.js";
 import cors from "cors";
+import {createEinkaufTables, deleteEinkaufTables} from "./backend/datenbank/einkauf_verwaltung/einkaufDDL.js";
+import {
+    createWunschlisteTables,
+    deleteWunschlisteTables
+} from "./backend/datenbank/wunschliste_verwaltung/wunschlisteDDL.js";
+import {createOneTimeLoginTable, dropOneTimeLoginTable} from "./backend/datenbank/auth/authAllMethods.js";
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -39,13 +47,15 @@ app.use((err, req, res, next) => {
     });
 });
 
+// Docker 1. mal starten: docker compose up
+// Docker wieder löschen: docker compose down -v
+
 app.listen(port, () => {
+    init()
     console.log(`Server läuft auf http://localhost:${port}`)
-    //createSampleData()
 })
 
-async function createSampleData() {
-    // Lösche abhängige Tabellen zuerst
+async function init() {
     await deleteWarenkorbProduktTable();
     await deleteWarenkorbTable();
     await deleteProductTable();
@@ -54,7 +64,6 @@ async function createSampleData() {
     await deleteWunschlisteTables();
     await dropOneTimeLoginTable();
 
-    // Erstelle Tabellen in der richtigen Reihenfolge
     await createBenutzerTable();
     await createProduktTable();
     await createWarenkorbTable();
@@ -62,4 +71,6 @@ async function createSampleData() {
     await createEinkaufTables();
     await createWunschlisteTables();
     await createOneTimeLoginTable();
+
+    console.log("Innit db successfully!");
 }

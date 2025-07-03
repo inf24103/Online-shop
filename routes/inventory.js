@@ -29,13 +29,12 @@ router.get('/product/all', async (req, res) => {
 });
 
 router.get('/product/search', async (req, res) => {
-    const {name, maxPreis, minMenge, kategorie, sortierung} = req.query;
-    if (!name || !maxPreis || !minMenge || !kategorie || !sortierung) {
-        return res.status(400).json({
-            error: 'All fields are required: name, maxPreis, minMenge, kategorie, sortierung'
-        });
-    }
-
+    let { name = null, maxPreis = null, minMenge = null, kategorie = null, sortierung = null } = req.query;
+    name = name === "" ? null : name;
+    maxPreis = maxPreis === "" ? null : maxPreis;
+    minMenge = minMenge === "" ? null : minMenge;
+    kategorie = kategorie === "" ? null : kategorie;
+    sortierung = sortierung === "" ? null : sortierung;
     try {
         const result = await searchProdukte(name, maxPreis, minMenge, kategorie, sortierung);
         res.status(200).json(result);
@@ -46,14 +45,14 @@ router.get('/product/search', async (req, res) => {
 });
 
 router.post('/product/new', authenticateTokenAndAuthorizeRole(['admin']), async (req, res) => {
-    const {produktname, preis, menge, bild, kategorie, kurzbeschreibung, beschreibung} = req.body;
-    if (!produktname || !preis || !menge || !bild || !kategorie || !kurzbeschreibung || !beschreibung) {
+    const {produktname, preis, verfuegbareMenge, bild, kategorie, kurzbeschreibung, beschreibung} = req.body;
+    if (!produktname || !preis || !verfuegbareMenge || !bild || !kategorie || !kurzbeschreibung || !beschreibung) {
         return res.status(400).json({
             error: 'All fields are required: produktname, preis, menge, bild, kategorie, kurzbeschreibung, beschreibung'
         });
     }
 
-    const product = await createProdukt(produktname, preis, menge, kategorie, kurzbeschreibung, beschreibung);
+    const product = await createProdukt(produktname, preis, verfuegbareMenge, kategorie, kurzbeschreibung, beschreibung);
 
     return res.status(200).json(product)
 })
@@ -108,7 +107,6 @@ router.patch('/product/:id', authenticateTokenAndAuthorizeRole(['admin']), async
     if (kategorie !== undefined) updatedProduct.kategorie = kategorie;
     if (kurzbeschreibung !== undefined) updatedProduct.kurzbeschreibung = kurzbeschreibung;
     if (beschreibung !== undefined) updatedProduct.beschreibung = beschreibung;
-
     await updateProdukt(
         updatedProduct.produktname,
         updatedProduct.preis,
@@ -146,11 +144,11 @@ router.post('/warenkorb/add', authenticateToken, async (req, res) => {
             return res.status(404).json({message: "product not found"})
         }
 
-        if (product.menge < 1) {
+        if (product[0].menge < 1) {
             return res.status(404).json({message: "product out of stock"})
         }
 
-        if (product.menge < anzahlInt) {
+        if (product[0].menge < anzahlInt) {
             return res.status(400).json({message: 'Not enough products in stock'})
         }
 
@@ -190,7 +188,10 @@ router.delete('/warenkorb/:id', authenticateToken, async (req, res) => {
         const currentQuantity = productInCart.anzahl;
         const newQuantity = currentQuantity - 1;
 
-        if (newQuantity > 0) {
+        if (newQuantity > 5) {
+            await deleteProductInWarenkorb(produktId, warenkorb[0].warenkorbid);
+            res.status(200).json({message: 'Produkt aus dem Warenkorb entfernt'});
+        } else if (newQuantity > 0) {
             await updateProductQuantity(warenkorb[0].warenkorbid, produktId, -1);
             res.status(200).json({message: 'Produktanzahl im Warenkorb verringert'});
         } else {
@@ -244,12 +245,38 @@ router.get("/kaeufe/kaufen", authenticateToken, async (req, res) => {
         if (products.length === 0) {
             return res.status(400).json({message: "No products in the cart"});
         }
+        for (let i = 0; i < products.length; i++) {
+            if(products[i].menge < products[i].anzahl){
+                return res.status(400).json({message: "Es können nur noch: " + products[i].menge + " von " + products[i].produktname + " gekauft werden. Bitte reduziere die Anzahl der zu kaufenden Produkte im Warenkorb"});
+            }
+        }
 
         const einkauf = await createEinkauf(userid);
         let gesamtpreis = 0;
         for (let i = 0; i < products.length; i++) {
             gesamtpreis += products[i].preis * products[i].anzahl;
             await addProduktToEinkauf(einkauf[0].einkaufid, products[i].produktid, products[i].anzahl);
+            const updatedProduct = products[i];
+            updatedProduct.produktname = products[i].produktname;
+            updatedProduct.preis = products[i].preis;
+            updatedProduct.menge = products[i].menge - products[i].anzahl;
+            updatedProduct.bild = products[i].bild;
+            updatedProduct.kategorie = products[i].kategorie;
+            updatedProduct.kurzbeschreibung = products[i].kurzbeschreibung;
+            updatedProduct.beschreibung = products[i].beschreibung;
+            updatedProduct.produktid = products[i].produktid;
+
+            await updateProdukt(
+                updatedProduct.produktname,
+                updatedProduct.preis,
+                updatedProduct.menge,
+                updatedProduct.kategorie,
+                updatedProduct.kurzbeschreibung,
+                updatedProduct.beschreibung,
+                updatedProduct.bild,
+                updatedProduct.produktid,
+            );
+
         }
         mail(user[0].email, "Fitura: Kaufbestätigung", generateOrderConfirmationTemplate(user[0].benutzername, products, gesamtpreis));
 
@@ -293,9 +320,6 @@ router.get('/kaeufe/:einkaufid', authenticateToken, async (req, res) => {
             return res.status(400).json({message: "Keine Einkäufe gefunden für den eingeloggten Benutzer"});
         }
         let found = false;
-        if(einkauefe.length < einkaufid){
-            return res.status(404).json({message: "Einkauf nicht gefunden"})
-        }
         for (let i = 0; i < einkauefe.length; i++) {
             if (einkauefe[i].einkaufid === einkaufid) {
                 found = true;
@@ -303,7 +327,7 @@ router.get('/kaeufe/:einkaufid', authenticateToken, async (req, res) => {
             }
         }
         if (!found) {
-            return res.status(403).json({message: "Der Einkauf gehört nicht dir!"});
+            return res.status(403).json({message: "Einkauf nicht gefunden oder nicht eigener."});
         }
         const products = await getProdukteByEinkauf(einkaufid);
         res.status(200).json(products);

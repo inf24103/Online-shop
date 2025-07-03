@@ -1,0 +1,20 @@
+meta {
+  name: checkPermission
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:3000/api/auto
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "userId": 3,
+    "aktion": "sperren",
+    "ressourceId": 3,
+    "ressourceArt": "product"
+  }
+}
