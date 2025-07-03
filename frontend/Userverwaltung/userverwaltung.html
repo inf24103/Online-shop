@@ -1,12 +1,10 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>User-Verwaltung</title>
+  <link rel="stylesheet" href="../Userverwaltung/userverwaltungstyle.css">
     <link rel="stylesheet" href="../public/navbar.css">
-    <link rel="stylesheet" href="../public/page_layout.css">
-    <link rel="stylesheet" href="../public/footer.css">
-    <link rel="stylesheet" href="../LoginPage/loginstyle.css">
-    <title>SignUp</title>
 </head>
 <body>
 <header class="navbar">
@@ -31,22 +29,18 @@
     <button class="sidebar-close" aria-label="Schließen">&times;</button>
     <ul id="sidebar-menu"></ul>
 </aside>
-<div class="login-form">
-    <div class="section">
-        <div class="content">
-            <h2>Login</h2>
-            <form action="" method="post">
-                <input type="text" placeholder="Username" name="username" required>
-                <input type="password" placeholder="Password" name="password" required>
-                <button id="button">Login</button>
-            </form>
-            <p>You dont have an account? Klick <a href="../SignUpPage/signup.html">hier</a></p>
-        </div>
-        <div class="form-img">
-            <img src="../pictures/loginpage.png" alt="">
-        </div>
-    </div>
+
+<h1>User-Verwaltung</h1>
+<div class="filter">
+  <form method="post" action="">
+    <input type="number" name="search" placeholder="User-ID">
+    <button type="submit">Filter</button>
+  </form>
 </div>
-<script src="../LoginPage/login.js"></script>
-<script src="../public/sidebar.js"></script>
+<div class="userlist">
+
+</div>
 </body>
+<script src="../Userverwaltung/userverwaltung.js"></script>
+<script src="../public/sidebar.js"></script>
+</html>

@@ -113,3 +113,26 @@ button:hover {
     display: block;
     object-fit: cover;
 }
+
+.delete {
+    border: none;
+    background: transparent;
+    padding: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button.delete img {
+    width: 20px !important;
+    height: 20px !important;
+    max-width: 20px !important;
+    max-height: 20px !important;
+    object-fit: contain !important;
+    pointer-events: none;
+    filter: grayscale(100%);
+    transition: filter 0.1s;
+}
+
+.delete:hover img {
+    filter: none;
+}

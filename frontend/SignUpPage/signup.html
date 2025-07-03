@@ -9,16 +9,29 @@
     <title>SignUp</title>
 </head>
 <body>
-<header>
-    <ul class="navbar">
-        <li><img class="logo" src="../pictures/fitura_logo.png" alt="logo"></li>
-        <li class="navitem"><a href="../LoginPage/loginpage.html">Sign in</a></li>
-        <li class="navitem"><a href="../SignUpPage/signup.html">Sign up</a></li>
-        <li class="navitem"><a href="../ProductPage/productpage.html">Products</a></li>
-        <li class="navitem"><a href="#about">About</a></li>
-        <li class="navitem"><a href="../user/index.html">Home</a></li>
-    </ul>
+<header class="navbar">
+    <div class="nav-inner">
+        <a href="../user/index.html" class="logo-link">
+            <img src="../pictures/fitura_logo.png" alt="logo" class="logo">
+        </a>
+
+        <nav class="nav-links">
+            <a href="../ProductPage/productpage.html" class="navitem">Products</a>
+            <a href="#Einkaufsliste" class="navitem icon-link" id="einkaufsliste">
+                <img src="../pictures/einkaufswagen.png">
+            </a>
+            <a href="../LoginPage/loginpage.html" class="navitem icon-link" id="account" title="Profil / Login">
+                <img src="../pictures/account_icon.png" alt="" class="account-icon">
+            </a>
+        </nav>
+    </div>
 </header>
+<aside id="sidebar" class="sidebar">
+    <button class="sidebar-close" aria-label="Schließen">&times;</button>
+    <ul id="sidebar-menu">
+        <!--Hier werden Infos durch js angezeigt! -->
+    </ul>
+</aside>
     <div class="signup-form">
         <div class="section">
             <div class="content">
@@ -43,4 +56,5 @@
         </div>
     </div>
 <script src="../SignUpPage/signup.js"></script>
+<script src="../public/sidebar.js"></script>
 </body>
