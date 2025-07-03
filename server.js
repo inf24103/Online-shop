@@ -2,7 +2,6 @@ import express from "express";
 import morgan from "morgan";
 import {mountRoutes} from "./routes/router.js";
 import cookieParser from "cookie-parser";
-import cors from "cors";
 import {
     createProductWarenkorbTable,
     createProduktTable, createWarenkorbTable,
@@ -18,6 +17,7 @@ import {
     deleteWunschlisteTables
 } from "./backend/datenbank/wunschliste_verwaltung/wunschlisteDDL.js";
 import {createOneTimeLoginTable, dropOneTimeLoginTable} from "./backend/datenbank/auth/authAllMethods.js";
+import {createBenutzer} from "./backend/datenbank/user_verwaltung/userDML.js";
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -51,7 +51,7 @@ app.use((err, req, res, next) => {
 // Docker wieder löschen: docker compose down -v
 
 app.listen(port, () => {
-    init()
+    //init()
     console.log(`Server läuft auf http://localhost:${port}`)
 })
 

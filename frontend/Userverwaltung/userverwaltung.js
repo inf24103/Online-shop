@@ -18,7 +18,11 @@ async function loadUserData() {
             cache: "no-store"
         });
 
-        if(!res.ok) throw new Error(res.statusText);
+        //Keine Berechtigung
+        if(res.status === 403) {
+            window.location.href = "../unauthorized/unauthorized.html";
+        }
+        if(!res.ok) alert("Es ist ein Fehler aufgetreten!");
 
         let users = await res.json();
 
@@ -61,6 +65,24 @@ function render (users) {
         icon_delete.alt = "löschen";
         deleteBtn.appendChild(icon_delete);
         card.appendChild(deleteBtn);
+
+        deleteBtn.addEventListener("click", async () => {
+            const ok = confirm(`Benutzer: ${user.benutzername} wirklich löschen?`);
+            if(!ok) return;
+            try {
+                const res = await fetch(`http://localhost:3000/api/user/${user.benutzerid}`, {
+                    credentials: "include",
+                    method: "DELETE"
+                });
+                if(res.ok) {
+                    card.remove();
+                } else {
+                    alert("Löschen fehlgeschlagen");
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        })
 
         listEl.append(card);
     });
