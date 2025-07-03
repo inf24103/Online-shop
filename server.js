@@ -2,7 +2,6 @@ import express from "express";
 import morgan from "morgan";
 import {mountRoutes} from "./routes/router.js";
 import cookieParser from "cookie-parser";
-import cors from "cors";
 import {
     createProductWarenkorbTable,
     createProduktTable, createWarenkorbTable,
@@ -18,6 +17,8 @@ import {
     deleteWunschlisteTables
 } from "./backend/datenbank/wunschliste_verwaltung/wunschlisteDDL.js";
 import {createOneTimeLoginTable, dropOneTimeLoginTable} from "./backend/datenbank/auth/authAllMethods.js";
+import {createBenutzer, updateBenutzer} from "./backend/datenbank/user_verwaltung/userDML.js";
+import {getUserById, getUserByUsername} from "./backend/datenbank/user_verwaltung/userDRL.js";
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -69,5 +70,28 @@ async function init() {
     await createWunschlisteTables();
     await createOneTimeLoginTable();
 
+    // create admin account
+    await createAdminAccount()
     console.log("Innit db successfully!");
+}
+
+async function createAdminAccount() {
+    await createBenutzer("admin", "admin", "amdin", "admin", "$2b$12$i2V4lHexLcYzjcUXo30ywuFyRlznGMFNr96T0XqHqgPsF1tJjXl3y", "12345", "admin", "admin", "admin", "admin", 'admin');
+    const user = await getUserByUsername("admin");
+    user[0].authentifizierung = true
+    await updateBenutzer(
+        user[0].benutzerid,
+        user[0].benutzername,
+        user[0].nachname,
+        user[0].vorname,
+        user[0].email,
+        user[0].rolle,
+        user[0].kontostatus,
+        user[0].plz,
+        user[0].ort,
+        user[0].strasse,
+        user[0].hausnummer,
+        user[0].telefonnr,
+        user[0].authentifizierung
+    );
 }
