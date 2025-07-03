@@ -6,19 +6,19 @@ export const getProduktById = async (produktid) => {
     return await query(sql, [produktid]);
 };
 
-/* Suche mit Filtern und Sortierung */
+
 export const searchProdukte = async (name, maxPreis, minMenge, kategorie, sortierung) => {
     const sql = `
-    SELECT * FROM Produkt
-    WHERE
-      ($1::text IS NULL OR produktname ILIKE '%' || $1 || '%') AND
-      ($2::numeric IS NULL OR preis <= $2) AND
-      ($3::integer IS NULL OR menge >= $3) AND
-      ($4::text IS NULL OR kategorie = $4)
-    ORDER BY
-      CASE WHEN $5 = 'preis_asc' THEN preis END ASC,
-      CASE WHEN $5 = 'preis_desc' THEN preis END DESC;
-  `;
+        SELECT * FROM Produkt
+        WHERE
+            ($1::text IS NULL OR produktname ILIKE '%' || $1 || '%') AND
+            ($2::numeric IS NULL OR preis <= $2) AND
+            ($3::integer IS NULL OR menge >= $3) AND
+            ($4::text IS NULL OR kategorie = $4)
+        ORDER BY
+            CASE WHEN $5 = 'preis_asc' THEN preis END ASC,
+            CASE WHEN $5 = 'preis_desc' THEN preis END DESC;
+    `;
     return await query(sql, [name, maxPreis, minMenge, kategorie, sortierung]);
 };
 

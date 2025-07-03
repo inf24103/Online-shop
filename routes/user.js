@@ -94,7 +94,7 @@ router.delete('/:id', authenticateTokenAndAuthorizeRole(['admin']), async (req, 
 router.put('/block/:id', authenticateTokenAndAuthorizeRole(['admin']),async (req, res) => {
     try {
         const userId = req.params.id;
-        if(isNaN(userid)){
+        if(isNaN(userId)){
             return res.status(403).json({message: 'Invalid id'})
         }
         const user = await getUserById(userId);
@@ -130,7 +130,7 @@ router.put('/block/:id', authenticateTokenAndAuthorizeRole(['admin']),async (req
 router.put('/unblock/:id', authenticateTokenAndAuthorizeRole(['admin']),async (req, res) => {
     try {
         const userId = req.params.id;
-        if(isNaN(userid)){
+        if(isNaN(userId)){
             return res.status(403).json({message: 'Invalid id'})
         }
         const user = await getUserById(userId);
@@ -160,41 +160,5 @@ router.put('/unblock/:id', authenticateTokenAndAuthorizeRole(['admin']),async (r
     } catch (error) {
         console.error('Error unblocking user:', error);
         return res.status(500).json({ message: 'Failed to unblock user' });
-    }
-});
-
-router.put('/createadmin/:id', authenticateTokenAndAuthorizeRole(['admin']), async (req, res) => {
-    try {
-        const userId = req.params.id;
-        if(isNaN(userId)){
-            return res.status(403).json({message: 'Ungültige userid'})
-        }
-        const user = await getUserById(userId);
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        user[0].rolle = 'admin';
-        await updateBenutzer(
-            user[0].benutzerid,
-            user[0].benutzername,
-            user[0].nachname,
-            user[0].vorname,
-            user[0].email,
-            user[0].rolle,
-            user[0].kontostatus,
-            user[0].plz,
-            user[0].ort,
-            user[0].strasse,
-            user[0].hausnummer,
-            user[0].telefonnr,
-            user[0].authentifizierung
-        );
-
-        return res.status(200).json({ message: 'User successfully admin' });
-    } catch (error) {
-        console.error('Error unblocking user:', error);
-        return res.status(500).json({ message: 'Failed to make user to admin' });
     }
 });

@@ -11,6 +11,7 @@ import {
     deleteWarenkorbTable
 } from "./backend/datenbank/produkt_verwaltung/produktDDL.js";
 import {createBenutzerTable, deleteBenutzerTable} from "./backend/datenbank/user_verwaltung/userDDL.js";
+import cors from "cors";
 import {createEinkaufTables, deleteEinkaufTables} from "./backend/datenbank/einkauf_verwaltung/einkaufDDL.js";
 import {
     createWunschlisteTables,
