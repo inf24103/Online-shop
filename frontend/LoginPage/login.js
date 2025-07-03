@@ -22,7 +22,7 @@
                 }
                 if(res.status === 200) {
                     form.reset();
-                    window.location.href = "/Webshop/Online-shop/frontend/user/index.html";
+                    window.location.href = "../user/index.html";
                 }
             } catch (e) {
                 console.error(e);
