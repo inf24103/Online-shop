@@ -20,20 +20,22 @@ const modalPrice = document.getElementById('modal-product-price');
 const modalCategory = document.getElementById('modal-product-category');
 const closeButton = productDetailModal.querySelector('.close-button');
 const addToCartModalButton = productDetailModal ? productDetailModal.querySelector('.add-to-cart-modal') : null;
+let currentProductInModal = null;
+const filterForm = document.querySelector(".filter form");
 
-async function renderProducts() {
+function renderProducts(productList = products) {
     const container = document.querySelector('.product-card');
     container.innerHTML = '';
 
-    products.forEach(product => {
+    productList.forEach(product => {
         const card = document.createElement('div');
         card.classList.add('product');
         card.innerHTML = `
             ${product.pic ? `<img src="${product.pic}" alt="${product.pic}">` : ''}
             <h3>${product.name}</h3>
             <p>${product.category}</p>
-            <p><small>ab</small> <strong>€${product.price}</strong></p>
-            <button>Add to card</button>
+            <p><strong>€${product.price}</strong></p>
+            <button class="add-to-cart-modal">Add to card</button>
             `;
         container.appendChild(card);
 
@@ -43,16 +45,46 @@ async function renderProducts() {
             }
         })
 
-        const initialAddToCartButton = card.querySelector('.add-to-cart-modal');
-        if (initialAddToCartButton) {
-            initialAddToCartButton.addEventListener('click',(event) => {
-                event.stopPropagation();//Sollte verhindern dass beim add to cart button nicht das Fenster geöffnet werden soll
-            })
-        }
-    })
+        const AddToCartButton = card.querySelector('.add-to-cart-modal');
+        AddToCartButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            addToCart(product);
+        });
+    });
+}
+
+filterForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const searchTerm = filterForm.elements["search"].value.toLowerCase();
+    const selectedCategory = filterForm.elements["category"].value;
+    const maxPrice = parseFloat(filterForm.elements["price"].value);
+    const filteredProducts = products.filter(product => {
+        const matchesSearch = product.name.toLowerCase().includes(searchTerm);
+        const matchesCategory = selectedCategory === "All" || selectedCategory === ""|| product.category === selectedCategory;
+        const matchesPrice = isNaN(maxPrice) || product.price <= maxPrice;
+
+        return matchesSearch && matchesPrice && matchesCategory;
+    });
+    renderProducts(filteredProducts);
+});
+
+function addToCart(product){
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const existing = cart.findIndex(p => p.id === product.id);
+
+    if (existing !== -1){
+        cart[existing].quantity += 1;
+    } else {
+        cart.push({...product, quantity:1});
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCartCount();
 }
 
 function openProductModal(product){
+    currentProductInModal = product;
     modalImage.src = product.pic || ''; //Standardbild falls keins vorhanden
     modalImage.alt = product.name;
     modalName.textContent = product.name;
@@ -77,4 +109,28 @@ productDetailModal.addEventListener('click', (event) =>{
     }
 })
 
-window.addEventListener('DOMContentLoaded', renderProducts)
+function updateCartCount(){
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const cartCountElement = document.getElementById("cart-count");
+    if(cartCountElement) {
+        cartCountElement.textContent = count;
+    }
+}
+
+if(addToCartModalButton){
+    addToCartModalButton.addEventListener("click", (event) =>{
+        event.stopPropagation();
+        if (currentProductInModal){
+            addToCart(currentProductInModal);
+            closeProductModal();
+        }
+    });
+}
+
+window.addEventListener("DOMContentLoaded", () =>{
+    renderProducts();
+    updateCartCount();
+})
+
+/*window.addEventListener('DOMContentLoaded', renderProducts)*/

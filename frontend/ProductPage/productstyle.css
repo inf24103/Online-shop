@@ -19,7 +19,7 @@ h1 {
     display: flex;
     justify-content: center;
     margin-top: 25px;
-    padding: 20px;
+    padding: 0 20px;
 }
 form {
     display: flex;
@@ -27,20 +27,24 @@ form {
     align-items: center;
     flex-wrap: wrap;
     padding: 20px;
-    text-align: center;
+    justify-content: center;
     width: 100%;
-    height: 80px;
+    max-width: 900px;
+    height: auto;
     border: 1px solid #ccc;
     background-color: white;
     border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 input[type=search],
 input[type=number],
 select {
-    padding: 10px;
+    padding: 10px 12px;
     border: 1px solid #aaa;
     border-radius: 4px;
-    font-size: 14px;
+    font-size: 15px;
+    min-width: 160px;
+    flex: 1;
 }
 button {
     padding: 10px 20px;
@@ -48,7 +52,9 @@ button {
     color: white;
     border: none;
     border-radius: 4px;
+    font-size: 15px;
     cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
 button:hover {
@@ -68,7 +74,7 @@ button:hover {
     display: grid;
     align-items: center;
     gap: 3px;
-    height: 500px;
+    height: auto;/*500px*/
     padding: 10px;
     background-color: white;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -230,6 +236,49 @@ button:hover {
 }
 
 @media (max-width: 768px) { /*Einstellung für kleinere Bildschirme*/
+    form{
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 10px;
+        height: auto;
+    }
+
+    input[type=search],
+    input[type=number],
+    select,
+    button{
+        width: 100%;
+    }
+
+    .product{
+        height: auto;
+        font-size: 16px;
+    }
+
+    .product img{
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    h1{
+        font-size: 1.5em;
+        margin-top: 20px;
+    }
+
+    .modal-info-area{
+        font-size: 1.5em;
+    }
+
+    .modal-info-area h2{
+        font-size: 1em;
+    }
+
+    .modal-info-area .add-to-cart-modal{
+        width: 100%;
+        text-align: center;
+    }
+
     .modal-content{
         grid-template-columns: 1fr;
         grid-template-rows: auto auto;
