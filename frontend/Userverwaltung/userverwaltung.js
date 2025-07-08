@@ -1,13 +1,23 @@
 let listEl;
+let form;
+let input;
+let resetBtn;
 
 document.addEventListener("DOMContentLoaded", () => {
     listEl = document.querySelector(".userlist");
-    const form = document.querySelector(".filter form");
-    const input = form.elements.search;
+    form = document.querySelector(".filter form");
+    input = form.elements.search;
+    resetBtn = document.getElementById("reset-filter");
 
     loadUserData();
-})
 
+    form.addEventListener("submit", handleSearch);
+    resetBtn.addEventListener("click", () => {
+        form.reset();
+        loadUserData();
+    })
+
+})
 
 async function loadUserData() {
     listEl.innerHTML = "Lade Benutzerdaten...";
@@ -21,21 +31,24 @@ async function loadUserData() {
         //Keine Berechtigung
         if(res.status === 403) {
             window.location.href = "../unauthorized/unauthorized.html";
+            return;
         }
         if(!res.ok) alert("Es ist ein Fehler aufgetreten!");
 
-        let users = await res.json();
+        const users = await res.json();
 
         render(users);
+
     } catch (error) {
         console.log(error);
+        listEl.textContent = "Fehler beim Laden!";
     }
 }
 
 function render (users) {
     if(users.length === 0) {
         listEl.innerHTML = "Kein User gefunden!";
-        return
+        return;
     }
     listEl.innerHTML = "";
 
@@ -54,17 +67,43 @@ function render (users) {
         <p><strong>Status:</strong> ${user.kontostatus}</p> 
         `
 
+        //Löschen Button
         const deleteBtn = document.createElement("button");
-
         deleteBtn.className = "delete";
         deleteBtn.title = "Delete";
-
         const icon_delete = document.createElement("img");
-
         icon_delete.src = "../pictures/muelleimer.png";
         icon_delete.alt = "löschen";
+
+        const btnRow = document.createElement("div");
+        btnRow.className = "btn-row";
+        card.appendChild(btnRow);
+
         deleteBtn.appendChild(icon_delete);
         card.appendChild(deleteBtn);
+
+        //Sperren/Entsperren Button
+        const lockBtn = document.createElement("button");
+        lockBtn.className = "sperren";
+        lockBtn.title = "Benutzer sperren";
+        lockBtn.innerHTML = `<img src="../pictures/sperr_icon.png" alt="Sperren">`;
+        lockBtn.addEventListener("click", async () => {
+            const ok = confirm("Benutzer sperren?");
+            if(!ok) return;
+            try {
+                const res = await fetch(`http://localhost:3000/api/user/block/${user.benutzerid}`, {
+                    method: "PUT",
+                    credentials: "include"
+                });
+                if(res.ok) {
+                    card.querySelector("p:last-of-type").textContent = "Status: gesperrt";
+                } else {
+                    alert("Sperren fehlgeschlagen");
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        });
 
         deleteBtn.addEventListener("click", async () => {
             const ok = confirm(`Benutzer: ${user.benutzername} wirklich löschen?`);
@@ -84,6 +123,45 @@ function render (users) {
             }
         })
 
+        btnRow.append(lockBtn, deleteBtn);
+        card.appendChild(btnRow);
         listEl.append(card);
     });
+}
+
+async function handleSearch(e) {
+    e.preventDefault();
+    const id = input.value.trim();
+
+    if(id === "") {
+        loadUserData();
+        return;
+    }
+
+    listEl.textContent = "Suche...";
+
+    try {
+        const res = await fetch(`http://localhost:3000/api/user/${id}`, {
+            credentials: "include"
+        });
+
+        if(res.status === 404) {
+            listEl.textContent = "Es wurde kein Benutzer gefunden";
+            return;
+        }
+        if(!res.ok) {
+            listEl.textContent = "Es ist ein Fehler aufgetreten";
+            return;
+        }
+
+        const data = await res.json();
+        const users = data.user;
+        render(users)
+
+
+    } catch (e) {
+        console.error(e);
+        listEl.textContent = "Fehler bei der Suche";
+    }
+
 }

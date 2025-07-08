@@ -90,7 +90,8 @@ button:hover {
     color: #444;
 }
 
-.delete {
+.delete,
+.sperren {
     border: none;
     background: transparent;
     padding: 4px;
@@ -99,10 +100,44 @@ button:hover {
     justify-content: center;
 }
 
-.delete img {
+.delete img,
+.sperren img {
     width: 40px;
     height: 40px;
     object-fit: contain;
     filter: grayscale(100%);
     transition: filter 0.1s;
+}
+
+.delete:hover,
+.sperren:hover {
+    filter: none;
+}
+
+.delete:hover,
+.sperren:hover {
+    transform: translateY(-2px);
+}
+
+.btn-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.back-btn {
+    margin: 0 auto 24px;
+    display: block;
+    padding: 8px 18px;
+    font-size: 15px;
+    color: #fff;
+    background: #0a75c2;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.back-btn:hover {
+    background: #095a94;
 }

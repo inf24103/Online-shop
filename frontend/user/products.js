@@ -1,31 +1,37 @@
-const products = [
-    {id: 1, name: "Whey Protein Vanilla", price: 19.99, category: "Supplements", pic: "https://cdn.shopify.com/s/files/1/0845/1358/7515/files/DesignerProteinPudding_360g_Black_WhiteVanillaFlavor_2024x2024_shop-iG0RlCqX_44ab9e01-a5e0-40b6-b077-ddd211bca90e.jpg?v=1749637177"},
-    {id: 2, name: "Creatine Monohydrate", price: 14.49, category: "Supplements"},
-    {id: 3, name: "Gym T-Shirt Black", price: 24.99, category: "Clothing"},
-    {id: 4, name: "Fitness Shorts", price: 29.99, category: "Clothing"},
-    {id: 5, name: "Protein Shaker 700ml", price: 9.99, category: "Style"},
-    {id: 6, name: "Lifting Gloves", price: 15.99, category: "Style"},
-    {id: 7, name: "Pre-Workout Booster", price: 22.49, category: "Supplements"},
-    {id: 8, name: "Sleeveless Hoodie", price: 34.95, category: "Clothing"},
-    {id: 9, name: "Resistance Bands Set", price: 17.99, category: "Style"},
-    {id: 10, name: "Zinc + Magnesium Capsules", price: 11.90, category: "Supplements"}
-];
+/* products.js – rendert die ersten 6 Produkte aus der API */
 
 async function renderProducts() {
-    const container = document.querySelector(".product-card");
-    container.innerHTML = '';
+    const container = document.querySelector('.product-card');
+    if (!container) return;
 
-    for (let i = 0; i < 2; i++) {
-        const card = document.createElement("div");
-        card.classList.add("product");
-        card.innerHTML = `
-        ${products[i].pic ? `<img src="${products[i].pic}" alt="${products[i].pic}">` : ''}
-            <h3>${products[i].name}</h3>
-            <p>${products[i].price}</p>
-            <p>${products[i].category}</p>
+    container.innerHTML = 'Lade Produkte …';
+
+    try {
+        const res = await fetch('http://localhost:3000/api/inv/product/all', {
+            credentials: 'include'          // Cookie mitsenden, falls nötig
+        });
+        if (!res.ok) throw new Error('API-Fehler ' + res.status);
+
+        const data = await res.json();      // Array wie in deinem Beispiel
+        const products = data.slice(0, 6);  // nur die ersten 6
+
+        container.innerHTML = '';
+        products.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'product';
+            card.innerHTML = `
+                ${p.bild ? `<img src="${p.bild}" alt="${p.produktname}">`
+                : '<img src="../pictures/placeholder.jpg" alt="Bild folgt">'}
+                <h3>${p.produktname}</h3>
+                <p>€ ${Number(p.preis).toFixed(2)}</p>
+                <p style="color:#777;">${p.kategorie}</p>
             `;
-        container.appendChild(card);
+            container.appendChild(card);
+        });
+    } catch (err) {
+        console.error(err);
+        container.innerHTML = '<p style="color:red">Produkte konnten nicht geladen werden.</p>';
     }
 }
 
-window.addEventListener("DOMContentLoaded", renderProducts);
+window.addEventListener('DOMContentLoaded', renderProducts);
