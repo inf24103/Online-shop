@@ -8,20 +8,20 @@ import {
     deleteProductTable,
     deleteWarenkorbProduktTable,
     deleteWarenkorbTable
-} from "./backend/datenbank/produkt_verwaltung/produktDDL.js";
-import {createBenutzerTable, deleteBenutzerTable} from "./backend/datenbank/user_verwaltung/userDDL.js";
-import {createEinkaufTables, deleteEinkaufTables} from "./backend/datenbank/einkauf_verwaltung/einkaufDDL.js";
+} from "./datenbank/produkt_verwaltung/produktDDL.js";
+import {createBenutzerTable, deleteBenutzerTable} from "./datenbank/user_verwaltung/userDDL.js";
+import {createEinkaufTables, deleteEinkaufTables} from "./datenbank/einkauf_verwaltung/einkaufDDL.js";
 import {
     createWunschlisteTables,
     deleteWunschlisteTables
-} from "./backend/datenbank/wunschliste_verwaltung/wunschlisteDDL.js";
-import {createOneTimeLoginTable, dropOneTimeLoginTable} from "./backend/datenbank/auth/authAllMethods.js";
-import {createBenutzer, updateBenutzer} from "./backend/datenbank/user_verwaltung/userDML.js";
-import {getUserById, getUserByUsername} from "./backend/datenbank/user_verwaltung/userDRL.js";
-import {createProdukt, createWarenkorb} from "./backend/datenbank/produkt_verwaltung/produktDML.js";
+} from "./datenbank/wunschliste_verwaltung/wunschlisteDDL.js";
+import {createOneTimeLoginTable, dropOneTimeLoginTable} from "./datenbank/auth/authAllMethods.js";
+import {createBenutzer, updateBenutzer} from "./datenbank/user_verwaltung/userDML.js";
+import {getUserById, getUserByUsername} from "./datenbank/user_verwaltung/userDRL.js";
+import {createProdukt, createWarenkorb} from "./datenbank/produkt_verwaltung/produktDML.js";
 
 const app = express()
-const port = process.env.PORT || 3000
+const port = 3000
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -45,16 +45,16 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Docker 1. mal starten: docker compose up
+// Docker 1. mal starten: docker compose up --build
 // Docker wieder löschen: docker compose down -v
 
 app.get("/", (req, res) => {
-    return res.status(200).redirect(`http://localhost:${port}/`);
+    return res.status(200).redirect(`http://localhost:5000/`);
 })
 
 app.listen(port, () => {
-    //init()
-    console.log(`Server läuft auf http://localhost:${port}`)
+    init()
+    console.log(`Backend server läuft auf http://localhost:${port}`)
 })
 
 async function init() {
@@ -76,7 +76,7 @@ async function init() {
 
     // create admin account
     await createAdminAccount()
-    await createSeedData()
+    //await createSeedData()
     console.log("Innit db successfully!");
 }
 

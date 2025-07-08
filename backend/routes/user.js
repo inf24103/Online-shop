@@ -1,22 +1,22 @@
 import express from 'express';
 
 import {authenticateToken, authenticateTokenAndAuthorizeRole} from "../middleware/middleware.js";
-import {getAllUsers, getUserById} from "../backend/datenbank/user_verwaltung/userDRL.js";
-import {deleteBenutzer, updateBenutzer} from "../backend/datenbank/user_verwaltung/userDML.js";
+import {getAllUsers, getUserById} from "../datenbank/user_verwaltung/userDRL.js";
+import {deleteBenutzer, updateBenutzer} from "../datenbank/user_verwaltung/userDML.js";
 import {
     createWarenkorb,
     deleteAllProductsInWarenkorb,
     deleteWarenkorb
-} from "../backend/datenbank/produkt_verwaltung/produktDML.js";
+} from "../datenbank/produkt_verwaltung/produktDML.js";
 import {
     getWarenkorbByBenutzerId
-} from "../backend/datenbank/produkt_verwaltung/produktDRL.js";
-import {deleteEinkaeufeByBenutzer} from "../backend/datenbank/einkauf_verwaltung/einkaufDML.js";
-import {getEigeneWunschlistenByBenutzerId} from "../backend/datenbank/wunschliste_verwaltung/wunschlisteDRL.js";
+} from "../datenbank/produkt_verwaltung/produktDRL.js";
+import {deleteEinkaeufeByBenutzer} from "../datenbank/einkauf_verwaltung/einkaufDML.js";
+import {getEigeneWunschlistenByBenutzerId} from "../datenbank/wunschliste_verwaltung/wunschlisteDRL.js";
 import {
     deleteAllPermissionsFromWunschliste,
     deleteAllProductsFromWunschliste, deleteWunschliste
-} from "../backend/datenbank/wunschliste_verwaltung/wunschlisteDML.js";
+} from "../datenbank/wunschliste_verwaltung/wunschlisteDML.js";
 
 const router = express.Router();
 
@@ -93,14 +93,18 @@ router.delete('/:id', authenticateTokenAndAuthorizeRole(['admin']), async (req, 
 
 router.put('/block/:id', authenticateTokenAndAuthorizeRole(['admin']),async (req, res) => {
     try {
-        const userId = req.params.id;
+        const userId = parseInt(req.params.id);
         if(isNaN(userId)){
             return res.status(403).json({message: 'Invalid id'})
         }
         const user = await getUserById(userId);
 
-        if (!user) {
+        if (user.length === 0) {
             return res.status(404).json({ message: 'User not found' });
+        }
+
+        if(userId === req.jwtpayload.userid){
+            return res.status(403).json({message: 'Can\'t block your self.'})
         }
 
         user[0].kontostatus = 'gesperrt';

@@ -1,24 +1,24 @@
 import express from "express";
 import jwt from 'jsonwebtoken';
 import dotenv from "dotenv";
-import {createBenutzer, updateBenutzer} from "../backend/datenbank/user_verwaltung/userDML.js";
+import {createBenutzer, updateBenutzer} from "../datenbank/user_verwaltung/userDML.js";
 import bcrypt from 'bcrypt';
-import {getUserByEmail, getUserById, getUserByUsername} from "../backend/datenbank/user_verwaltung/userDRL.js";
-import {createWarenkorb} from "../backend/datenbank/produkt_verwaltung/produktDML.js";
-import {mail} from "../backend/mailService/mailservice.js";
-import {generateRegistrationConfirmationTemplate} from "../backend/mailService/regestrierungsBestaetigung.js";
-import {generateOneTimeLoginCodeTemplate} from "../backend/mailService/oneTimeLoginCode.js";
+import {getUserByEmail, getUserById, getUserByUsername} from "../datenbank/user_verwaltung/userDRL.js";
+import {createWarenkorb} from "../datenbank/produkt_verwaltung/produktDML.js";
+import {mail} from "../mailService/mailservice.js";
+import {generateRegistrationConfirmationTemplate} from "../mailService/regestrierungsBestaetigung.js";
+import {generateOneTimeLoginCodeTemplate} from "../mailService/oneTimeLoginCode.js";
 import crypto from "crypto";
-import {generateOneTimeLoginLinkTemplate} from "../backend/mailService/oneTimeLoginLink.js";
+import {generateOneTimeLoginLinkTemplate} from "../mailService/oneTimeLoginLink.js";
 import {
     deleteLoginCode, deleteLoginToken,
     getLoginCode,
     getLoginToken,
     saveLoginCode,
     saveLoginToken
-} from "../backend/datenbank/auth/authAllMethods.js";
+} from "../datenbank/auth/authAllMethods.js";
 import {authenticateTokenAndAuthorizeRole} from "../middleware/middleware.js";
-import {getWarenkorbByBenutzerId} from "../backend/datenbank/produkt_verwaltung/produktDRL.js";
+import {getWarenkorbByBenutzerId} from "../datenbank/produkt_verwaltung/produktDRL.js";
 
 dotenv.config()
 

@@ -4,19 +4,19 @@ import {
     createProdukt, createWarenkorb, deleteAllProductsInWarenkorb, deleteProductInWarenkorb,
     deleteProdukt,
     updateProdukt
-} from "../backend/datenbank/produkt_verwaltung/produktDML.js";
+} from "../datenbank/produkt_verwaltung/produktDML.js";
 import express from "express";
 import {
     getAllProdukte,
     getProduktById, getProdukteByWarenkorbid,
     getWarenkorbByBenutzerId, updateProductQuantity,
     searchProdukte
-} from "../backend/datenbank/produkt_verwaltung/produktDRL.js";
-import {addProduktToEinkauf, createEinkauf} from "../backend/datenbank/einkauf_verwaltung/einkaufDML.js";
-import {mail} from "../backend/mailService/mailservice.js";
-import {getUserById} from "../backend/datenbank/user_verwaltung/userDRL.js";
-import {generateOrderConfirmationTemplate} from "../backend/mailService/orderConfirmation.js";
-import {getEinkaeufeByBenutzer, getProdukteByEinkauf} from "../backend/datenbank/einkauf_verwaltung/einkaufDRL.js";
+} from "../datenbank/produkt_verwaltung/produktDRL.js";
+import {addProduktToEinkauf, createEinkauf} from "../datenbank/einkauf_verwaltung/einkaufDML.js";
+import {mail} from "../mailService/mailservice.js";
+import {getUserById} from "../datenbank/user_verwaltung/userDRL.js";
+import {generateOrderConfirmationTemplate} from "../mailService/orderConfirmation.js";
+import {getEinkaeufeByBenutzer, getProdukteByEinkauf} from "../datenbank/einkauf_verwaltung/einkaufDRL.js";
 
 const router = express.Router();
 

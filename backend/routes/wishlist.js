@@ -9,14 +9,14 @@ import {
     deleteProduktFromWunschliste,
     deleteWunschliste,
     updateBerechtigung
-} from "../backend/datenbank/wunschliste_verwaltung/wunschlisteDML.js";
-import {getUserByUsername} from "../backend/datenbank/user_verwaltung/userDRL.js";
+} from "../datenbank/wunschliste_verwaltung/wunschlisteDML.js";
+import {getUserByUsername} from "../datenbank/user_verwaltung/userDRL.js";
 import {
     getAlleWunschlistenByBenutzer,
     getBerechtigungenByWunschlisteId,
     getEigeneWunschlistenByBenutzerId, getFremdeWunschlistenByBenutzer, getProdukteByWunschliste
-} from "../backend/datenbank/wunschliste_verwaltung/wunschlisteDRL.js";
-import {getProduktById} from "../backend/datenbank/produkt_verwaltung/produktDRL.js";
+} from "../datenbank/wunschliste_verwaltung/wunschlisteDRL.js";
+import {getProduktById} from "../datenbank/produkt_verwaltung/produktDRL.js";
 
 const router = express.Router();
 

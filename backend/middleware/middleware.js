@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import {getUserById} from "../backend/datenbank/user_verwaltung/userDRL.js";
+import {getUserById} from "../datenbank/user_verwaltung/userDRL.js";
 
 dotenv.config();
 

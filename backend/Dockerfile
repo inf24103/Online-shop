@@ -2,7 +2,7 @@
 FROM node:18-alpine AS base
 
 # Setze das Arbeitsverzeichnis im Container
-WORKDIR /app/frontend
+WORKDIR /app/backend
 
 # Kopiere package.json und package-lock.json (falls vorhanden)
 COPY package*.json ./
@@ -13,8 +13,8 @@ RUN npm install
 # Kopiere den Quellcode
 COPY . .
 
-# Öffne Port 5000
-EXPOSE 5000
+# Öffne Port 3000
+EXPOSE 3000
 
 # Starte die Anwendung
 CMD ["npm", "start"] 

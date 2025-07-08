@@ -2,10 +2,10 @@
   "name": "online_shop",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "serverBackend.js",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
+    "start": "node serverBackend.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "private": true,

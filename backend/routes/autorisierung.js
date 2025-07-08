@@ -1,10 +1,10 @@
 import express from "express";
-import {getUserById} from "../backend/datenbank/user_verwaltung/userDRL.js";
+import {getUserById} from "../datenbank/user_verwaltung/userDRL.js";
 import {authenticateTokenAndAuthorizeRole} from "../middleware/middleware.js";
 import {
     getAlleWunschlistenByBenutzer, getBerechtigungenByWunschlisteId,
     getEigeneWunschlistenByBenutzerId
-} from "../backend/datenbank/wunschliste_verwaltung/wunschlisteDRL.js";
+} from "../datenbank/wunschliste_verwaltung/wunschlisteDRL.js";
 
 const router = express.Router();
 // export our router to be mounted by the parent application
