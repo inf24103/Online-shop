@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
         //Anzeige wenn eingeloggt
         if(loggedIn) {
             let html = `
-            <li><a href="#Profil">Profilverwaltung</a></li>
+            <li><a href="../Profilverwaltung/profilverwaltung.html">Profilverwaltung</a></li>
             <li><a href="#Einkaufsliste">Einkaufslisten</a></li>`
             if(rolle === "admin") {
                 html += `<li><a href="../Userverwaltung/userverwaltung.html">Userverwaltung</a></li>`
