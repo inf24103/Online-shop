@@ -26,10 +26,9 @@ export const createProduktTable = async () => {
       produktname VARCHAR(30),
       preis DECIMAL(10,2),
       menge INTEGER,
-      bild BYTEA,
+      bild VARCHAR(500),
       kategorie VARCHAR(50),
-      kurzbeschreibung VARCHAR(100),
-      beschreibung VARCHAR(500)
+      beschreibung VARCHAR(5000)
     );
   `;
     await query(sql);

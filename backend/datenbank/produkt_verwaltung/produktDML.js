@@ -1,12 +1,12 @@
 import {query} from '../index.js';
 
 /* Produkt erstellen */
-export const createProdukt = async (produktname, preis, menge, kategorie, kurzbeschreibung, beschreibung) => {
+export const createProdukt = async (produktname, preis, menge, kategorie, beschreibung) => {
     const sql = `
-        INSERT INTO Produkt (produktname, preis, menge, kategorie, kurzbeschreibung, beschreibung)
-        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;
+        INSERT INTO Produkt (produktname, preis, menge, kategorie, beschreibung)
+        VALUES ($1, $2, $3, $4, $5) RETURNING *;
     `;
-    return await query(sql, [produktname, preis, menge, kategorie, kurzbeschreibung, beschreibung]);
+    return await query(sql, [produktname, preis, menge, kategorie, beschreibung]);
 };
 
 /* Produkt löschen */
@@ -18,19 +18,18 @@ export const deleteProdukt = async (produktid) => {
 };
 
 /* Produkt aktualisieren */
-export const updateProdukt = async (produktname, preis, menge, kategorie, kurzbeschreibung, beschreibung, bild, produktid) => {
+export const updateProdukt = async (produktname, preis, menge, kategorie, beschreibung, bild, produktid) => {
     const sql = `
         UPDATE Produkt
         SET produktname      = $1,
             preis            = $2,
             menge            = $3,
             kategorie        = $4,
-            kurzbeschreibung = $5,
-            beschreibung     = $6,
-            bild             = $7
-        WHERE produktid = $8;
+            beschreibung     = $5,
+            bild             = $6
+        WHERE produktid = $7;
     `;
-    return await query(sql, [produktname, preis, menge, kategorie, kurzbeschreibung, beschreibung, bild, produktid]);
+    return await query(sql, [produktname, preis, menge, kategorie, beschreibung, bild, produktid]);
 };
 
 export const createWarenkorb = async (benutzerid) => {
