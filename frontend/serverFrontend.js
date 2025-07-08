@@ -4,11 +4,13 @@
 // cors wieder rein machen für die Kommunikation zum Backend Server
 import express from "express";
 import * as fs from "node:fs";
+import * as path from "node:path";
 const app = express()
 const port = 5000
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(".", "frontend")));
 
 // Globales abfangen unbehandelter Fehler
 app.use((err, req, res, next) => {

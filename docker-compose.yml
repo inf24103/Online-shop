@@ -1,11 +1,19 @@
 version: '1.0'
 
 services:
+#  frontend:
+#    build:
+#      context: .
+#      dockerfile: frontend/Dockerfile
+#    container_name: fitura_online-shop-frontend
+#    ports:
+#      - "5000:5000"
+
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: fitura_online-shop
+    container_name: fitura_online-shop-backend
     ports:
       - "3000:3000"
     environment:

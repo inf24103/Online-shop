@@ -53,7 +53,7 @@ app.get("/", (req, res) => {
 })
 
 app.listen(port, () => {
-    init()
+    //init()
     console.log(`Server läuft auf http://localhost:${port}`)
 })
 
