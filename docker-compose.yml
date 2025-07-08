@@ -30,8 +30,7 @@ services:
       - POSTGRES_PASSWORD=1234
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      #- ./backend/datenbank/init.js:/docker-entrypoint-initdb.d/init.js # init.sql wird in docker-entrypoint-initdb.d/init.sql kopiert. die Postgres-image führt alle Dateien in diesem Verzeichnis aus. Diese datei wird vor start automatisch einmal ausgeführt - sehr praktisch
     restart: unless-stopped
 
 volumes:
-  postgres_data: 
+  postgres_data:

@@ -1,12 +1,12 @@
 import {query} from '../index.js';
 
 /* Produkt erstellen */
-export const createProdukt = async (produktname, preis, menge, kategorie, beschreibung) => {
+export const createProdukt = async (produktname, preis, menge, kategorie, beschreibung, bild) => {
     const sql = `
-        INSERT INTO Produkt (produktname, preis, menge, kategorie, beschreibung)
-        VALUES ($1, $2, $3, $4, $5) RETURNING *;
+        INSERT INTO Produkt (produktname, preis, menge, kategorie, beschreibung, bild)
+        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;
     `;
-    return await query(sql, [produktname, preis, menge, kategorie, beschreibung]);
+    return await query(sql, [produktname, preis, menge, kategorie, beschreibung, bild]);
 };
 
 /* Produkt löschen */
