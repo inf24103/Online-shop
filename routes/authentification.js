@@ -17,7 +17,8 @@ import {
     saveLoginCode,
     saveLoginToken
 } from "../backend/datenbank/auth/authAllMethods.js";
-import {authenticateToken, authenticateTokenAndAuthorizeRole} from "../middleware/middleware.js";
+import {authenticateTokenAndAuthorizeRole} from "../middleware/middleware.js";
+import {getWarenkorbByBenutzerId} from "../backend/datenbank/produkt_verwaltung/produktDRL.js";
 
 dotenv.config()
 
@@ -143,6 +144,10 @@ router.post('/register', async (req, res) => {
         const user = await getUserByUsername(username);
         const token = createJWTToken(user);
         await createWarenkorb(user[0].benutzerid);
+        const warenkorb = await getWarenkorbByBenutzerId(user[0].benutzerid)
+        if(warenkorb === undefined) {
+            return res.status(500).json({ error: 'Fehler beim Erstellen des Warenkorbs.' });
+        }
 
         mail(email, "Regestrierungsbestätigung", generateRegistrationConfirmationTemplate(username, "http://localhost:3000/api/auth/register/confirm/"+user[0].benutzerid));
 

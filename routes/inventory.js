@@ -1,7 +1,7 @@
 import {authenticateToken, authenticateTokenAndAuthorizeRole} from "../middleware/middleware.js";
 import {
     addProductToWarenkorb,
-    createProdukt, deleteAllProductsInWarenkorb, deleteProductInWarenkorb,
+    createProdukt, createWarenkorb, deleteAllProductsInWarenkorb, deleteProductInWarenkorb,
     deleteProdukt,
     updateProdukt
 } from "../backend/datenbank/produkt_verwaltung/produktDML.js";
@@ -45,14 +45,14 @@ router.get('/product/search', async (req, res) => {
 });
 
 router.post('/product/new', authenticateTokenAndAuthorizeRole(['admin']), async (req, res) => {
-    const {produktname, preis, verfuegbareMenge, bild, kategorie, kurzbeschreibung, beschreibung} = req.body;
-    if (!produktname || !preis || !verfuegbareMenge || !bild || !kategorie || !kurzbeschreibung || !beschreibung) {
+    const {produktname, preis, verfuegbareMenge, bild, kategorie, beschreibung} = req.body;
+    if (!produktname || !preis || !verfuegbareMenge || !bild || !kategorie || !beschreibung) {
         return res.status(400).json({
-            error: 'All fields are required: produktname, preis, menge, bild, kategorie, kurzbeschreibung, beschreibung'
+            error: 'All fields are required: produktname, preis, menge, bild, kategorie, beschreibung'
         });
     }
 
-    const product = await createProdukt(produktname, preis, verfuegbareMenge, kategorie, kurzbeschreibung, beschreibung);
+    const product = await createProdukt(produktname, preis, verfuegbareMenge, kategorie, beschreibung);
 
     return res.status(200).json(product)
 })
@@ -98,21 +98,19 @@ router.patch('/product/:id', authenticateTokenAndAuthorizeRole(['admin']), async
         return res.status(404).json({message: 'Produkt nicht gefunden'});
     }
 
-    const {produktname, preis, menge, bild, kategorie, kurzbeschreibung, beschreibung} = req.body;
+    const {produktname, preis, menge, bild, kategorie, beschreibung} = req.body;
     const updatedProduct = produkt[0];
     if (produktname !== undefined) updatedProduct.produktname = produktname;
     if (preis !== undefined) updatedProduct.preis = preis;
     if (menge !== undefined) updatedProduct.menge = menge;
     if (bild !== undefined) updatedProduct.bild = bild;
     if (kategorie !== undefined) updatedProduct.kategorie = kategorie;
-    if (kurzbeschreibung !== undefined) updatedProduct.kurzbeschreibung = kurzbeschreibung;
     if (beschreibung !== undefined) updatedProduct.beschreibung = beschreibung;
     await updateProdukt(
         updatedProduct.produktname,
         updatedProduct.preis,
         updatedProduct.menge,
         updatedProduct.kategorie,
-        updatedProduct.kurzbeschreibung,
         updatedProduct.beschreibung,
         updatedProduct.bild,
         id,
@@ -152,15 +150,15 @@ router.post('/warenkorb/add', authenticateToken, async (req, res) => {
             return res.status(400).json({message: 'Not enough products in stock'})
         }
 
-        const warenkorbid = await getWarenkorbByBenutzerId(req.jwtpayload.userid);
-        const existingProduct = await getProdukteByWarenkorbid(warenkorbid[0].warenkorbid);
+        const warenkorb = await getWarenkorbByBenutzerId(req.jwtpayload.userid);
+        const existingProduct = await getProdukteByWarenkorbid(warenkorb[0].warenkorbid);
         const productInCart = existingProduct.find(p => p.produktid === productidInt);
 
         if (productInCart) {
-            await updateProductQuantity(warenkorbid[0].warenkorbid, productidInt, anzahlInt);
+            await updateProductQuantity(warenkorb[0].warenkorbid, productidInt, anzahlInt);
             res.status(200).json({message: 'Produktanzahl im Warenkorb erhöht'});
         } else {
-            const newEntry = await addProductToWarenkorb(warenkorbid[0].warenkorbid, productidInt, anzahlInt);
+            const newEntry = await addProductToWarenkorb(warenkorb[0].warenkorbid, productidInt, anzahlInt);
             res.status(200).json(newEntry);
         }
     } catch (error) {
@@ -211,7 +209,14 @@ router.get('/warenkorb/my', authenticateToken, async (req, res) => {
     }
 
     try {
-        const warenkorb = await getWarenkorbByBenutzerId(id);
+        let warenkorb = await getWarenkorbByBenutzerId(id);
+        if(!warenkorb === undefined) {
+            await createWarenkorb(id)
+            warenkorb = await getWarenkorbByBenutzerId(id);
+            if(warenkorb === undefined) {
+                return res.status(500).json({message: "Warenkorb konnte nicht für den Benutzer erstellt werden"});
+            }
+        }
         res.status(200).json(warenkorb);
     } catch (error) {
         console.error('Fehler beim Ermitteln des Warenkorbs:', error);
@@ -226,7 +231,14 @@ router.get('/warenkorb/myproducts', authenticateToken, async (req, res) => {
     }
 
     try {
-        const warenkorb = await getWarenkorbByBenutzerId(id);
+        let warenkorb = await getWarenkorbByBenutzerId(id);
+        if(!warenkorb === undefined) {
+            await createWarenkorb(id)
+            warenkorb = await getWarenkorbByBenutzerId(id);
+            if(warenkorb === undefined) {
+                return res.status(500).json({message: "Warenkorb konnte nicht für den Benutzer erstellt werden"});
+            }
+        }
         const products = await getProdukteByWarenkorbid(warenkorb[0].warenkorbid);
         res.status(200).json(products);
     } catch (error) {
@@ -262,7 +274,6 @@ router.get("/kaeufe/kaufen", authenticateToken, async (req, res) => {
             updatedProduct.menge = products[i].menge - products[i].anzahl;
             updatedProduct.bild = products[i].bild;
             updatedProduct.kategorie = products[i].kategorie;
-            updatedProduct.kurzbeschreibung = products[i].kurzbeschreibung;
             updatedProduct.beschreibung = products[i].beschreibung;
             updatedProduct.produktid = products[i].produktid;
 
@@ -271,7 +282,6 @@ router.get("/kaeufe/kaufen", authenticateToken, async (req, res) => {
                 updatedProduct.preis,
                 updatedProduct.menge,
                 updatedProduct.kategorie,
-                updatedProduct.kurzbeschreibung,
                 updatedProduct.beschreibung,
                 updatedProduct.bild,
                 updatedProduct.produktid,
