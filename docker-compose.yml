@@ -12,18 +12,6 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: fitura_online-shop-frontend
-    ports:
-      - "5000:5000"
-    volumes:
-      - ./:/frontend
-      - /frontend/node_modules
-    restart: unless-stopped
-
   backend:
     build:
       context: ./backend
@@ -45,6 +33,18 @@ services:
     volumes:
       - ./:/backend
       - /backend/node_modules
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: fitura_online-shop-frontend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./:/frontend
+      - /frontend/node_modules
     restart: unless-stopped
 
 volumes:
