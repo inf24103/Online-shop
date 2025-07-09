@@ -43,7 +43,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ./:/frontend
+      - ./frontend:/frontend
       - /frontend/node_modules
     restart: unless-stopped
 
