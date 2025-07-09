@@ -33,11 +33,6 @@ app.get("/", (req, res) => {
     renderPage('index.html','user', res)
 })
 
-app.get("/user", (req, res) => {
-    console.log("gelogged2");
-    renderPage('index.html','user', res)
-})
-
 function renderPage(page, ordner, res) {
     console.log("page rendering");
     const fullPath = path.join('.', ordner, page);
