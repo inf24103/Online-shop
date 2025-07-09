@@ -2,6 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import {mountRoutes} from "./routes/router.js";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import {
     createProductWarenkorbTable,
     createProduktTable, createWarenkorbTable,
@@ -17,7 +18,7 @@ import {
 } from "./datenbank/wunschliste_verwaltung/wunschlisteDDL.js";
 import {createOneTimeLoginTable, dropOneTimeLoginTable} from "./datenbank/auth/authAllMethods.js";
 import {createBenutzer, updateBenutzer} from "./datenbank/user_verwaltung/userDML.js";
-import {getUserById, getUserByUsername} from "./datenbank/user_verwaltung/userDRL.js";
+import {getUserByUsername} from "./datenbank/user_verwaltung/userDRL.js";
 import {createProdukt, createWarenkorb} from "./datenbank/produkt_verwaltung/produktDML.js";
 
 const app = express()
@@ -27,6 +28,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.use(cors({
+    origin: "http://localhost:5000",
+    credentials: true
+}));
 
 // configure logging before each api call
 morgan.token('source', function () {
@@ -49,7 +54,7 @@ app.use((err, req, res, next) => {
 // Docker wieder löschen: docker compose down -v
 
 app.get("/", (req, res) => {
-    return res.status(200).redirect(`http://localhost:5000/`);
+    res.redirect(`http://localhost:5000/`);
 })
 
 app.listen(port, () => {
