@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Produktverwaltung</title>
+    <link rel="stylesheet" href="ProductAdminStyle.css">
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <button id="add-product-btn" aria-label="Produkt hinzufügen"></button>
+        </div>
+
+        <div id="product-form-container" class="collapsible">
+            <form id="product-form">
+                <input type="search" id="name" placeholder="Produktname" required/>
+                <input type="number" id="price" placeholder="Preis (€)" step="0.01" required/>
+                <input type="number" id="menge" placeholder="Menge" required/>
+                <input type="text" id="category" placeholder="Kategorie" required/>
+                <input type="text" id="image" placeholder="Bild-URL (optional)"/>
+                <input type="text" id="short-desc" placeholder="Kurzbeschreibung"/>
+                <textarea id="description" placeholder="Beschreibung"></textarea>
+                <button type="submit">Produkt speichern</button>
+            </form>
+        </div>
+
+        <div class="filter">
+            <form id="filter-form" onsubmit="return false;">
+                <input type="text" id="filter-name" placeholder="Filtern nach Name"/>
+                <input type="text" id="filter-category" placeholder="Kategorie"/>
+                <select id="filter-sort">
+                    <option value="">Sortieren nach</option>
+                    <option value="preis_asc">Preis aufsteigend</option>
+                    <option value="preis_desc">Preis absteigend</option>
+                </select>
+                <button id="filter-btn" type="submit">Filtern</button>
+            </form>
+        </div>
+        <div id="product-list" class="product-grid"></div>
+    </div>
+    <script src="AdminProduct.js"></script>
+</body>
+</html>
+<!--<input type="text" id="filter-name" placeholder="Filtern nach Name">
+                <input type="text" id="filter-category" placeholder="Kategorie">
+                <select id="filter-sort">
+                    <option value="">Sortieren nach</option>
+                    <option value="preis_asc">Preis aufsteigend</option>
+                    <option value="preis_desc">Preis absteigend</option>
+                </select>
+                <button id="filter-btn">Filtern</button>-->

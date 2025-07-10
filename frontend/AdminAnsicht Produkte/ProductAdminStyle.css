@@ -1,0 +1,203 @@
+body{
+    font-family: sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+
+.admin-container{
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.admin-header{
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+}
+
+#add-product-btn{
+    position: relative;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 1.5rem;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+}
+
+#add-product-btn::before, #add-product-btn::after{
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background-color: white;
+    transform: translate(-50%, -50%);
+}
+
+#add-product-btn::before{
+    width: 16px;
+    height: 2px;
+}
+
+#add-product-btn::after{
+    width: 2px;
+    height: 16px;
+}
+
+#product-form-container{
+    background-color: white;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+#product-form input, #product-form textarea{
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+}
+
+#product-form button{
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.filter{
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+    padding: 0 20px;
+}
+
+.filter form{
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 20px;
+    justify-content: center;
+    width: 100%;
+    max-width: 900px;
+    height: auto;
+    border: 1px solid #ccc;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+input[type="search"],
+input[type="number"],
+input[type="text"],
+select {
+    padding: 10px 12px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    font-size: 15px;
+    min-width: 160px;
+    flex: 1;
+}
+button {
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+button:hover {
+    background-color: #555;
+}
+
+.product-grid{
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(22px, 1fr));
+    margin-top: 30px;
+}
+
+.product-card{
+    background-color: white;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    position: relative;
+}
+
+.product-card img{
+    max-width: 100%;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.product-card .button-group {
+    position: absolute; /* Absolut innerhalb der .product-card positionieren */
+    bottom: 10px; /* 10px vom unteren Rand */
+    right: 10px; /* 10px vom rechten Rand */
+    display: flex; /* Buttons nebeneinander anordnen */
+    gap: 10px; /* Abstand zwischen den Buttons */
+}
+
+/* Allgemeine Styles für die Buttons innerhalb der Gruppe */
+.product-card .button-group button {
+    color: white;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    opacity: 0.9; /* Leicht transparent im Normalzustand */
+    transition: background-color 0.3s, opacity 0.3s;
+    font-size: 0.9rem;
+    position: static; /* WICHTIG: Überschreibe die alte absolute Positionierung für einzelne Buttons */
+    width: auto; /* Buttons passen sich ihrem Inhalt an */
+}
+
+.product-card .button-group button:hover {
+    opacity: 1; /* Volle Deckkraft beim Hover */
+}
+
+/* Spezifische Farben für den Löschbutton */
+.product-card .delete-btn {
+    background-color: #dc3545; /* Rot */
+}
+
+.product-card .delete-btn:hover {
+    background-color: #a41e2c; /* Dunkleres Rot beim Hover */
+}
+
+/* Farbe für den Bearbeiten-Button */
+.product-card .edit-btn {
+    background-color: #007BFF; /* Blau */
+}
+
+.product-card .edit-btn:hover {
+    background-color: #0056b3; /* Dunkleres Blau beim Hover */
+}
+
+.collapsible {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.5s ease, opacity 0.3s ease;
+}
+
+.collapsible.open{
+    max-height: 1000px;
+    opacity: 1;
+}
