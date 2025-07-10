@@ -31,8 +31,7 @@ services:
     depends_on:
       - db
     volumes:
-      - ./:/backend
-      - /backend/node_modules
+      - ./backend:/app
     restart: unless-stopped
 
   frontend:
@@ -43,8 +42,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ./frontend:/frontend
-      - /frontend/node_modules
+      - ./frontend:/app
     restart: unless-stopped
 
 volumes:

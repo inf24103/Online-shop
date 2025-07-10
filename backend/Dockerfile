@@ -2,13 +2,13 @@
 FROM node:18-alpine AS base
 
 # Setze das Arbeitsverzeichnis im Container
-WORKDIR /app/backend
+WORKDIR /app
 
 # Kopiere package.json und package-lock.json (falls vorhanden)
 COPY package*.json ./
 
 # Installiere Abhängigkeiten
-RUN npm install
+RUN npm ci
 
 # Kopiere den Quellcode
 COPY . .
