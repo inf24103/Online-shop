@@ -52,10 +52,40 @@ async function loadProfile() {
         </div>
         `;
 
+        const [ordersRes, cartRes] = await Promise.all([
+            fetch("http://localhost:3000/api/inv/kaeufe/my", { credentials: "include" }),
+            fetch("http://localhost:3000/api/inv/warenkorb/myproducts", { credentials: "include" }),
+        ]);
+
+        let orderHTML = "<p>Bestellungen konnten nicht geladen werden</p>";
+        let cardHTML = "<p>Warenkorb konnte nicht geladen werden.</p>";
+
+        if(ordersRes.ok) {
+            const orders = await ordersRes.json();
+            if(orders.length === 0) {
+                orderHTML = "Es sind noch keine Bestellungen vorhanden.";
+            } else {
+                orderHTML = `<ul>${orders.map(o => `<li>Bestellung #${o.id} vom ${new Date(orders.datum).toLocaleDateString()}</li>`).join("")}</ul>`;
+            }
+        }
+
+        if (cartRes.ok) {
+            const cart = await cartRes.json();  // <--- DAS muss korrekt sein
+            if (Array.isArray(cart) && cart.length === 0) {
+                cardHTML = "<p>Dein Warenkorb ist leer</p>";
+            } else {
+                cardHTML = `<ul>${cart.map(p =>
+                    `<li>${p.produktname} (x${p.anzahl}) – ${parseFloat(p.preis).toFixed(2)}€</li>`
+                ).join("")}</ul>`;
+            }
+        }
+
+
         extraArea.innerHTML = `
-            <h2>Bestellungen und Warenkorb</h2>
-            <p>Du hast aktuell keine Bestellungen.</p>
-            <p>Dein Warenkorb ist leer</p>
+            <h2>Bestellungen</h2>
+            ${orderHTML}
+            <h2>Warenkorb</h2>
+            ${cardHTML}
             `;
 
         document.getElementById("logout-btn").addEventListener("click", async () => {
