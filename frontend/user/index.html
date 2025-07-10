@@ -62,6 +62,25 @@
         <p>Copyright © 2025 Fitura GmbH & Co. KG</p>
     </footer>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", async () => {
+        try {
+            const res = await fetch("/api/user/me", {
+                credentials: "include",
+                cache: "no-cache",
+            });
+
+            if (!res.ok) {
+                const cartLink = document.getElementById("einkaufsliste");
+                if (cartLink) {
+                    cartLink.style.display = "none";
+                }
+            }
+        } catch (e) {
+            console.error("Fehler bei Login-Check", e);
+        }
+    });
+</script>
 <script src="/user/products.js"></script>
 <script src="/public/sidebar.js"></script>
 </body>

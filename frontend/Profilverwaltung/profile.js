@@ -1,6 +1,9 @@
 async function loadProfile() {
-    const card = document.getElementById("profile-card");
-    card.innerHTML = `Lade Profil...`;
+    const profileArea = document.getElementById("profile-content");
+    const extraArea = document.getElementById("profile-extra");
+
+    profileArea.innerHTML = "Lade Profil...";
+    extraArea.innerHTML = "Lade Informationen...";
 
     try {
         const res = await fetch("http://localhost:3000/api/user/me", {
@@ -9,10 +12,14 @@ async function loadProfile() {
         });
 
         if(res.status === 401) {
-            card.innerHTML = "<p>Logge dich ein, damit du deine Benutzerdaten anzeigen kannst!</p>";
+            profileArea.innerHTML = "<p>Logge dich ein, damit du deine Benutzerdaten anzeigen kannst!</p>";
+            extraArea.innerHTML = "";
+            return;
         }
         if(!res.ok) {
-            card.innerHTML = "<p>Dein Profil konnte nicht geladen werden! </p>";
+            profileArea.innerHTML = "<p>Dein Profil konnte nicht geladen werden! </p>";
+            extraArea.innerHTML = "";
+            return;
         }
 
         const [user] = await res.json();
@@ -31,7 +38,7 @@ async function loadProfile() {
             gesperrt = "<span style='color:dodgerblue'>Nein</span>"
         }
 
-        card.innerHTML = `
+        profileArea.innerHTML = `
         <h2>Profil von ${user.vorname} ${user.nachname}</h2>
         <p><strong>Benutzername:</strong> ${user.benutzername}</p>
         <p><strong>E-Mail:</strong> ${user.email}</p>
@@ -44,6 +51,12 @@ async function loadProfile() {
             <button id="back" class="btn" onclick="history.back()">← Zurück</button>
         </div>
         `;
+
+        extraArea.innerHTML = `
+            <h2>Bestellungen und Warenkorb</h2>
+            <p>Du hast aktuell keine Bestellungen.</p>
+            <p>Dein Warenkorb ist leer</p>
+            `;
 
         document.getElementById("logout-btn").addEventListener("click", async () => {
             try {
@@ -59,7 +72,7 @@ async function loadProfile() {
 
     } catch (e) {
         console.error(e);
-        card.innerHTML = "<p> Es ist ein Fehler aufgetreten!</p>'";
+        profileArea.innerHTML = "<p> Es ist ein Fehler aufgetreten!</p>";
     }
 }
 

@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
 
         //Menü leeren
-        menu.innerHTML = "<li>Lade...</li>";
+        menu.innerHTML = "<li>Lade.</li>";
         //Sidebar einblenden
         sidebar.classList.add("open");
         overlay.style.display = "block";
@@ -45,10 +45,10 @@ document.addEventListener("DOMContentLoaded", () => {
         //Anzeige wenn eingeloggt
         if(loggedIn) {
             let html = `
-            <li><a href="../Profilverwaltung/profilverwaltung.html">Profilverwaltung</a></li>
+            <li><a href="/Profilverwaltung/profilverwaltung.html">Profilverwaltung</a></li>
             <li><a href="#Einkaufsliste">Einkaufslisten</a></li>`
             if(rolle === "admin") {
-                html += `<li><a href="../Userverwaltung/userverwaltung.html">Userverwaltung</a></li>`
+                html += `<li><a href="/Userverwaltung/userverwaltung.html">Userverwaltung</a></li>`
             }
             html += `<li><a href="#" id="logout">Abmelden</a></li>`;
             menu.innerHTML = html;
@@ -68,8 +68,8 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         } else {
             menu.innerHTML = `
-            <li><a href="../LoginPage/loginpage.html">Login</a></li>
-            <li><a href="../SignUpPage/signup.html">Registrieren</a></li>`;
+            <li><a href="/LoginPage/loginpage.html">Login</a></li>
+            <li><a href="/SignUpPage/signup.html">Registrieren</a></li>`;
         }
     });
 
