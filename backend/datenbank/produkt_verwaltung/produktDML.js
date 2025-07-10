@@ -1,12 +1,29 @@
 import {query} from '../index.js';
 
 /* Produkt erstellen */
-export const createProdukt = async (produktname, preis, menge, kategorie, beschreibung, bild) => {
+export const createProdukt = async (produktname, preis, menge, kategorie, beschreibung, bildname) => {
+    // Kategorie säubern
+    const safeKategorie = kategorie.replace(/[\/\\:*?"<>|]/g, '').trim().toLowerCase();
+
+    // Bildname säubern: Sonderzeichen entfernen, Leerzeichen durch _
+    const safeBildname = bildname
+        .replace(/[\/\\:*?"<>|]/g, '_')   // Sonderzeichen
+        .replace(/\s+/g, '_')           // Leerzeichen → _
+        .trim();
+    const bildPfad = `productBilder/${safeKategorie}/${safeBildname}`;
+
+    // Prüfen, ob dieser Bildpfad schon verwendet wird
+    const checkSql = `SELECT * FROM Produkt WHERE bild = $1`;
+    const existing = await query(checkSql, [bildPfad]);
+    if (existing.length > 0) {
+        throw new Error(`Bildpfad '${bildPfad}' ist bereits einem anderen Produkt zugeordnet.`);
+    }
+
     const sql = `
         INSERT INTO Produkt (produktname, preis, menge, kategorie, beschreibung, bild)
         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;
     `;
-    return await query(sql, [produktname, preis, menge, kategorie, beschreibung, bild]);
+    return await query(sql, [produktname, preis, menge, kategorie, beschreibung, bildPfad]);
 };
 
 /* Produkt löschen */
