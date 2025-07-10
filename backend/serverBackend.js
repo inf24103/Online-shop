@@ -37,7 +37,13 @@ app.use(cors({
 morgan.token('source', function () {
     return 'Morgan:';
 });
-const customFormat = ':source :method :url :status :res[content-length] - :response-time ms';
+const pad = (n) => n.toString().padStart(2, '0');
+morgan.token('timestamp', function () {
+    const now = new Date();
+    return `${pad(now.getDate())}.${pad(now.getMonth() + 1)}.${now.getFullYear()} ` +
+        `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+});
+const customFormat = ':source :method :url :status :res[content-length] - :response-time ms [:timestamp]';
 app.use(morgan(customFormat));
 
 mountRoutes(app);
@@ -50,7 +56,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Docker 1. mal starten: docker compose up --build
+// Docker 1. mal starten: docker compose build --no-cache
 // Docker wieder löschen: docker compose down -v
 
 app.get("/", (req, res) => {

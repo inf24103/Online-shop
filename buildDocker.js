@@ -6,7 +6,7 @@ function run(command, options = {}) {
         console.log(`\n> ${command}`);
         execSync(command, { stdio: "inherit", ...options });
     } catch (error) {
-        console.error(`❌ Fehler bei Befehl: ${command}`);
+        console.error(`Fehler bei Befehl: ${command}`);
         process.exit(1);
     }
 }
@@ -34,7 +34,10 @@ console.log("Warte 2 Sekunden, damit die Datenbank initialisieren kann...");
 await sleep(2000);
 
 // 5. Starte Backend und Frontend
-console.log("🚀 Starte Backend und Frontend...");
-run("docker compose up backend frontend");
+console.log("Starte Backend und Frontend...");
+run("docker compose up -d backend frontend");
+
+console.log("Logs:")
+run("docker compose logs -f --tail=100 db backend frontend");
 
 console.log("\nAlle Container wurden erfolgreich gestartet!");

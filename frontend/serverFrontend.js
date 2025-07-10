@@ -14,7 +14,13 @@ app.use(express.static(path.join(".", ".")));
 morgan.token('source', function () {
     return 'Morgan:';
 });
-const customFormat = ':source :method :url :status :res[content-length] - :response-time ms';
+const pad = (n) => n.toString().padStart(2, '0');
+morgan.token('timestamp', function () {
+    const now = new Date();
+    return `${pad(now.getDate())}.${pad(now.getMonth() + 1)}.${now.getFullYear()} ` +
+        `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+});
+const customFormat = ':source :method :url :status :res[content-length] - :response-time ms [:timestamp]';
 app.use(morgan(customFormat));
 
 // Globales abfangen unbehandelter Fehler
@@ -34,9 +40,7 @@ app.get("/", (req, res) => {
 })
 
 function renderPage(page, ordner, res) {
-    console.log("page rendering");
     const fullPath = path.join('.', ordner, page);
-    console.log(fullPath);
     fs.readFile(fullPath, 'utf-8', (err, content) => {
         if (err) return res.status(500).send('Seitenfehler');
         return res.send(content);
@@ -45,5 +49,5 @@ function renderPage(page, ordner, res) {
 
 app.listen(port, () => {
     console.log(`Frontend-Server läuft auf http://localhost:${port}`)
-    console.log("minutes: ", new Date().getMinutes(), "seconds: ",new Date().getSeconds());
+    console.log("Start time:"," hours: ", new Date().getHours(),"minutes: ", new Date().getMinutes(), "seconds: ",new Date().getSeconds());
 })
