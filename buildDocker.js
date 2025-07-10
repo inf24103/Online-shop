@@ -38,6 +38,6 @@ console.log("Starte Backend und Frontend...");
 run("docker compose up -d backend frontend");
 
 console.log("Logs:")
-run("docker compose logs -f --tail=100 --timestamps db backend frontend");
+run("docker compose logs -f --tail=100 db backend frontend");
 
 console.log("\nAlle Container wurden erfolgreich gestartet!");
