@@ -100,12 +100,6 @@ async function loadProducts(filters = {}) {
 
 async function editProduct(id) {
     try {
-        // Produkt-Details abrufen (angenommen, es gibt einen GET-Endpunkt für einzelne Produkte)
-        // Wenn es keinen spezifischen GET-Endpunkt für IDs gibt, müsstest du die Daten aus der bereits geladenen Liste suchen.
-        // Für bessere Skalierbarkeit ist ein GET /product/:id Endpunkt ideal.
-        // Für diesen Beispiel gehe ich davon aus, dass wir alle Produkte laden und das passende finden.
-        // Besser wäre: const res = await fetch(`http://localhost:3000/api/inv/product/${id}`);
-        // Wenn es keinen Einzelabruf gibt, suchen wir im bereits geladenen Array.
         const allProductsRes = await fetch('http://localhost:3000/api/inv/product/all');
         if (!allProductsRes.ok) throw new Error("Fehler beim Laden der Produktdetails zum Bearbeiten.");
         const allProducts = await allProductsRes.json();
@@ -143,7 +137,8 @@ async function deleteProduct(id) {
 
     try {
         const res = await fetch(`http://localhost:3000/api/inv/product/${id}`, {
-            method: "DELETE"
+            method: "DELETE",
+            credentials: "include",
         });
         if (!res.ok) throw new Error("Fehler beim Löschen");
         alert("Produkt erfolgreich gelöscht!");
