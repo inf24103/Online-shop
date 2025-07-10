@@ -1,5 +1,5 @@
 # Verwende die offizielle Node.js LTS Version als Basis-Image
-FROM node:18-alpine AS base
+FROM node:18-alpine
 
 # Setze das Arbeitsverzeichnis im Container
 WORKDIR /app
@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Installiere Abhängigkeiten
-RUN npm ci
+RUN npm install
 
 # Kopiere den Quellcode
 COPY . .

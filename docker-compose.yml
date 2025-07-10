@@ -1,17 +1,6 @@
-version: '1.0'
+version: '2.0'
 
 services:
-  db:
-    image: postgres:14-alpine
-    container_name: fitura_db
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_PASSWORD=1234
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
-
   backend:
     build:
       context: ./backend
@@ -43,6 +32,19 @@ services:
       - "5000:5000"
     volumes:
       - ./frontend:/app
+    restart: unless-stopped
+
+  db:
+    image: postgres:14-alpine
+    container_name: fitura_db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
 volumes:

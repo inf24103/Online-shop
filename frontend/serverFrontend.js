@@ -34,9 +34,7 @@ app.get("/", (req, res) => {
 })
 
 function renderPage(page, ordner, res) {
-    console.log("page rendering");
     const fullPath = path.join('.', ordner, page);
-    console.log(fullPath);
     fs.readFile(fullPath, 'utf-8', (err, content) => {
         if (err) return res.status(500).send('Seitenfehler');
         return res.send(content);
@@ -45,5 +43,5 @@ function renderPage(page, ordner, res) {
 
 app.listen(port, () => {
     console.log(`Frontend-Server läuft auf http://localhost:${port}`)
-    console.log("minutes: ", new Date().getMinutes(), "seconds: ",new Date().getSeconds());
+    console.log("Start time:"," hours: ", new Date().getHours(),"minutes: ", new Date().getMinutes(), "seconds: ",new Date().getSeconds());
 })

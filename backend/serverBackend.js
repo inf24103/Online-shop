@@ -50,7 +50,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Docker 1. mal starten: docker compose up --build
+// Docker 1. mal starten: docker compose build --no-cache
 // Docker wieder löschen: docker compose down -v
 
 app.get("/", (req, res) => {
