@@ -35,6 +35,21 @@
     </div>
   </div>
 </div>
+<div id="edit-modal" class="modal">
+  <div class="modal-content edit-modal-content">
+    <h3 id="edit-title">Wunschliste bearbeiten</h3>
+    <p id="edit-beschreibung">
+      <!-- Hier wird die Beschreibung eingefügt -->
+    </p>
+    <button class="settings-btn">
+      <img src="#" alt="Settings" />
+    </button>
+    <button class="delete-btn" onclick="loeschen(currentBearbeiteId); closeEditModal()">Löschen</button>
+  </div>
+  <div style="test-align: right;">
+    <button onclick="closeEditModal()">Schließen</button>
+  </div>
+</div>
 </body>
 <script src="/Wunschlisten/wunschliste.js"></script>
 </html>

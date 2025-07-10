@@ -17,7 +17,7 @@ async function loadWunschlisten() {
         } else {
             eigeneListen.forEach(w => {
                 eigene.innerHTML += `
-                    <div class="wunschliste-card">
+                    <div class="wunschliste-card" data-id="${w.wunschlisteid}">
                         <h3>${w.wunschlistename}</h3>
                         <p>Produkte: Kommt noch</p>
                         <div class="actions">
@@ -115,6 +115,25 @@ async function submitWunschliste() {
         return;
     }
 
+}
+
+function bearbeiten(id) {
+    const wunschliste = document.querySelector(`[data-id='${id}']`);
+    const name = wunschliste?.querySelector("h3")?.innerText || "Unbekannt";
+    const beschreibung = wunschliste?.querySelector("p")?.innerText || "";
+
+    currentBearbeiteId = id;
+
+    document.getElementById("edit-title").innerHTML = name;
+    document.getElementById("edit-beschreibung").innerHTML = beschreibung;
+
+    document.getElementById("edit-modal").style.display = "block";
+
+}
+
+function closeEditModal() {
+    document.getElementById("edit-modal").style.display = "none";
+    currentBearbeiteId = null;
 }
 
 window.addEventListener("DOMContentLoaded", loadWunschlisten);
