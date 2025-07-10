@@ -111,21 +111,18 @@ async function editProduct(id) {
             return;
         }
 
-        // Formularfelder mit Produktdaten füllen
         document.getElementById("name").value = productToEdit.produktname;
         document.getElementById("price").value = productToEdit.preis;
         document.getElementById("menge").value = productToEdit.menge;
         document.getElementById("category").value = productToEdit.kategorie;
-        document.getElementById("image").value = productToEdit.bild || ''; // Optionales Feld
-        document.getElementById("short-desc").value = productToEdit.kurzbeschreibung || ''; // Optionales Feld
+        document.getElementById("image").value = productToEdit.bild || '';
+        document.getElementById("short-desc").value = productToEdit.kurzbeschreibung || '';
         document.getElementById("description").value = productToEdit.beschreibung;
 
-        // Formular-Container öffnen
         formContainer.classList.add("open");
 
-        // Den Bearbeitungsmodus aktivieren
         editingProductId = id;
-        saveProductButton.textContent = "Änderungen speichern"; // Button-Text anpassen
+        saveProductButton.textContent = "Änderungen speichern";
     } catch (err) {
         alert("Produkt zum Bearbeiten konnte nicht geladen werden: " + err.message);
         console.error(err);
@@ -138,7 +135,6 @@ async function deleteProduct(id) {
     try {
         const res = await fetch(`http://localhost:3000/api/inv/product/${id}`, {
             method: "DELETE",
-            credentials: "include",
         });
         if (!res.ok) throw new Error("Fehler beim Löschen");
         alert("Produkt erfolgreich gelöscht!");
@@ -161,5 +157,4 @@ document.getElementById("filter-btn").addEventListener("click", () => {
     });
 });
 
-// Beim Start alle Produkte laden
 loadProducts();
