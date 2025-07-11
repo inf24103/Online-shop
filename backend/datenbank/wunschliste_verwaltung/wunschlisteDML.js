@@ -52,6 +52,15 @@ export const addProduktToWunschliste = async (wunschlisteid, produktid) => {
     return await query(sql, params)
 }
 
+export const removeBenutzer = async (wunschlisteid, benutzerid) => {
+    const sql = `
+    DELETE FROM wunschliste_berechtigung 
+    WHERE wunschlisteid = $1
+    AND benutzerid = $2;
+  `;
+    return await query(sql, [wunschlisteid, benutzerid]);
+};
+
 
 /* Wunschliste löschen */
 export const deleteWunschliste = async (wunschlisteid) => {

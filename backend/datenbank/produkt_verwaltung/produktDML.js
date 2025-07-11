@@ -5,7 +5,8 @@ export const createProdukt = async (produktname, preis, menge, kategorie, beschr
     // Kategorie säubern
     const safeKategorie = kategorie.replace(/[\/\\:*?"<>|]/g, '').trim().toLowerCase();
 
-    // Bildname säubern: Sonderzeichen entfernen, Leerzeichen durch _
+    // Bildname säubern: Sonderzeichen entfernen, Leerzeichen durch
+    console.log(bildname)
     const safeBildname = bildname
         .replace(/[\/\\:*?"<>|]/g, '_')   // Sonderzeichen
         .replace(/\s+/g, '_')           // Leerzeichen → _

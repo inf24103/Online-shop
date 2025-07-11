@@ -51,10 +51,14 @@ router.post('/product/new', authenticateTokenAndAuthorizeRole(['admin']), async 
             error: 'All fields are required: produktname, preis, menge, bild, kategorie, beschreibung'
         });
     }
+    try {
+        const product = await createProdukt(produktname, preis, verfuegbareMenge, kategorie, beschreibung, bild);
+        return res.status(200).json(product)
+    } catch (error) {
+        console.error('Fehler bei erstellen des Produktes:', error);
+        res.status(500).json({message: "Evtl. Bild umbenennen"})
+    }
 
-    const product = await createProdukt(produktname, preis, verfuegbareMenge, kategorie, beschreibung);
-
-    return res.status(200).json(product)
 })
 
 router.get('/product/:id', async (req, res) => {
