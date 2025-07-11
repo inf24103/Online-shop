@@ -147,7 +147,9 @@ async function updateQuantity(produktid, change) {
 
 
     if (newAnzahl <= 0) {
-        await removeItemFromCart(produktid);
+        if (confirm("Möchten Sie dieses Produkt wirklich aus dem Warenkorb entfernen?")) {
+            await removeItemFromCart(produktid);
+        }
         return;
     }
 
@@ -212,6 +214,7 @@ async function removeItemFromCart(produktid) {
                 }
                 throw new Error(`Fehler beim Entfernen aus dem Warenkorb: ${response.statusText}`);
             }
+            alert("Produkt erfolgreich aus dem Warenkorb entfernt!");
             renderCart();
 
             if (removedItem) {
@@ -232,6 +235,7 @@ async function removeItemFromCart(produktid) {
 
         if (localCart.length < initialLength) {
             localStorage.setItem("cart", JSON.stringify(localCart));
+            alert("Produkt erfolgreich aus dem Warenkorb entfernt!");
             renderCart();
 
             if (removedItem) {

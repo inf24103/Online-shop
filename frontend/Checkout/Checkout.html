@@ -4,85 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - Fitura</title>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../public/page_layout.css">
+    <link rel="stylesheet" href="../public/navbar.css">
+    <link rel="stylesheet" href="../public/footer.css">
     <link rel="stylesheet" href="Checkout.css">
 </head>
 <body>
-<header>
-    <nav>
-        <a href="../ProductPage/productpage.html" class="logo">Dein Shop</a>
-        <ul>
-            <li><a href="../ProductPage/productpage.html">Produkte</a></li>
-            <li><a href="../Warenkorb/Warenkorb.html">Warenkorb (<span id="cart-count">0</span>)</a></li>
-        </ul>
-    </nav>
-</header>
+    <main class="container">
+        <h1>Checkout</h1>
 
-<main class="container">
-    <h1>Checkout</h1>
+        <section class="checkout-summary">
+            <h2>Ihre Bestellung</h2>
+            <div id="checkout-items" class="checkout-product-grid">
+            </div>
+            <div class="cart-total">
+                <p>Gesamt: <span id="checkout-total-price">€0.00</span></p>
+            </div>
+        </section>
 
-    <section class="checkout-summary">
-        <h2>Ihre Bestellung</h2>
-        <div id="checkout-items" class="cart-items">
-        </div>
-        <div class="cart-total">
-            <p>Gesamt: <span id="checkout-total-price">€0.00</span></p>
-        </div>
-    </section>
+        <section class="checkout-form-section">
+            <h2 id="address-form-title">Liefer- und Rechnungsadresse</h2>
+            <form id="address-form" class="checkout-form">
+                <div class="form-group">
+                    <label for="firstName">Vorname:</label>
+                    <input type="text" id="firstName" name="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Nachname:</label>
+                    <input type="text" id="lastName" name="lastName" required>
+                </div>
+                <div class="form-group">
+                    <label for="street">Straße und Hausnummer:</label>
+                    <input type="text" id="street" name="street" required>
+                </div>
+                <div class="form-group">
+                    <label for="zipCode">Postleitzahl:</label>
+                    <input type="text" id="zipCode" name="zipCode" required>
+                </div>
+                <div class="form-group">
+                    <label for="city">Ort:</label>
+                    <input type="text" id="city" name="city" required>
+                </div>
+                <div class="form-group">
+                    <label for="country">Land:</label>
+                    <input type="text" id="country" name="country" value="Deutschland" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">E-Mail:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Telefon (optional):</label>
+                    <input type="tel" id="phone" name="phone">
+                </div>
 
-    <section class="checkout-form-section">
-        <h2>Liefer- und Rechnungsadresse</h2>
-        <form id="address-form" class="checkout-form">
-            <div class="form-group">
-                <label for="firstName">Vorname:</label>
-                <input type="text" id="firstName" name="firstName" required>
-            </div>
-            <div class="form-group">
-                <label for="lastName">Nachname:</label>
-                <input type="text" id="lastName" name="lastName" required>
-            </div>
-            <div class="form-group">
-                <label for="street">Straße und Hausnummer:</label>
-                <input type="text" id="street" name="street" required>
-            </div>
-            <div class="form-group">
-                <label for="zipCode">Postleitzahl:</label>
-                <input type="text" id="zipCode" name="zipCode" required>
-            </div>
-            <div class="form-group">
-                <label for="city">Ort:</label>
-                <input type="text" id="city" name="city" required>
-            </div>
-            <div class="form-group">
-                <label for="country">Land:</label>
-                <input type="text" id="country" name="country" value="Deutschland" required>
-            </div>
-            <div class="form-group">
-                <label for="email">E-Mail:</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="phone">Telefon (optional):</label>
-                <input type="tel" id="phone" name="phone">
-            </div>
+                <div class="form-group payment-method">
+                    <h2>Zahlungsmethode</h2>
+                    <input type="hidden" name="paymentMethod" value="Vorkasse">
+                </div>
 
-            <div class="form-group payment-method">
-                <h2>Zahlungsmethode</h2>
-                <input type="hidden" name="paymentMethod" value="Vorkasse">
-            </div>
+                <button type="submit" id="place-order-button" class="btn-primary">Kauf abschließen</button>
+            </form>
+        </section>
+    </main>
 
-            <button type="submit" id="place-order-button" class="btn-primary">Kauf abschließen</button>
-        </form>
-    </section>
-</main>
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p>Bestellung wird bearbeitet...</p>
+    </div>
 
-<div id="loading-overlay" class="loading-overlay">
-    <div class="loading-spinner"></div>
-    <p>Bestellung wird bearbeitet...</p>
-</div>
 
-<script src="Checkout.js"></script>
-<script src="../Warenkorb/Warenkorb.js"></script>
-<script src="../ProductPage/products.js"></script>
+
+    <script src="Checkout.js"></script>
 </body>
 </html>
