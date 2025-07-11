@@ -12,61 +12,9 @@ const filterForm = document.querySelector(".filter form");
 let allProductsCache = [];
 let currentCart = [];
 
-function updateCartCount() {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    const cartCountElement = document.getElementById("cart-count");
-    if(cartCountElement) {
-        cartCountElement.textContent = count;
-    }
-}
+let scrollPosition = 0;
 
-async function loadAndSyncCart() {
-    const userToken = localStorage.getItem('adminToken');
-    let tempProducts = [...allProductsCache];
-
-    if (userToken) {
-        try {
-            const response = await fetch('http://localhost:3000/api/inv/warenkorb/myproducts', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}`
-                }
-            });
-            if (response.ok) {
-                currentCart = await response.json();
-                tempProducts = tempProducts.map(product => {
-                    const cartItem = currentCart.find(item => item.produktid === product.produktid);
-                    if (cartItem) {
-                        return { ...product,
-                            menge: product.menge - cartItem.anzahl
-                        };
-                    }
-                    return product;
-                });
-            } else {
-                currentCart = [];
-            }
-        } catch (error) {
-            console.error("Fehler beim Abrufen des Warenkorbs für Synchronisation:", error);
-            currentCart = [];
-        }
-    } else {
-        currentCart = JSON.parse(localStorage.getItem("cart")) || [];
-        tempProducts = tempProducts.map(product => {
-            const cartItem = currentCart.find(item => item.produktid === product.produktid);
-            if (cartItem) {
-                return { ...product,
-                    menge: product.menge - cartItem.quantity
-                };
-            }
-            return product;
-        });
-    }
-    allProductsCache = tempProducts;
-    updateCartCount();
-}
+const IMAGE_BASE_URL = 'http://localhost:5000/';
 
 function renderProducts(productList) {
     const container = document.querySelector('.product-card');
@@ -85,9 +33,11 @@ function renderProducts(productList) {
             stockMessage = 'Nicht mehr im Vorrat';
         } else if (product.menge < 5) {
             stockMessage = 'Nur noch wenige auf Lager';
-        } else { //
+        } else {
             stockMessage = 'Im Vorrat';
         }
+
+        const imageUrl = product.bild ? `${IMAGE_BASE_URL}${product.bild}` : 'https://via.placeholder.com/200';
 
         const card = document.createElement('div');
         card.classList.add('product');
@@ -95,11 +45,11 @@ function renderProducts(productList) {
             card.classList.add('out-of-stock');
         }
         card.innerHTML = `
-            ${product.bild ? `<img src="${product.bild}" alt="${product.produktname}">` : ''}
+            ${product.bild ? `<img src="${imageUrl}" alt="${product.produktname}">` : ''}
             <h3>${product.produktname}</h3>
             <p>${product.kategorie}</p>
             <p><strong>€${parseFloat(product.preis).toFixed(2)}</strong></p>
-            <p class="product-stock-info">${stockMessage}</p> 
+            <p class="product-stock-info">${stockMessage}</p>
             <button class="add-to-cart-initial" ${isOutOfStock ? 'disabled' : ''}>
                 ${isOutOfStock ? 'Nicht vorrätig' : 'In den Warenkorb'}
             </button>
@@ -216,7 +166,6 @@ async function addToCartAPI(productToAdd, anzahl = 1) {
             }
 
             const result = await response.json();
-            alert("Produkt zum Warenkorb hinzugefügt!");
             const updatedProductIndex = allProductsCache.findIndex(p => p.produktid === productToAdd.produktid);
             if (updatedProductIndex !== -1) {
                 allProductsCache[updatedProductIndex].menge -= anzahl;
@@ -238,7 +187,6 @@ async function addToCartAPI(productToAdd, anzahl = 1) {
             cart.push({ ...productToAdd, quantity: anzahl });
         }
         localStorage.setItem("cart", JSON.stringify(cart));
-        alert("Produkt zum Warenkorb hinzugefügt!");
 
         const updatedProductIndex = allProductsCache.findIndex(p => p.produktid === productToAdd.produktid);
         if (updatedProductIndex !== -1) {
@@ -250,9 +198,68 @@ async function addToCartAPI(productToAdd, anzahl = 1) {
     }
 }
 
+function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const count = cart.reduce((sum, item) => sum + (item.quantity || item.anzahl || 0), 0);
+    const cartCountElement = document.getElementById("cart-count");
+    if(cartCountElement) {
+        cartCountElement.textContent = count;
+    }
+}
+
+async function loadAndSyncCart() {
+    const userToken = localStorage.getItem('adminToken');
+    let tempProducts = [...allProductsCache];
+
+    if (userToken) {
+        try {
+            const response = await fetch('http://localhost:3000/api/inv/warenkorb/myproducts', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userToken}`
+                }
+            });
+            if (response.ok) {
+                const backendCartItems = await response.json();
+                currentCart = backendCartItems.map(item => ({ ...item.product, anzahl: item.anzahl }));
+
+                tempProducts = tempProducts.map(product => {
+                    const cartItem = currentCart.find(item => item.produktid === product.produktid);
+                    if (cartItem) {
+                        return { ...product,
+                            menge: product.originalMenge - cartItem.anzahl
+                        };
+                    }
+                    return product;
+                });
+            } else {
+                currentCart = [];
+            }
+        } catch (error) {
+            console.error("Fehler beim Abrufen des Warenkorbs für Synchronisation:", error);
+            currentCart = [];
+        }
+    } else {
+        currentCart = JSON.parse(localStorage.getItem("cart")) || [];
+        tempProducts = tempProducts.map(product => {
+            const cartItem = currentCart.find(item => item.produktid === product.produktid);
+            if (cartItem) {
+                return { ...product,
+                    menge: product.originalMenge - cartItem.quantity
+                };
+            }
+            return product;
+        });
+    }
+    allProductsCache = tempProducts;
+    updateCartCount();
+}
+
 function openProductModal(product){
     currentProductInModal = product;
-    modalImage.src = product.bild || '';
+    const imageUrl = product.bild ? `${IMAGE_BASE_URL}${product.bild}` : 'https://via.placeholder.com/200';
+    modalImage.src = imageUrl;
     modalImage.alt = product.produktname;
     modalName.textContent = product.produktname;
     modalDescription.textContent = product.beschreibung || 'Keine detaillierte Beschreibung verfügbar.';
@@ -273,13 +280,23 @@ function openProductModal(product){
         }
     }
 
-    productDetailModal.classList.add('is-expanded');
+    scrollPosition = window.scrollY;
+
     document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollPosition}px`;
+
+    productDetailModal.classList.add('is-expanded');
 }
 
 function closeProductModal(){
     productDetailModal.classList.remove('is-expanded');
+
     document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+
+    window.scrollTo(0, scrollPosition);
 }
 
 closeButton.addEventListener('click', closeProductModal);

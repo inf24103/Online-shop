@@ -18,7 +18,7 @@
     <li class="navitem"><a href="../user/index.html">Home</a></li>
     <li class="navitem cart-icon">
         <a href="../Warenkorb/Warenkorb.html">🛒
-        <span id="cart-count" class="cart-count">0</span>
+            <span id="cart-count" class="cart-count">0</span>
         </a>
     </li>
 </ul>
@@ -27,10 +27,11 @@
     <form action="" method="get">
         <input type="search" name="name" placeholder="Filtern nach Name">
         <select name="kategorie" id="kat_filter">
-            <option value="">All</option> <option value="All">Alle</option>
-            <option value="Supplements">Supplements</option>
-            <option value="Clothing">Clothing</option>
-            <option value="Style">Style</option>
+            <option value="All">Alle Kategorien</option>
+            <option value="Sportbekleidung">Sportbekleidung</option>
+            <option value="Fitnesszubehör">Fitnesszubehör</option>
+            <option value="Trainingsgerät">Trainingsgerät</option>
+            <option value="Supplement">Supplement</option>
         </select>
         <input type="number" name="maxPreis" min="1" placeholder="Max. Preis (€)">
         <input type="number" name="minMenge" min="0" placeholder="Min. Menge">
@@ -45,7 +46,6 @@
     </form>
 </div>
 <div class="product-card">
-    <!-- Hier werden die Produkte eingefügt -->
 </div>
 <div class="product-modal" id="product-detail-modal">
     <div class="modal-content">

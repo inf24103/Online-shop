@@ -2,8 +2,19 @@ const cartContainer = document.querySelector('.cart-items');
 const totalPriceElement = document.getElementById('total-price');
 const checkoutButton = document.getElementById('checkout-button');
 
+function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const count = cart.reduce((sum, item) => sum + (item.quantity || item.anzahl || 0), 0);
+    const cartCountElement = document.getElementById("cart-count");
+    if(cartCountElement) {
+        cartCountElement.textContent = count;
+    }
+}
+
+const IMAGE_BASE_URL = 'http://localhost:5000/';
+
 async function fetchCart() {
-    const userToken = localStorage.getItem('adminToken'); // Oder 'userToken'
+    const userToken = localStorage.getItem('adminToken');
 
     if (userToken) {
         try {
@@ -16,8 +27,8 @@ async function fetchCart() {
             });
             if (!response.ok) {
                 if (response.status === 401 || response.status === 403) {
-                    console.warn("Sitzung abgelaufen oder nicht autorisiert. Lade leeren Warenkorb.");
-                     localStorage.removeItem('adminToken');
+                    console.warn("Sitzung abgelaufen oder nicht autorisiert. Leere den lokalen Warenkorb.");
+                    localStorage.removeItem('adminToken');
                     return [];
                 }
                 throw new Error(`Fehler beim Laden des Warenkorbs: ${response.statusText}`);
@@ -31,7 +42,6 @@ async function fetchCart() {
         }
     } else {
         const localCart = JSON.parse(localStorage.getItem("cart")) || [];
-
         return localCart.map(item => ({
             produktid: item.produktid,
             produktname: item.produktname,
@@ -62,12 +72,22 @@ async function renderCart() {
         `;
         cartContainer.appendChild(emptyMessageDiv);
         totalPriceElement.textContent = `€0.00`;
+        if (checkoutButton) {
+            checkoutButton.style.display = 'none';
+        }
         updateCartCount();
         return;
     }
 
+    if (checkoutButton) {
+        checkoutButton.style.display = 'block';
+    }
+
+
     cartItems.forEach((product) => {
-        const itemQuantity = product.anzahl || 1;
+        const imageUrl = product.bild ? `${IMAGE_BASE_URL}${product.bild}` : 'https://via.placeholder.com/100';
+
+        const itemQuantity = product.anzahl;
         const itemPrice = parseFloat(product.preis);
         const itemTotalPrice = itemPrice * itemQuantity;
         total += itemTotalPrice;
@@ -76,7 +96,7 @@ async function renderCart() {
         item.className = "cart-item";
 
         item.innerHTML = `
-            <img src="${product.bild || 'https://via.placeholder.com/100'}" alt="${product.produktname}">
+            <img src="${imageUrl}" alt="${product.produktname}">
             <div>
                 <h3>${product.produktname}</h3>
                 <p>€${itemPrice.toFixed(2)} x <span class="item-quantity-display">${itemQuantity}</span></p>
@@ -99,7 +119,7 @@ async function renderCart() {
 function addCartItemEventListeners() {
     document.querySelectorAll('.update-quantity-btn').forEach(button => {
         button.onclick = async (event) => {
-            const produktid = event.target.dataset.productid;
+            const produktid = parseInt(event.target.dataset.productid);
             const change = parseInt(event.target.dataset.change);
             await updateQuantity(produktid, change);
         };
@@ -107,7 +127,7 @@ function addCartItemEventListeners() {
 
     document.querySelectorAll('.remove-item-btn').forEach(button => {
         button.onclick = async (event) => {
-            const produktid = event.target.dataset.productid;
+            const produktid = parseInt(event.target.dataset.productid);
             await removeItemFromCart(produktid);
         };
     });
@@ -115,27 +135,26 @@ function addCartItemEventListeners() {
 
 async function updateQuantity(produktid, change) {
     const userToken = localStorage.getItem('adminToken');
-    let currentAnzahl = 0;
-
-    const currentCartItems = await fetchCart();
+    let currentCartItems = await fetchCart();
     const existingItem = currentCartItems.find(item => item.produktid === produktid);
-    if (existingItem) {
-        currentAnzahl = existingItem.anzahl;
+
+    if (!existingItem) {
+        console.warn(`Produkt mit ID ${produktid} nicht im Warenkorb gefunden.`);
+        return;
     }
 
-    const newAnzahl = currentAnzahl + change;
+    const newAnzahl = existingItem.anzahl + change;
+
 
     if (newAnzahl <= 0) {
-        if (confirm("Möchten Sie dieses Produkt wirklich aus dem Warenkorb entfernen?")) {
-            await removeItemFromCart(produktid);
-        }
+        await removeItemFromCart(produktid);
         return;
     }
 
     if (userToken) {
         try {
-            const response = await fetch('http://localhost:3000/api/inv/warenkorb/update', {
-                method: 'PUT',
+            const response = await fetch('http://localhost:3000/api/inv/warenkorb/add', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${userToken}`
@@ -173,12 +192,9 @@ async function removeItemFromCart(produktid) {
     const userToken = localStorage.getItem('adminToken');
     const currentCartItems = await fetchCart();
     const removedItem = currentCartItems.find(item => item.produktid === produktid);
-    const removedQuantity = removedItem ? removedItem.anzahl : 1;
+    const removedQuantity = removedItem ? removedItem.anzahl : 0;
 
     if (userToken) {
-        if (!confirm("Möchten Sie dieses Produkt wirklich aus dem Warenkorb entfernen?")) {
-            return;
-        }
         try {
             const response = await fetch(`http://localhost:3000/api/inv/warenkorb/${produktid}`, {
                 method: 'DELETE',
@@ -196,112 +212,39 @@ async function removeItemFromCart(produktid) {
                 }
                 throw new Error(`Fehler beim Entfernen aus dem Warenkorb: ${response.statusText}`);
             }
-            alert("Produkt erfolgreich aus dem Warenkorb entfernt!");
             renderCart();
 
-            const cartItemRemovedEvent = new CustomEvent('cartItemRemoved', {
-                detail: { produktid: produktid, anzahl: removedQuantity }
-            });
-            window.dispatchEvent(cartItemRemovedEvent);
+            if (removedItem) {
+                const cartItemRemovedEvent = new CustomEvent('cartItemRemoved', {
+                    detail: { produktid: produktid, anzahl: removedQuantity }
+                });
+                window.dispatchEvent(cartItemRemovedEvent);
+            }
 
         } catch (error) {
             console.error("Fehler beim Entfernen des Produkts:", error);
             alert("Fehler beim Entfernen des Produkts: " + error.message);
         }
     } else {
-        if (!confirm("Möchten Sie dieses Produkt wirklich aus dem Warenkorb entfernen?")) {
-            return;
-        }
         let localCart = JSON.parse(localStorage.getItem("cart")) || [];
         const initialLength = localCart.length;
         localCart = localCart.filter(item => item.produktid !== produktid);
 
         if (localCart.length < initialLength) {
             localStorage.setItem("cart", JSON.stringify(localCart));
-            alert("Produkt erfolgreich aus dem Warenkorb entfernt!");
             renderCart();
 
-            const cartItemRemovedEvent = new CustomEvent('cartItemRemoved', {
-                detail: { produktid: produktid, anzahl: removedQuantity }
-            });
-            window.dispatchEvent(cartItemRemovedEvent);
-        }
-    }
-}
-
-async function processCheckout() {
-    const userToken = localStorage.getItem('adminToken');
-    if (!userToken) {
-        alert("Bitte melden Sie sich an oder registrieren Sie sich, um Ihre Bestellung abzuschließen.");
-        window.location.href = "../LoginPage/loginpage.html"; // Oder zur Registrierungsseite
-        return;
-    }
-
-    const currentCartItems = await fetchCart();
-
-    if (currentCartItems.length === 0) {
-        alert("Ihr Warenkorb ist leer. Bitte fügen Sie Produkte hinzu, um fortzufahren.");
-        return;
-    }
-
-    if (confirm("Möchten Sie Ihre Bestellung jetzt abschließen?")) {
-        try {
-            const response = await fetch('http://localhost:3000/api/orders/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}`
-                },
-                body: JSON.stringify({
-                    items: currentCartItems.map(item => ({
-                        produktid: item.produktid,
-                        anzahl: item.anzahl,
-                        preis: item.preis
-                    })),
-                    totalPrice: parseFloat(totalPriceElement.textContent.replace('€', ''))
-                })
-            });
-
-            if (!response.ok) {
-                if (response.status === 401 || response.status === 403) {
-                    alert("Sitzung abgelaufen oder nicht autorisiert. Bitte neu anmelden.");
-                    window.location.href = "../LoginPage/loginpage.html";
-                    return;
-                }
-                const errorData = await response.json();
-                throw new Error(`Fehler beim Abschließen der Bestellung: ${errorData.message || response.statusText}`);
+            if (removedItem) {
+                const cartItemRemovedEvent = new CustomEvent('cartItemRemoved', {
+                    detail: { produktid: produktid, anzahl: removedQuantity }
+                });
+                window.dispatchEvent(cartItemRemovedEvent);
             }
-
-            const result = await response.json();
-            alert("Bestellung erfolgreich aufgegeben! Vielen Dank für Ihren Einkauf.");
-
-            localStorage.removeItem("cart");
-
-            renderCart();
-            updateCartCount();
-
-
-        } catch (error) {
-            console.error("Fehler beim Abschließen der Bestellung:", error);
-            alert("Fehler beim Abschließen der Bestellung: " + error.message);
         }
     }
-}
-
-if (checkoutButton) {
-    checkoutButton.addEventListener('click', processCheckout);
 }
 
 window.addEventListener("DOMContentLoaded", () => {
     renderCart();
+    updateCartCount();
 });
-
-
-function updateCartCount() {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const count = cart.reduce((sum, item) => sum + (item.quantity || item.anzahl), 0);
-    const cartCountElement = document.getElementById("cart-count");
-    if(cartCountElement) {
-        cartCountElement.textContent = count;
-    }
-}
