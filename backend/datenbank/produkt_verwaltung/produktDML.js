@@ -1,24 +1,15 @@
 import {query} from '../index.js';
+import {getAllProdukte} from "./produktDRL.js";
 
 /* Produkt erstellen */
-export const createProdukt = async (produktname, preis, menge, kategorie, beschreibung, bildname) => {
+export const createProdukt = async (produktname, preis, menge, kategorie, beschreibung, bildFormat) => {
     // Kategorie säubern
     const safeKategorie = kategorie.replace(/[\/\\:*?"<>|]/g, '').trim().toLowerCase();
 
-    // Bildname säubern: Sonderzeichen entfernen, Leerzeichen durch
-    console.log(bildname)
-    const safeBildname = bildname
-        .replace(/[\/\\:*?"<>|]/g, '_')   // Sonderzeichen
-        .replace(/\s+/g, '_')           // Leerzeichen → _
-        .trim();
-    const bildPfad = `productBilder/${safeKategorie}/${safeBildname}`;
-
-    // Prüfen, ob dieser Bildpfad schon verwendet wird
-    const checkSql = `SELECT * FROM Produkt WHERE bild = $1`;
-    const existing = await query(checkSql, [bildPfad]);
-    if (existing.length > 0) {
-        throw new Error(`Bildpfad '${bildPfad}' ist bereits einem anderen Produkt zugeordnet.`);
-    }
+    const allProducts = await getAllProdukte()
+    const productNr = allProducts.length
+    const bildPfad = `productBilder/${safeKategorie}/${productNr}.${bildFormat}`;
+    console.log(bildPfad);
 
     const sql = `
         INSERT INTO Produkt (produktname, preis, menge, kategorie, beschreibung, bild)
