@@ -19,11 +19,9 @@ async function loadWunschlisten() {
         } else {
             eigeneListen.forEach(w => {
                 eigene.innerHTML += `
-                    <div class="wunschliste-card" data-id="${w.wunschlisteid}">
+                    <div class="wunschliste-card" data-id="${w.wunschlisteid}" data-beschreibung="${encodeURIComponent(w.beschreibung)}">
                         <h3>${w.wunschlistename}</h3>
-                        <p>Produkte: Kommt noch</p>
                         <div class="actions">
-                            <button onclick="bearbeiten(${w.wunschlisteid})"><img src="/pictures/settings.png" alt="Bearbeiten"></button>
                             <button onclick="loeschen(${w.wunschlisteid})"><img src="/pictures/muelleimer.png" alt="Löschen"></button>
                         </div>
                     </div>`;
@@ -122,7 +120,7 @@ async function submitWunschliste() {
 function bearbeiten(id) {
     const wunschliste = document.querySelector(`[data-id='${id}']`);
     const name = wunschliste?.querySelector("h3")?.innerText || "Unbekannt";
-    const beschreibung = wunschliste?.querySelector("p")?.innerText || "";
+    const beschreibung = decodeURIComponent(wunschliste?.getAttribute("data-beschreibung") || "");
 
     currentBearbeiteId = id;
 
