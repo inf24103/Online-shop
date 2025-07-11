@@ -54,14 +54,13 @@ form.addEventListener("submit", async (e) => {
         await loadProducts();
         form.reset();
         formContainer.classList.remove("open");
-        editingProductId = null; // Bearbeitungsmodus beenden
-        saveProductButton.textContent = "Produkt speichern"; // Button-Text zurücksetzen
+        editingProductId = null;
+        saveProductButton.textContent = "Produkt speichern";
     } catch (err) {
         alert("Operation fehlgeschlagen: " + err.message);
         console.error(err);
     }
 });
-
 
 async function loadProducts(filters = {}) {
     const query = new URLSearchParams(filters).toString();
@@ -88,7 +87,6 @@ async function loadProducts(filters = {}) {
             <h3>${product.produktname}</h3>
             <p><strong>Preis:</strong> €${parseFloat(product.preis).toFixed(2)}</p>
             <p><strong>Kategorie:</strong> ${product.kategorie}</p>
-            <p>${product.kurzbeschreibung || ''}</p>
             <div class="button-group"> 
                 <button class="delete-btn" onclick="deleteProduct(${product.produktid})">Löschen</button>
                 <button class="edit-btn" onclick="editProduct(${product.produktid})">Bearbeiten</button>
@@ -105,7 +103,6 @@ async function editProduct(id) {
         const allProducts = await allProductsRes.json();
         const productToEdit = allProducts.find(p => p.produktid === id);
 
-
         if (!productToEdit) {
             alert("Produkt nicht gefunden.");
             return;
@@ -116,7 +113,6 @@ async function editProduct(id) {
         document.getElementById("menge").value = productToEdit.menge;
         document.getElementById("category").value = productToEdit.kategorie;
         document.getElementById("image").value = productToEdit.bild || '';
-        document.getElementById("short-desc").value = productToEdit.kurzbeschreibung || '';
         document.getElementById("description").value = productToEdit.beschreibung;
 
         formContainer.classList.add("open");

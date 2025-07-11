@@ -25,22 +25,29 @@
 <h1>All Products</h1>
 <div class="filter">
     <form action="" method="get">
-        <input type="search" name="search" placeholder="Search Products">
-        <select name="category" id="kat_filter">
-            <option value="Category">Category</option>
-            <option value="All">All</option>
+        <input type="search" name="name" placeholder="Filtern nach Name">
+        <select name="kategorie" id="kat_filter">
+            <option value="">All</option> <option value="All">Alle</option>
             <option value="Supplements">Supplements</option>
             <option value="Clothing">Clothing</option>
             <option value="Style">Style</option>
         </select>
-        <input type="number" name="price" min="1" max="100" placeholder="Max. Preis(€)"> <!--value="Preis"-->
-        <button type="submit">🔍</button>
+        <input type="number" name="maxPreis" min="1" placeholder="Max. Preis (€)">
+        <input type="number" name="minMenge" min="0" placeholder="Min. Menge">
+        <select name="sortierung" id="sort_filter">
+            <option value="">Sortieren nach</option>
+            <option value="preis_asc">Preis aufsteigend</option>
+            <option value="preis_desc">Preis absteigend</option>
+            <option value="name_asc">Name A-Z</option>
+            <option value="name_desc">Name Z-A</option>
+        </select>
+        <button type="submit">🔍 Filtern</button>
     </form>
 </div>
 <div class="product-card">
     <!-- Hier werden die Produkte eingefügt -->
 </div>
-<div class="product-modal" id="product-detail-modal"> <!--Klasse um das modal Fenster öffnen zu können-->
+<div class="product-modal" id="product-detail-modal">
     <div class="modal-content">
         <span class="close-button">&times;</span>
         <div class="modal-image-area">
@@ -51,7 +58,7 @@
             <p class="description" id="modal-product-description"></p>
             <p class="category" id="modal-product-category"></p>
             <p class="price" id="modal-product-price"></p>
-            <button class="add-to-cart-modal">In den Warenkorb</button>
+            <p class="quantity" id="modal-product-quantity"></p> <button class="add-to-cart-modal">In den Warenkorb</button>
         </div>
     </div>
 </div>

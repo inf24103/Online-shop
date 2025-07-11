@@ -1,23 +1,23 @@
-body{
-    font-family: sans-serif;
-    background-color: #f9f9f9;
+body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
     margin: 0;
     padding: 0;
+    background: #f4f4f4;
 }
 
-.admin-container{
+.admin-container {
     max-width: 1200px;
     margin: 30px auto;
     padding: 0 20px;
 }
 
-.admin-header{
+.admin-header {
     display: flex;
     justify-content: flex-end;
     margin-bottom: 1rem;
 }
 
-#add-product-btn{
+#add-product-btn {
     position: relative;
     background-color: #4CAF50;
     color: white;
@@ -28,9 +28,11 @@ body{
     border: none;
     cursor: pointer;
     display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-#add-product-btn::before, #add-product-btn::after{
+#add-product-btn::before, #add-product-btn::after {
     content: "";
     position: absolute;
     top: 50%;
@@ -39,17 +41,17 @@ body{
     transform: translate(-50%, -50%);
 }
 
-#add-product-btn::before{
+#add-product-btn::before {
     width: 16px;
     height: 2px;
 }
 
-#add-product-btn::after{
+#add-product-btn::after {
     width: 2px;
     height: 16px;
 }
 
-#product-form-container{
+#product-form-container {
     background-color: white;
     padding: 1rem;
     margin-bottom: 1rem;
@@ -57,7 +59,8 @@ body{
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
-#product-form input, #product-form textarea{
+#product-form input,
+#product-form textarea {
     display: block;
     width: 100%;
     box-sizing: border-box;
@@ -67,23 +70,28 @@ body{
     border-radius: 5px;
 }
 
-#product-form button{
+#product-form button {
     background-color: #007BFF;
     color: white;
     border: none;
     padding: 0.5rem 1rem;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+}
+#product-form button:hover {
+    background-color: #0056b3;
 }
 
-.filter{
+.filter {
     display: flex;
     justify-content: center;
     margin-top: 25px;
     padding: 0 20px;
 }
 
-.filter form{
+.filter form {
     display: flex;
     gap: 15px;
     align-items: center;
@@ -96,19 +104,36 @@ body{
     border: 1px solid #ccc;
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
+
 input[type="search"],
 input[type="number"],
 input[type="text"],
 select {
-    padding: 10px 12px;
-    border: 1px solid #aaa;
+    padding: 12px 12px;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    font-size: 15px;
+    flex: 1;
+    box-sizing: border-box;
+}
+
+.filter form button {
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+    border: none;
     border-radius: 4px;
     font-size: 15px;
-    min-width: 160px;
-    flex: 1;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 }
+
+.filter form button:hover {
+    background-color: #555;
+}
+
 button {
     padding: 10px 20px;
     background-color: #333;
@@ -124,70 +149,105 @@ button:hover {
     background-color: #555;
 }
 
-.product-grid{
+.product-grid {
     display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(22px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(305px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    margin: 0 auto;
+    box-sizing: border-box;
     margin-top: 30px;
 }
 
-.product-card{
+.product-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    height: auto;
+    padding: 10px;
     background-color: white;
-    border-radius: 12px;
-    padding: 1rem;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-bottom: 0;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
     position: relative;
+    padding-bottom: 50px;
 }
 
-.product-card img{
-    max-width: 100%;
+.product-card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.product-card img {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    justify-self: center;
+    align-self: center;
     border-radius: 8px;
-    margin-bottom: 0.5rem;
+    margin-bottom: 10px;
+}
+
+.product-card h3 {
+    font-size: 20px;
+    margin: 5px 0 6px 0;
+    color: #222;
+    text-align: left;
+}
+
+.product-card p {
+    font-size: 16px;
+    margin-left: 0;
+    color: #222;
+    text-align: left;
 }
 
 .product-card .button-group {
-    position: absolute; /* Absolut innerhalb der .product-card positionieren */
-    bottom: 10px; /* 10px vom unteren Rand */
-    right: 10px; /* 10px vom rechten Rand */
-    display: flex; /* Buttons nebeneinander anordnen */
-    gap: 10px; /* Abstand zwischen den Buttons */
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
 }
 
-/* Allgemeine Styles für die Buttons innerhalb der Gruppe */
 .product-card .button-group button {
     color: white;
     border: none;
-    padding: 0.4rem 0.8rem;
+    padding: 0.5rem 1rem;
     border-radius: 4px;
     cursor: pointer;
-    opacity: 0.9; /* Leicht transparent im Normalzustand */
+    opacity: 0.9;
     transition: background-color 0.3s, opacity 0.3s;
     font-size: 0.9rem;
-    position: static; /* WICHTIG: Überschreibe die alte absolute Positionierung für einzelne Buttons */
-    width: auto; /* Buttons passen sich ihrem Inhalt an */
+    position: static;
+    width: auto;
 }
 
 .product-card .button-group button:hover {
-    opacity: 1; /* Volle Deckkraft beim Hover */
+    opacity: 1;
 }
 
-/* Spezifische Farben für den Löschbutton */
 .product-card .delete-btn {
-    background-color: #dc3545; /* Rot */
+    background-color: #dc3545;
 }
 
 .product-card .delete-btn:hover {
-    background-color: #a41e2c; /* Dunkleres Rot beim Hover */
+    background-color: #a41e2c;
 }
 
-/* Farbe für den Bearbeiten-Button */
 .product-card .edit-btn {
-    background-color: #007BFF; /* Blau */
+    background-color: #007BFF;
 }
 
 .product-card .edit-btn:hover {
-    background-color: #0056b3; /* Dunkleres Blau beim Hover */
+    background-color: #0056b3;
 }
 
 .collapsible {
@@ -197,7 +257,66 @@ button:hover {
     transition: max-height 0.5s ease, opacity 0.3s ease;
 }
 
-.collapsible.open{
+.collapsible.open {
     max-height: 1000px;
     opacity: 1;
+}
+
+@media (max-width: 760px) {
+    .filter form {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 10px;
+        height: auto;
+    }
+
+    input[type="search"],
+    input[type="number"],
+    input[type="text"],
+    select,
+    button {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .product-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        padding: 10px;
+    }
+
+    .product-card {
+        height: auto;
+    }
+
+    .product-card img {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .product-card h3 {
+        font-size: 18px;
+    }
+
+    .product-card p {
+        font-size: 14px;
+    }
+
+    .product-card .button-group {
+        position: static;
+        margin-top: 10px;
+        width: 100%;
+        justify-content: center;
+    }
+    .product-card .button-group button {
+        flex: 1;
+        padding: 0.8rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
 }
