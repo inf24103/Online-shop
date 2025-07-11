@@ -41,6 +41,19 @@
     <p id="edit-beschreibung">
       <!-- Hier wird die Beschreibung eingefügt -->
     </p>
+    <form id="share-form" onsubmit="freigabeHinzufuegen(event)">
+      <input type="text" id="benutzernameFreigabe" placeholder="Benutzername eingeben" required />
+      <select id="berechtigungsFreigabe">
+        <option value="lesen">Lesen</option>
+        <option value="schreiben">Schreiben</option>
+      </select>
+      <button type="submit">Hinzufügen</button>
+    </form>
+
+    <!--Liste für bereits angelegte Mitglieder-->
+    <div id="freigabe-liste">
+      <!--Wird befüllt-->
+    </div>
     <button class="settings-btn">
       <img src="#" alt="Settings" />
     </button>
@@ -48,6 +61,15 @@
   </div>
   <div style="test-align: right;">
     <button onclick="closeEditModal()">Schließen</button>
+  </div>
+</div>
+<div id="produkt-wunschlisten-modal" class="modal">
+  <div class="modal-content">
+    <h3>Wunschliste hinzurügen</h3>
+    <div id="wunschlisten-checkbox-liste">
+      <!--Hier werden Checkboxen eingefügt-->
+    </div>
+    <button onclick="schliesseProduktModal()">Schließen</button>
   </div>
 </div>
 </body>
