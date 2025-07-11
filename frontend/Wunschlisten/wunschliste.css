@@ -15,6 +15,56 @@ h1 {
     color: #333;
     text-align: center;
 }
+
+.freigabe-formular {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.freigabe-formular input,
+.freigabe-formular select {
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.freigabe-formular button {
+    padding: 6px 12px;
+    border-radius: 6px;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.freigabe-liste {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.freigabe-item select {
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.freigabe-item .icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.freigabe-item img {
+    width: 20px;
+    height: 20px;
+}
+
 .filter {
     display: flex;
     justify-content: center;
@@ -35,6 +85,23 @@ form#share-form {
     background-color: white;
     border-radius: 8px;
 }
+
+.icon-btn {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}
+
 input {
     padding: 10px;
     border: 1px solid #aaa;

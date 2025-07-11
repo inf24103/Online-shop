@@ -131,12 +131,25 @@ function bearbeiten(id) {
     document.getElementById("edit-modal").style.display = "block";
 
     //Lade geteilte Benutzer für diese Liste
-    fetch(`http://localhost:3000/api/wun/sharedusers?wunschlisteid=${id}`, {
+    fetch(`http://localhost:3000/api/wun/berechtigungen/${id}`, {
         credentials: "include"
     })
-    .then(res => res.json())
-    .then(data => zeigeFreigabe(data))
-    .catch(err => alert(err));
+        .then(async res => {
+            console.log("Status:", res.status);
+            const text = await res.text();
+            console.log("Antworttext:", text);
+
+            if (!res.ok) {
+                throw new Error(`Fehler: ${text}`);
+            }
+
+            return JSON.parse(text);
+        })
+        .then(data => zeigeFreigabe(data))
+        .catch(err => {
+            console.error(err);
+            alert("Fehler beim Laden der Freigabe");
+        });
 
 }
 
@@ -147,6 +160,7 @@ function closeEditModal() {
 
 async function freigabeHinzufuegen(event) {
     event.preventDefault();
+
     const benutzer = document.getElementById("benutzernameFreigabe").value.trim();
     const rechte = document.getElementById("berechtigungsFreigabe").value;
 
@@ -165,11 +179,16 @@ async function freigabeHinzufuegen(event) {
                 wunschlisteid: currentBearbeiteId
             })
         });
+        const text = await res.text();
+        console.log("Status: ", res.status);
+        console.log("Text: ", text)
 
         if(res.ok) {
             bearbeiten(currentBearbeiteId);
+        } else if(res.status === 400) {
+            alert("Benutzer nicht gefunden");
         } else {
-            alert("Fehler beim Teilen.");
+            alert("Feher!");
         }
 
     } catch (e) {
@@ -180,7 +199,7 @@ async function freigabeHinzufuegen(event) {
 async function berechtigungAendern(wunschlisteid, benutzername, neueBerechtigung) {
     try {
         const res = await fetch("http://localhost:3000/api/wun/authorize", {
-            method: "PUT",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
@@ -192,8 +211,13 @@ async function berechtigungAendern(wunschlisteid, benutzername, neueBerechtigung
             })
         });
 
-        if(!res.ok) {
-            alert("Fehler beim Aktualisieren der Berechtigung");
+        const text = await res.text();
+
+        if(res.status === 200) {
+            alert("Berechtigung erfolgreich geändert")
+        } else {
+            console.warn("Fehlertext: ", text);
+            alert("Fehler");
         }
 
     } catch (e) {
@@ -226,19 +250,30 @@ async function freigabeEntfernen(wunschlisteid, benutzername) {
 }
 
 function zeigeFreigabe(freigaben) {
-    const container = document.getElementById("freigaben-liste");
+    const container = document.getElementById("freigabe-liste");
     container.innerHTML = "";
 
     freigaben.forEach(f => {
         const item = document.createElement("div");
-        item.className = "freigabe-item";
+        const berechtigung = f.berechtigung;
+
+        //Drop Down Menü
+        let options = `
+            <option value="read" ${berechtigung === 'read' ? 'selected' : ''}>Lesen</option>
+            <option value="write" ${berechtigung === 'write' ? 'selected' : ''}>Schreiben</option>
+            <option value="owner" ${berechtigung === 'owner' ? 'selected' : ''} disabled>Owner</option>
+        `;
+
         item.innerHTML = `
             <span>${f.benutzername}</span>
             <select onchange="berechtigungAendern(${currentBearbeiteId}, '${f.benutzername}', this.value)">
-                <option value="read" ${f.berechtigung === 'read' ? 'selected' : ''}>Lesen</option>
-                <option value="write" ${f.berechtigung === 'write' ? 'selected' : ''}>Schreiben</option>
+                <option value="read" ${berechtigung === 'read' ? 'selected' : ''}>Lesen</option>
+                <option value="write" ${berechtigung === 'write' ? 'selected' : ''}>Schreiben</option>
+
             </select>
-            <button onclick="freigabeEntfernen(${currentBearbeiteId}, '${f.benutzername}')">Entfernen</button>
+            <button onclick="freigabeEntfernen(${currentBearbeiteId}, '${f.benutzername}')" class="icon-btn" title="Entfernen">
+                <img src="/pictures/muelleimer.png" alt="Löschen" class="icon-img">
+            </button>
         `;
         container.appendChild(item);
     });
@@ -256,11 +291,11 @@ function zeigeProduktZuWunschlistenModal(produktId) {
                 const resProdukte = await fetch("http://localhost:3000/api/wun/products", {
                     method: "POST",
                     credentials: "include",
-                    headers: { ContentType: "application/json" },
-                    body: JSON.stringify({wunschlisteid : w.wunschlisteid})
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ wunschlisteid : w.wunschlisteid})
                 });
-                const produkte = document.createElement("div");
-                const istDrin = produkte.some(p => p.productid === produktId);
+                const produkte = await resProdukte.json();
+                const istDrin = produkte.some(p => p.produktid === produktId);
 
                 const div = document.createElement("div");
                 div.innerHTML = `

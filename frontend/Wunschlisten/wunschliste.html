@@ -38,14 +38,14 @@
 <div id="edit-modal" class="modal">
   <div class="modal-content edit-modal-content">
     <h3 id="edit-title">Wunschliste bearbeiten</h3>
-    <p id="edit-beschreibung">
+    <div id="edit-beschreibung" style="margin-bottom: 12px; color: #444;">
       <!-- Hier wird die Beschreibung eingefügt -->
-    </p>
-    <form id="share-form" onsubmit="freigabeHinzufuegen(event)">
+    </div>
+    <form id="share-form" class="freigabe-formular" onsubmit="freigabeHinzufuegen(event)">
       <input type="text" id="benutzernameFreigabe" placeholder="Benutzername eingeben" required />
       <select id="berechtigungsFreigabe">
-        <option value="lesen">Lesen</option>
-        <option value="schreiben">Schreiben</option>
+        <option value="read">Lesen</option>
+        <option value="write">Schreiben</option>
       </select>
       <button type="submit">Hinzufügen</button>
     </form>
