@@ -1,0 +1,56 @@
+version: '2.0'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fitura_online-shop-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=db
+      - DB_USER=postgres
+      - DB_PASSWORD=1234
+      - DB_NAME=postgres
+      - DB_PORT=5432
+      - JWT_SECRET=secret_key
+      - GMAIL_USER=fituranoreply@gmail.com
+      - GMAIL_PASS=falschesPasswort
+      - TZ=Europe/Berlin
+    depends_on:
+      - db
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: fitura_online-shop-frontend
+    ports:
+      - "5000:5000"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=Europe/Berlin
+    restart: unless-stopped
+
+  db:
+    image: postgres:14-alpine
+    container_name: fitura_db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+      - TZ=Europe/Berlin
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

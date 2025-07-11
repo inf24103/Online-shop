@@ -2,23 +2,35 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../public/navbar.css">
-    <link rel="stylesheet" href="../public/page_layout.css">
-    <link rel="stylesheet" href="../public/footer.css">
-    <link rel="stylesheet" href="../LoginPage/loginstyle.css">
+    <link rel="stylesheet" href="/public/navbar.css">
+    <link rel="stylesheet" href="/public/page_layout.css">
+    <link rel="stylesheet" href="/public/footer.css">
+    <link rel="stylesheet" href="/LoginPage/loginstyle.css">
     <title>SignUp</title>
 </head>
 <body>
-<header>
-    <ul class="navbar">
-        <li><img class="logo" src="../pictures/fitura_logo.png" alt="logo"></li>
-        <li class="navitem"><a href="../LoginPage/loginpage.html">Sign in</a></li>
-        <li class="navitem"><a href="../SignUpPage/signup.html">Sign up</a></li>
-        <li class="navitem"><a href="../ProductPage/productpage.html">Products</a></li>
-        <li class="navitem"><a href="#about">About</a></li>
-        <li class="navitem"><a href="../user/index.html">Home</a></li>
-    </ul>
+<header class="navbar">
+    <div class="nav-inner">
+        <a href="/user/index.html" class="logo-link">
+            <img src="/pictures/fitura_logo.png" alt="logo" class="logo">
+        </a>
+
+        <nav class="nav-links">
+            <a href="/ProductPage/productpage.html" class="navitem">Products</a>
+            <a href="#Einkaufsliste" class="navitem icon-link" id="einkaufsliste">
+                <img src="/pictures/einkaufswagen.png">
+            </a>
+            <a href="/LoginPage/loginpage.html" class="navitem icon-link" id="account" title="Profil / Login">
+                <img src="/pictures/account_icon.png" alt="" class="account-icon">
+            </a>
+        </nav>
+    </div>
 </header>
+<!-- Sidebar – direkt unter </header> -->
+<aside id="sidebar" class="sidebar">
+    <button class="sidebar-close" aria-label="Schließen">&times;</button>
+    <ul id="sidebar-menu"></ul>
+</aside>
 <div class="login-form">
     <div class="section">
         <div class="content">
@@ -28,12 +40,13 @@
                 <input type="password" placeholder="Password" name="password" required>
                 <button id="button">Login</button>
             </form>
-            <p>You dont have an account? Klick <a href="../SignUpPage/signup.html">hier</a></p>
+            <p>You dont have an account? Klick <a href="/SignUpPage/signup.html">hier</a></p>
         </div>
         <div class="form-img">
-            <img src="../pictures/loginpage.png" alt="">
+            <img src="/pictures/loginpage.png" alt="">
         </div>
     </div>
 </div>
-<script src="../LoginPage/login.js"></script>
+<script src="/LoginPage/login.js"></script>
+<script src="/public/sidebar.js"></script>
 </body>

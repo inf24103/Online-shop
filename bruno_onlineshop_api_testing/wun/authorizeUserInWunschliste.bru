@@ -1,0 +1,19 @@
+meta {
+  name: authorizeUserInWunschliste
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:3000/api/wun/authorize
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "andererUserBenutzername": "2",
+    "berechtigung": "read",
+    "wunschlisteid": "1"
+  }
+}

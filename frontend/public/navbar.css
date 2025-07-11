@@ -1,29 +1,134 @@
 .navbar {
-    height: 90px;
+    background: #ffffff;
+    border-bottom: 1px solid #e4e4e4;
+}
+.nav-inner {
     width: 100%;
-    background-color: white;
+    height: 90px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
 }
+
+.icon-link img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+
+.logo {
+    height: 70px;
+}
+
+.logo-link {
+    display: inline-flex;
+    align-items: center;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
 .navitem {
-    display: inline-block;
-    margin-top: 30px;
-    margin-right: 40px;
-    float: right;
-}
-.navitem a {
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 24px;
+    font-size: 22px;
     color: rgb(111, 117, 111);
     text-decoration: none;
+    transition: color 0.2s;
 }
-.navitem a:hover {
-    color: black;
+
+.navitem img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    display: inline-block;
+    vertical-align: middle;
+    filter: grayscale(100%);
+    transition: 0.2s;
+}
+
+.navitem img:hover {
+    filter: none;
+}
+
+.navitem:hover {
+    color: #000;
+}
+
+.profile-btn {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: grayscale(100%);
+    transition: filter 0.2s;
+}
+
+.profile-btn:hover {
+    filter: none;
+}
+
+#account {
+    height: 30px;
+    width: auto;
+}
+
+#einkaufsliste {
+    height: 30px;
+    width: auto;
+}
+
+@media(max-width: 600px) {
+    .nav-links { gap: 24px; }
+}
+
+/*Sidebar*/
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: -260px;
+    width: 260px;
+    height: 100%;
+    background: #fff;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    transition: right 0.3s ease;
+    z-index: 1000;
+    padding: 30px 24px 40px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+/*Einblenden*/
+.sidebar.open{ right: 0; }
+.sidebar-close {
+    align-self: flex-end;
+    background: transparent;
+    border: none;
+    font-size: 32px;
+    line-height: 24px;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+#sidebar-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#sidebar-menu li {
+    margin: 18px 0;
+}
+
+#sidebar-menu a {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    color: #333;
     text-decoration: none;
-    font-size: 25px;
-}
-.logo {
-    float: left;
-    margin-left: 20px;
-    margin-top: 20px;
-    margin-right: 20px;
-    height: 70px;
+    transition: color 0.2s;
 }

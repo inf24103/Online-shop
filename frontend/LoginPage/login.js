@@ -14,14 +14,15 @@
                 const res = await fetch("http://localhost:3000/api/auth/login", {
                     method: "POST",
                     body: JSON.stringify(data),
-                    headers: {"Content-Type": "application/json"},
+                    credentials: "include",
+                    headers: {"Content-Type": "application/json"}
                 })
                 if(res.status === 401) {
                     alert("Benutzername oder Passwort ungültig");
                 }
                 if(res.status === 200) {
                     form.reset();
-                    window.location.href = "/Webshop/Online-shop/frontend/user/index.html";
+                    window.location.href = "../user/index.html";
                 }
             } catch (e) {
                 console.error(e);

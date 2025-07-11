@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User-Verwaltung</title>
+  <link rel="stylesheet" href="/Userverwaltung/userverwaltungstyle.css">
+    <link rel="stylesheet" href="/public/navbar.css">
+</head>
+<body>
+<header class="navbar">
+    <div class="nav-inner">
+        <a href="/user/index.html" class="logo-link">
+            <img src="/pictures/fitura_logo.png" alt="logo" class="logo">
+        </a>
+
+        <nav class="nav-links">
+            <a href="/ProductPage/productpage.html" class="navitem">Products</a>
+            <a href="#Einkaufsliste" class="navitem icon-link" id="einkaufsliste">
+                <img src="/pictures/einkaufswagen.png">
+            </a>
+            <a href="/LoginPage/loginpage.html" class="navitem icon-link" id="account" title="Profil / Login">
+                <img src="/pictures/account_icon.png" alt="" class="account-icon">
+            </a>
+        </nav>
+    </div>
+</header>
+<!-- Sidebar – direkt unter </header> -->
+<aside id="sidebar" class="sidebar">
+    <button class="sidebar-close" aria-label="Schließen">&times;</button>
+    <ul id="sidebar-menu"></ul>
+</aside>
+
+<h1>User-Verwaltung</h1>
+<div class="filter">
+  <form method="post" action="">
+    <input type="number" name="search" placeholder="User-ID">
+    <button type="submit">Filter</button>
+  </form>
+</div>
+<div class="userlist">
+
+</div>
+</body>
+<script src="/Userverwaltung/userverwaltung.js"></script>
+<script src="/public/sidebar.js"></script>
+</html>
