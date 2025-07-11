@@ -19,7 +19,6 @@
                 <input type="number" id="menge" placeholder="Menge" required/>
                 <input type="text" id="category" placeholder="Kategorie" required/>
                 <input type="text" id="image" placeholder="Bild-URL (optional)"/>
-                <input type="text" id="short-desc" placeholder="Kurzbeschreibung"/>
                 <textarea id="description" placeholder="Beschreibung"></textarea>
                 <button type="submit">Produkt speichern</button>
             </form>
@@ -29,6 +28,8 @@
             <form id="filter-form" onsubmit="return false;">
                 <input type="text" id="filter-name" placeholder="Filtern nach Name"/>
                 <input type="text" id="filter-category" placeholder="Kategorie"/>
+                <input type="number" id="filter-maxpreis" placeholder="Maximalpreis (€)" step="0.01" />
+                <input type="number" id="filter-minmenge" placeholder="Mindestmenge" />
                 <select id="filter-sort">
                     <option value="">Sortieren nach</option>
                     <option value="preis_asc">Preis aufsteigend</option>

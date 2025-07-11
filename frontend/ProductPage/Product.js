@@ -14,7 +14,7 @@ let currentCart = [];
 
 let scrollPosition = 0;
 
-const IMAGE_BASE_URL = 'http://localhost:5000/';
+const IMAGE_BASE_URL = 'http://localhost:3000/';
 
 function renderProducts(productList) {
     const container = document.querySelector('.product-card');
