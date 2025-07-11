@@ -24,6 +24,8 @@
     <p>Lade Wunschlisten...</p>
   </div>
 </div>
+
+<!--Wunschliste erstellen-->
 <div id="modal" class="modal">
   <div class="modal-content">
     <h3>Neue Wunschliste erstellen</h3>
@@ -35,6 +37,10 @@
     </div>
   </div>
 </div>
+
+
+<!--Wunschliste bearbeiten-->
+
 <div id="edit-modal" class="modal">
   <div class="modal-content edit-modal-content">
     <h3 id="edit-title">Wunschliste bearbeiten</h3>
@@ -59,10 +65,15 @@
   <div style="test-align: right;">
     <button onclick="closeEditModal()">Schließen</button>
   </div>
+  <div id="produkte-liste" class="produkte-grid">
+    <!--Hier werden die Produkte geladen-->
+  </div>
 </div>
+
+
 <div id="produkt-wunschlisten-modal" class="modal">
   <div class="modal-content">
-    <h3>Wunschliste hinzurügen</h3>
+    <h3>Wunschliste hinzufügen</h3>
     <div id="wunschlisten-checkbox-liste">
       <!--Hier werden Checkboxen eingefügt-->
     </div>
@@ -71,4 +82,5 @@
 </div>
 </body>
 <script src="/Wunschlisten/wunschliste.js"></script>
+<script src="/Wunschlisten/produkte_wunschliste.js"></script>
 </html>

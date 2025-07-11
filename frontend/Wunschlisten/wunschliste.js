@@ -149,7 +149,7 @@ function bearbeiten(id) {
             console.error(err);
             alert("Fehler beim Laden der Freigabe");
         });
-
+    zeigeProdukteDerWunschliste(id);
 }
 
 function closeEditModal() {
@@ -288,7 +288,7 @@ function zeigeProduktZuWunschlistenModal(produktId) {
         .then(async listen => {
             for(const w of listen) {
                 const resProdukte = await fetch("http://localhost:3000/api/wun/products", {
-                    method: "POST",
+                    method: "GET",
                     credentials: "include",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ wunschlisteid : w.wunschlisteid})
