@@ -28,10 +28,6 @@ export const searchProdukte = async (name, maxPreis, minMenge, kategorie, sortie
         }
     }
 
-    console.log(sortierungArray);
-    console.log(orderByClause);
-
-
     const sql = `
         SELECT * FROM Produkt
         WHERE

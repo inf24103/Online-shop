@@ -8,7 +8,7 @@ export const createProdukt = async (produktname, preis, menge, kategorie, beschr
 
     const allProducts = await getAllProdukte()
     const productNr = allProducts.length
-    const bildPfad = `productBilder/${safeKategorie}/${productNr}.${bildFormat}`;
+    const bildPfad = `${safeKategorie}/${productNr}.${bildFormat}`;
 
     const sql = `
         INSERT INTO Produkt (produktname, preis, menge, kategorie, beschreibung, bild)

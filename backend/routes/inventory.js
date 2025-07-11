@@ -60,16 +60,38 @@ router.get('/product/search', async (req, res) => {
         res.status(200).json(result);
     } catch (error) {
         console.error('Fehler bei der Produktsuche:', error);
-        res.status(500).json({ error: 'Interner Serverfehler' });
+        res.status(500).json({error: 'Interner Serverfehler'});
     }
 });
 
-router.post('/product/new', authenticateTokenAndAuthorizeRole(['admin']), upload.single("bild"), async (req, res) => {
+router.post('/product/new', authenticateTokenAndAuthorizeRole(['admin']), (req, res, next) => {
+    upload.single("bild")(req, res, function (err) {
+        if (err instanceof multer.MulterError || err instanceof Error) {
+            console.log("Error bei ermittlung des Bidls:",err);
+            return res.status(400).json({message: "Interner Serverfehler. Vermutlich falsches Bildformat. Nur Bildformate (jpg, png, webp) sind erlaubt."});
+        }
+        next();
+    });
+}, async (req, res) => {
     try {
-        const {produktname, preis, verfuegbareMenge, kategorie, beschreibung} = req.body;
+        let {produktname, preis, verfuegbareMenge, kategorie, beschreibung} = req.body;
         if (!produktname || !preis || !verfuegbareMenge || !kategorie || !beschreibung) {
             return res.status(400).json({
                 error: 'All fields are required: produktname, preis, menge, kategorie, beschreibung'
+            });
+        }
+        preis = parseInt(preis);
+        verfuegbareMenge = parseInt(verfuegbareMenge);
+        if (isNaN(preis)) {
+            return res.status(403).json({message: "Ungültiger Preis"})
+        }
+        if (isNaN(verfuegbareMenge)) {
+            return res.status(403).json({message: "Ungültige Menge"})
+        }
+        const erlaubteKategorien = ["supplement", "trainingsgerät", "fitnesszubehör", "sportbekleidung"];
+        if (!erlaubteKategorien.includes(kategorie.toLowerCase())) {
+            return res.status(400).json({
+                error: `Ungültige Kategorie. Erlaubte Kategorien sind: ${erlaubteKategorien.join(", ")}`
             });
         }
         if (!req.file) {
@@ -88,17 +110,14 @@ router.post('/product/new', authenticateTokenAndAuthorizeRole(['admin']), upload
             bildFormat
         );
 
-        const produktid = produkt[0].produktid;
-        const bildPfad = produkt[0].bild;
+        const absoluterBildPfad = "productBilder/"+produkt[0].bild;
+        const zielPfad = path.resolve(absoluterBildPfad);
+        console.log(zielPfad);
+        console.log(absoluterBildPfad);
+        fs.mkdirSync(path.dirname(zielPfad), { recursive: true });
+        fs.renameSync(req.file.path, zielPfad);
 
-        fs.mkdirSync(path.dirname(bildPfad), {recursive: true});
-        fs.renameSync(req.file.path, bildPfad);
-
-
-        return res.status(201).json({
-            message: req.file ? "Produkt mit Bild erfolgreich erstellt" : "Produkt ohne Bild erfolgreich erstellt",
-            produktId: produktid
-        });
+        return res.send(produkt)
     } catch (error) {
         console.error('Fehler bei erstellen des Produktes:', error);
         res.status(500).json({message: "Interner Serverfehler"});
