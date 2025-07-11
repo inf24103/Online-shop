@@ -173,7 +173,7 @@ async function removeItemFromCart(produktid) {
     const userToken = localStorage.getItem('adminToken');
     const currentCartItems = await fetchCart();
     const removedItem = currentCartItems.find(item => item.produktid === produktid);
-    const removedQuantity = removedItem ? removedItem.anzahl : 1; // Nehme an, wenn gefunden, nimm die anzahl
+    const removedQuantity = removedItem ? removedItem.anzahl : 1;
 
     if (userToken) {
         if (!confirm("Möchten Sie dieses Produkt wirklich aus dem Warenkorb entfernen?")) {
@@ -275,16 +275,11 @@ async function processCheckout() {
             const result = await response.json();
             alert("Bestellung erfolgreich aufgegeben! Vielen Dank für Ihren Einkauf.");
 
-            // Beispiel für Backend-Clear:
-            // await fetch('http://localhost:3000/api/inv/warenkorb/clear', { method: 'DELETE', headers: { 'Authorization': `Bearer ${userToken}` }});
-            // Oder den localStorage für den Zähler leeren:
             localStorage.removeItem("cart");
 
             renderCart();
             updateCartCount();
 
-            // Optional: Weiterleitung zur Bestellbestätigungsseite
-            // window.location.href = `../order-confirmation.html?orderId=${result.orderId}`;
 
         } catch (error) {
             console.error("Fehler beim Abschließen der Bestellung:", error);
