@@ -7,7 +7,27 @@ export const getProduktById = async (produktid) => {
 };
 
 
-export const searchProdukte = async (name, maxPreis, minMenge, kategorie, sortierung) => {
+export const searchProdukte = async (name, maxPreis, minMenge, kategorie, sortierungArray) => {
+    const sortierMapping = {
+        "preis_asc": "preis ASC",
+        "preis_desc": "preis DESC",
+        "name_asc": "produktname ASC",
+        "name_desc": "produktname DESC"
+    };
+
+    // Default: kein ORDER BY
+    let orderByClause = "";
+
+    if (Array.isArray(sortierungArray) && sortierungArray.length > 0) {
+        const sqlParts = sortierungArray
+            .map(s => sortierMapping[s])
+            .filter(Boolean); // entfernt undefined, falls falscher Wert übergeben wurde
+
+        if (sqlParts.length > 0) {
+            orderByClause = "ORDER BY " + sqlParts.join(", ");
+        }
+    }
+
     const sql = `
         SELECT * FROM Produkt
         WHERE
@@ -15,11 +35,9 @@ export const searchProdukte = async (name, maxPreis, minMenge, kategorie, sortie
             ($2::numeric IS NULL OR preis <= $2) AND
             ($3::integer IS NULL OR menge >= $3) AND
             ($4::text IS NULL OR kategorie = $4)
-        ORDER BY
-            CASE WHEN $5 = 'preis_asc' THEN preis END ASC,
-            CASE WHEN $5 = 'preis_desc' THEN preis END DESC;
+            ${orderByClause};
     `;
-    return await query(sql, [name, maxPreis, minMenge, kategorie, sortierung]);
+    return await query(sql, [name, maxPreis, minMenge, kategorie]);
 };
 
 /* Alle Produkte anzeigen */

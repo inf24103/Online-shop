@@ -23,7 +23,7 @@ export const createProduktTable = async () => {
     const sql = `
     CREATE TABLE IF NOT EXISTS Produkt (
       produktid SERIAL PRIMARY KEY,
-      produktname VARCHAR(30),
+      produktname VARCHAR(300),
       preis DECIMAL(10,2),
       menge INTEGER,
       bild VARCHAR(500),

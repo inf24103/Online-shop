@@ -6,6 +6,7 @@ import {
     updateProdukt
 } from "../datenbank/produkt_verwaltung/produktDML.js";
 import express from "express";
+import multer from "multer";
 import {
     getAllProdukte,
     getProduktById, getProdukteByWarenkorbid,
@@ -17,8 +18,21 @@ import {mail} from "../mailService/mailservice.js";
 import {getUserById} from "../datenbank/user_verwaltung/userDRL.js";
 import {generateOrderConfirmationTemplate} from "../mailService/orderConfirmation.js";
 import {getEinkaeufeByBenutzer, getProdukteByEinkauf} from "../datenbank/einkauf_verwaltung/einkaufDRL.js";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
 const router = express.Router();
+const upload = multer({
+    dest: "tmp/",
+    fileFilter: (req, file, cb) => {
+        const allowed = ["image/jpeg", "image/png", "image/webp"];
+        if (allowed.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error("Nur Bildformate (jpg, png, webp) sind erlaubt!"), false);
+        }
+    }
+});
 
 // export our router to be mounted by the parent application
 export default router
@@ -29,14 +43,20 @@ router.get('/product/all', async (req, res) => {
 });
 
 router.get('/product/search', async (req, res) => {
-    let { name = null, maxPreis = null, minMenge = null, kategorie = null, sortierung = null } = req.query;
+    let {name = null, maxPreis = null, minMenge = null, kategorie = null, sortierung = null} = req.query;
     name = name === "" ? null : name;
     maxPreis = maxPreis === "" ? null : maxPreis;
     minMenge = minMenge === "" ? null : minMenge;
     kategorie = kategorie === "" ? null : kategorie;
     sortierung = sortierung === "" ? null : sortierung;
+
+    let sortierungArray = [];
+    if (typeof sortierung === "string" && sortierung !== "") {
+        sortierungArray = sortierung.split(",").map(s => s.trim());
+    }
+
     try {
-        const result = await searchProdukte(name, maxPreis, minMenge, kategorie, sortierung);
+        const result = await searchProdukte(name, maxPreis, minMenge, kategorie, sortierungArray);
         res.status(200).json(result);
     } catch (error) {
         console.error('Fehler bei der Produktsuche:', error);
@@ -44,17 +64,64 @@ router.get('/product/search', async (req, res) => {
     }
 });
 
-router.post('/product/new', authenticateTokenAndAuthorizeRole(['admin']), async (req, res) => {
-    const {produktname, preis, verfuegbareMenge, bild, kategorie, beschreibung} = req.body;
-    if (!produktname || !preis || !verfuegbareMenge || !bild || !kategorie || !beschreibung) {
-        return res.status(400).json({
-            error: 'All fields are required: produktname, preis, menge, bild, kategorie, beschreibung'
-        });
+router.post('/product/new', authenticateTokenAndAuthorizeRole(['admin']), (req, res, next) => {
+    upload.single("bild")(req, res, function (err) {
+        if (err instanceof multer.MulterError || err instanceof Error) {
+            console.log("Error bei ermittlung des Bidls:",err);
+            return res.status(400).json({message: "Interner Serverfehler. Vermutlich falsches Bildformat. Nur Bildformate (jpg, png, webp) sind erlaubt."});
+        }
+        next();
+    });
+}, async (req, res) => {
+    try {
+        let {produktname, preis, verfuegbareMenge, kategorie, beschreibung} = req.body;
+        if (!produktname || !preis || !verfuegbareMenge || !kategorie || !beschreibung) {
+            return res.status(400).json({
+                error: 'All fields are required: produktname, preis, menge, kategorie, beschreibung'
+            });
+        }
+        preis = parseInt(preis);
+        verfuegbareMenge = parseInt(verfuegbareMenge);
+        if (isNaN(preis)) {
+            return res.status(403).json({message: "Ungültiger Preis"})
+        }
+        if (isNaN(verfuegbareMenge)) {
+            return res.status(403).json({message: "Ungültige Menge"})
+        }
+        const erlaubteKategorien = ["supplement", "trainingsgerät", "fitnesszubehör", "sportbekleidung"];
+        if (!erlaubteKategorien.includes(kategorie.toLowerCase())) {
+            return res.status(400).json({
+                error: `Ungültige Kategorie. Erlaubte Kategorien sind: ${erlaubteKategorien.join(", ")}`
+            });
+        }
+        if (!req.file) {
+            return res.status(400).json({
+                error: 'A bild is required'
+            });
+        }
+        const bildFormat = path.extname(req.file.originalname).replace(".", "") || "jpg";
+
+        const produkt = await createProdukt(
+            produktname,
+            parseFloat(preis),
+            parseInt(verfuegbareMenge),
+            kategorie,
+            beschreibung,
+            bildFormat
+        );
+
+        const absoluterBildPfad = "productBilder/"+produkt[0].bild;
+        const zielPfad = path.resolve(absoluterBildPfad);
+        console.log(zielPfad);
+        console.log(absoluterBildPfad);
+        fs.mkdirSync(path.dirname(zielPfad), { recursive: true });
+        fs.renameSync(req.file.path, zielPfad);
+
+        return res.send(produkt)
+    } catch (error) {
+        console.error('Fehler bei erstellen des Produktes:', error);
+        res.status(500).json({message: "Interner Serverfehler"});
     }
-
-    const product = await createProdukt(produktname, preis, verfuegbareMenge, kategorie, beschreibung);
-
-    return res.status(200).json(product)
 })
 
 router.get('/product/:id', async (req, res) => {
@@ -210,10 +277,10 @@ router.get('/warenkorb/my', authenticateToken, async (req, res) => {
 
     try {
         let warenkorb = await getWarenkorbByBenutzerId(id);
-        if(!warenkorb === undefined) {
+        if (!warenkorb === undefined) {
             await createWarenkorb(id)
             warenkorb = await getWarenkorbByBenutzerId(id);
-            if(warenkorb === undefined) {
+            if (warenkorb === undefined) {
                 return res.status(500).json({message: "Warenkorb konnte nicht für den Benutzer erstellt werden"});
             }
         }
@@ -232,10 +299,10 @@ router.get('/warenkorb/myproducts', authenticateToken, async (req, res) => {
 
     try {
         let warenkorb = await getWarenkorbByBenutzerId(id);
-        if(!warenkorb === undefined) {
+        if (!warenkorb === undefined) {
             await createWarenkorb(id)
             warenkorb = await getWarenkorbByBenutzerId(id);
-            if(warenkorb === undefined) {
+            if (warenkorb === undefined) {
                 return res.status(500).json({message: "Warenkorb konnte nicht für den Benutzer erstellt werden"});
             }
         }
@@ -258,7 +325,7 @@ router.get("/kaeufe/kaufen", authenticateToken, async (req, res) => {
             return res.status(400).json({message: "No products in the cart"});
         }
         for (let i = 0; i < products.length; i++) {
-            if(products[i].menge < products[i].anzahl){
+            if (products[i].menge < products[i].anzahl) {
                 return res.status(400).json({message: "Es können nur noch: " + products[i].menge + " von " + products[i].produktname + " gekauft werden. Bitte reduziere die Anzahl der zu kaufenden Produkte im Warenkorb"});
             }
         }

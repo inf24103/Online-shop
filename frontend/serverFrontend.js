@@ -20,7 +20,7 @@ morgan.token('timestamp', function () {
     return `${pad(now.getDate())}.${pad(now.getMonth() + 1)}.${now.getFullYear()} ` +
         `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
 });
-const customFormat = ':source :method :url :status :res[content-length] - :response-time ms [:timestamp]';
+const customFormat = '[:timestamp] :source :method :url :status :res[content-length] - :response-time ms';
 app.use(morgan(customFormat));
 
 // Globales abfangen unbehandelter Fehler

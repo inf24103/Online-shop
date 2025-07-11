@@ -80,6 +80,8 @@ router.post("/", authenticateTokenAndAuthorizeRole(['admin']), async (req, res) 
                 }
             }
             return res.status(403).json(false);
+        } else {
+            res.send(false)
         }
     } else {
         res.status(400).json({message: "Unknown ressourceArt"})

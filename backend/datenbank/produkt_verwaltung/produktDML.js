@@ -1,12 +1,20 @@
 import {query} from '../index.js';
+import {getAllProdukte} from "./produktDRL.js";
 
 /* Produkt erstellen */
-export const createProdukt = async (produktname, preis, menge, kategorie, beschreibung, bild) => {
+export const createProdukt = async (produktname, preis, menge, kategorie, beschreibung, bildFormat) => {
+    // Kategorie säubern
+    const safeKategorie = kategorie.replace(/[\/\\:*?"<>|]/g, '').trim().toLowerCase();
+
+    const allProducts = await getAllProdukte()
+    const productNr = allProducts.length
+    const bildPfad = `${safeKategorie}/${productNr}.${bildFormat}`;
+
     const sql = `
         INSERT INTO Produkt (produktname, preis, menge, kategorie, beschreibung, bild)
         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;
     `;
-    return await query(sql, [produktname, preis, menge, kategorie, beschreibung, bild]);
+    return await query(sql, [produktname, preis, menge, kategorie, beschreibung, bildPfad]);
 };
 
 /* Produkt löschen */
