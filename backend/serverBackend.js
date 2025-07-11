@@ -579,8 +579,189 @@ async function createSeedData() {
         14,
         "Trainingsgerät",
         "Hersteller: YOLEO. Multifunktionale Bank mit Neigungsoptionen für Oberkörper-Workouts. Ideal für kleine Trainingsbereiche.",
+        "webp"
+    );
+
+    await createProdukt(
+        "Optimum Nutrition Gold Standard Whey",
+        29.99,
+        100,
+        "Supplement",
+        "Hersteller: Optimum Nutrition. Hochwertiges Molkenproteinpulver mit 24g Eiweiß pro Portion – ideal zur Unterstützung des Muskelaufbaus nach dem Training.",
         "jpg"
     );
+
+    await createProdukt(
+        "MyProtein Impact Whey Protein Vanille",
+        24.95,
+        120,
+        "Supplement",
+        "Hersteller: MyProtein. Whey-Konzentrat mit 21g Protein pro Portion – schnell verdaulich, in vielen Geschmacksrichtungen erhältlich.",
+        "jpg"
+    );
+
+    await createProdukt(
+        "ESN Designer Whey Protein Erdbeere",
+        32.90,
+        90,
+        "Supplement",
+        "Hersteller: ESN. Deutsches Premium-Whey mit hoher biologischer Wertigkeit – ideal zur Eiweißversorgung nach dem Training.",
+        "webp"
+    );
+
+    await createProdukt(
+        "Bulk Powders Creatine Monohydrate",
+        18.99,
+        150,
+        "Supplement",
+        "Hersteller: Bulk. Reines Kreatinmonohydrat zur Leistungssteigerung bei Schnellkrafttraining – geschmacksneutral, mikronisiert.",
+        "webp"
+    );
+
+    await createProdukt(
+        "Foodspring Protein Bar Chocolate Brownie",
+        27.80,
+        200,
+        "Supplement",
+        "Hersteller: Foodspring. Eiweißriegel mit 20g Protein pro Stück – perfekt als Snack nach dem Training oder zwischendurch.",
+        "webp"
+    );
+
+    await createProdukt(
+        "ZEC+ Creatine Stack 500g",
+        34.95,
+        75,
+        "Supplement",
+        "Hersteller: ZEC+. Kombination aus Kreatin-Monohydrat und Transportmatrix – verbessert Schnellkraft und Leistungsfähigkeit.",
+        "webp"
+    );
+
+    await createProdukt(
+        "Bodylab24 Multivitamin Komplex",
+        16.90,
+        180,
+        "Supplement",
+        "Hersteller: Bodylab24. Hochdosierte Multivitamin-Kapseln mit 23 Mikronährstoffen – unterstützt Immunsystem & Energielevel.",
+        "jpg"
+    );
+
+    await createProdukt(
+        "Weider Mega Mass 4000",
+        49.95,
+        60,
+        "Supplement",
+        "Hersteller: Weider. Kalorienreicher Weight Gainer mit Kohlenhydraten und Protein – ideal für Hardgainer und Masseaufbau.",
+        "webp"
+    );
+
+    await createProdukt(
+        "IronMaxx 100% Casein Protein",
+        38.50,
+        70,
+        "Supplement",
+        "Hersteller: IronMaxx. Langsam verdauliches Eiweiß – ideal für die Nacht oder längere Pausen zwischen den Mahlzeiten.",
+        "jpg"
+    );
+
+    await createProdukt(
+        "Mammut Glutamin Powder",
+        22.30,
+        110,
+        "Supplement",
+        "Hersteller: Mammut Nutrition. L-Glutamin-Pulver zur Regeneration und Immunsystemunterstützung – geschmacksneutral.",
+        "jpg"
+    );
+
+    await createProdukt(
+        "MyProtein Zink & Magnesium Kapseln",
+        14.25,
+        150,
+        "Supplement",
+        "Hersteller: MyProtein. Nahrungsergänzung mit Zink, Magnesium und Vitamin B6 – trägt zu Muskelfunktion und Regeneration bei.",
+        "webp"
+    );
+
+    await createProdukt(
+        "BPN Flight Pre-Workout Booster",
+        42.90,
+        50,
+        "Supplement",
+        "Hersteller: Bare Performance Nutrition. Starker Pre-Workout mit Koffein, Beta-Alanin & L-Citrullin – für maximale Trainingsleistung.",
+        "jpg"
+    );
+
+    await createProdukt(
+        "GN Laboratories Arginin Fusion",
+        29.90,
+        85,
+        "Supplement",
+        "Hersteller: GN Labs. Arginin-Komplex zur Förderung der Durchblutung und Leistungssteigerung beim Training.",
+        "jpg"
+    );
+
+    await createProdukt(
+        "Olimp BCAA Xplode Powder",
+        28.50,
+        100,
+        "Supplement",
+        "Hersteller: Olimp. Hochdosiertes BCAA-Pulver mit 6g verzweigtkettigen Aminosäuren – fruchtiger Geschmack, ideal intra-workout.",
+        "jpg"
+    );
+
+    await createProdukt(
+        "BioTech USA Iso Whey Zero",
+        36.95,
+        90,
+        "Supplement",
+        "Hersteller: BioTech USA. Laktosefreies Whey Isolat mit extrem hohem Eiweißgehalt – ideal für Diät- und Definitionsphasen.",
+        "webp"
+    );
+
+    await createProdukt(
+        "Vit4ever Omega-3 Hochdosiert",
+        19.95,
+        140,
+        "Supplement",
+        "Hersteller: Vit4ever. Hochreines Omega-3-Öl mit 2000mg EPA/DHA pro Tagesdosis – zur Unterstützung von Herz und Gehirn.",
+        "webp"
+    );
+
+    await createProdukt(
+        "Scitec Nutrition 100% Whey Professional",
+        39.75,
+        80,
+        "Supplement",
+        "Hersteller: Scitec Nutrition. Proteinmischung mit Enzymkomplex für bessere Verwertung – cremiger Geschmack, leicht löslich.",
+        "jpg"
+    );
+
+    await createProdukt(
+        "Body Attack Power Weight Gainer",
+        44.90,
+        65,
+        "Supplement",
+        "Hersteller: Body Attack. Gainer mit hochwertigem Eiweiß und komplexen Kohlenhydraten – ideal zum Muskelaufbau.",
+        "jpg"
+    );
+
+    await createProdukt(
+        "ESN Crank Pump Pro Pre-Workout",
+        36.80,
+        60,
+        "Supplement",
+        "Hersteller: ESN. Koffeinfreier Pre-Workout Booster für maximalen Pump – mit Citrullin, Arginin und Glycerol.",
+        "webp"
+    );
+
+    await createProdukt(
+        "Rule One Proteins R1 Whey Blend",
+        42.50,
+        70,
+        "Supplement",
+        "Hersteller: Rule One. Kombination aus Whey-Isolat, -Konzentrat und -Hydrolysat – schnelle Eiweißversorgung für Sportler.",
+        "webp"
+    );
+
 }
 
 async function createAdminAccount() {
