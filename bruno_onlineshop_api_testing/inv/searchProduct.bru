@@ -5,14 +5,14 @@ meta {
 }
 
 get {
-  url: http://localhost:3000/api/inv/product/search/?sortierung=preis_asc,name_desc
+  url: http://localhost:3000/api/inv/product/search/?sortierung=preis_asc,name_desc&minMenge=150
   body: none
   auth: inherit
 }
 
 params:query {
   sortierung: preis_asc,name_desc
-  ~minMenge: 150
+  minMenge: 150
   ~maxPreis: 1000
   ~kategorie: Accessoires
   ~name: sdfg
