@@ -60,6 +60,27 @@ h1 {
     cursor: pointer;
 }
 
+#share-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-schwarz {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type="text"], select {
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
 .freigabe-item img {
     width: 20px;
     height: 20px;

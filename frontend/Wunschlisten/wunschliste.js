@@ -22,6 +22,7 @@ async function loadWunschlisten() {
                     <div class="wunschliste-card" data-id="${w.wunschlisteid}" data-beschreibung="${encodeURIComponent(w.beschreibung)}">
                         <h3>${w.wunschlistename}</h3>
                         <div class="actions">
+                            <button onclick="bearbeiten(${w.wunschlisteid})"><img src="/pictures/settings.png" alt="Bearbeiten"></button>
                             <button onclick="loeschen(${w.wunschlisteid})"><img src="/pictures/muelleimer.png" alt="Löschen"></button>
                         </div>
                     </div>`;
