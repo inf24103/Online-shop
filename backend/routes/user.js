@@ -12,10 +12,13 @@ import {
     getWarenkorbByBenutzerId
 } from "../datenbank/produkt_verwaltung/produktDRL.js";
 import {deleteEinkaeufeByBenutzer} from "../datenbank/einkauf_verwaltung/einkaufDML.js";
-import {getEigeneWunschlistenByBenutzerId} from "../datenbank/wunschliste_verwaltung/wunschlisteDRL.js";
+import {
+    getEigeneWunschlistenByBenutzerId,
+    getFremdeWunschlistenByBenutzer
+} from "../datenbank/wunschliste_verwaltung/wunschlisteDRL.js";
 import {
     deleteAllPermissionsFromWunschliste,
-    deleteAllProductsFromWunschliste, deleteWunschliste
+    deleteAllProductsFromWunschliste, deleteWunschliste, removeBenutzer
 } from "../datenbank/wunschliste_verwaltung/wunschlisteDML.js";
 
 const router = express.Router();
@@ -70,6 +73,11 @@ router.delete('/:id', authenticateTokenAndAuthorizeRole(['admin']), async (req, 
             await deleteAllProductsFromWunschliste(wischlistid);
             await deleteAllPermissionsFromWunschliste(wischlistid);
             await deleteWunschliste(wischlistid);
+        }
+        const fremdeWishlist = await getFremdeWunschlistenByBenutzer(userid);
+        for (let i = 0; i < fremdeWishlist.length; i++) {
+            const wischlistid = fremdeWishlist[i].wunschlisteid;
+            await removeBenutzer(wischlistid, userid);
         }
         await deleteAllProductsInWarenkorb(warenkorbid);
         await deleteWarenkorb(userid);

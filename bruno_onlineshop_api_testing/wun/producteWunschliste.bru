@@ -1,11 +1,11 @@
 meta {
-  name: deleteWishlist
+  name: producteWunschliste
   type: http
-  seq: 6
+  seq: 9
 }
 
-delete {
-  url: http://localhost:3000/api/wun/delete
+get {
+  url: http://localhost:3000/api/wun/products
   body: json
   auth: inherit
 }

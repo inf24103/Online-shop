@@ -1,17 +1,6 @@
-version: '1.0'
+version: '2.0'
 
 services:
-  db:
-    image: postgres:14-alpine
-    container_name: fitura_db
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_PASSWORD=1234
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
-
   backend:
     build:
       context: ./backend
@@ -28,11 +17,11 @@ services:
       - JWT_SECRET=secret_key
       - GMAIL_USER=fituranoreply@gmail.com
       - GMAIL_PASS=falschesPasswort
+      - TZ=Europe/Berlin
     depends_on:
       - db
     volumes:
-      - ./:/backend
-      - /backend/node_modules
+      - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
 
   frontend:
@@ -43,8 +32,24 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ./frontend:/frontend
-      - /frontend/node_modules
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=Europe/Berlin
+    restart: unless-stopped
+
+  db:
+    image: postgres:14-alpine
+    container_name: fitura_db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+      - TZ=Europe/Berlin
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
 
 volumes:

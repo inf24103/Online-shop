@@ -7,16 +7,17 @@ import {
     deleteAllPermissionsFromWunschliste,
     deleteAllProductsFromWunschliste,
     deleteProduktFromWunschliste,
-    deleteWunschliste,
+    deleteWunschliste, removeBenutzer,
     updateBerechtigung
 } from "../datenbank/wunschliste_verwaltung/wunschlisteDML.js";
-import {getUserByUsername} from "../datenbank/user_verwaltung/userDRL.js";
+import {getUserById, getUserByUsername} from "../datenbank/user_verwaltung/userDRL.js";
 import {
     getAlleWunschlistenByBenutzer,
     getBerechtigungenByWunschlisteId,
     getEigeneWunschlistenByBenutzerId, getFremdeWunschlistenByBenutzer, getProdukteByWunschliste
 } from "../datenbank/wunschliste_verwaltung/wunschlisteDRL.js";
 import {getProduktById} from "../datenbank/produkt_verwaltung/produktDRL.js";
+import user from "./user.js";
 
 const router = express.Router();
 
@@ -98,6 +99,128 @@ router.post("/authorize", authenticateToken, async (req, res) => {
         await addBerechtigung(wunschlisteid, user2[0].benutzerid, berechtigung);
 
         return res.status(200).json({message: "Berechtigung erfolgreich hinzugefügt"});
+    } catch (err) {
+        console.log("error creating wishlist: \n", err);
+        return res.status(500).json({message: "Internal Server Error"});
+    }
+});
+
+router.delete("/removeUser", authenticateToken, async (req, res) => {
+    const userid = req.jwtpayload.userid;
+    try {
+        let {andererUserBenutzername, wunschlisteid} = req.body;
+        wunschlisteid = parseInt(wunschlisteid);
+        if (!andererUserBenutzername || !wunschlisteid) {
+            return res.status(400).json({
+                error: 'All fields are required: andererUserID, wunschlisteid'
+            });
+        }
+
+        const user2 = await getUserByUsername(andererUserBenutzername);
+        if (user2.length === 0) {
+            return res.status(400).json({message: "Benutzer nicht gefunden"});
+        }
+
+        const wunschlisten = await getEigeneWunschlistenByBenutzerId(userid);
+        let found = false;
+        for (let i = 0; i < wunschlisten.length; i++) {
+            if (wunschlisten[i].wunschlisteid === wunschlisteid) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            return res.status(403).json({message: "Zugriff auf Wunschliste verweigert"});
+        }
+
+        if (user2[0].benutzerid === userid) {
+            return res.status(400).json({message: "Man kann ich selbst nicht entfernen"})
+        }
+
+        const berechtigungenWunschliste = await getBerechtigungenByWunschlisteId(wunschlisteid)
+
+        found = false;
+        for (let i = 0; i < berechtigungenWunschliste.length; i++) {
+            if (berechtigungenWunschliste[i].benutzerid === user2[0].benutzerid) {
+                found = true;
+                break;
+            }
+
+        }
+        if (found) {
+            await removeBenutzer(wunschlisteid, user2[0].benutzerid);
+            return res.status(200).json({message: "Benutzer von der Wunschliste entfernt"});
+        }
+
+        return res.status(404).json({message: "Benutzer hat keinen Zugriff auf diese Wunschliste"});
+    } catch (err) {
+        console.log("error creating wishlist: \n", err);
+        return res.status(500).json({message: "Internal Server Error"});
+    }
+});
+
+router.get("/berechtigungen/:wishlistid", authenticateToken, async (req, res) => {
+    const userid = req.jwtpayload.userid;
+    try {
+        const wunschlisteid = parseInt(req.params.wishlistid)
+        if (wunschlisteid === undefined) {
+            return res.status(400).json({
+                error: 'Ungültige WunschlistenId'
+            });
+        }
+
+        const eigeneWishlists = await getEigeneWunschlistenByBenutzerId(userid);
+        let found = false;
+        for (let i = 0; i < eigeneWishlists.length; i++) {
+            if (eigeneWishlists[i].wunschlisteid === wunschlisteid) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            return res.status(403).json({message: "Kein Owner"});
+        } else {
+            const berechtigungenWunschliste = await getBerechtigungenByWunschlisteId(wunschlisteid)
+            for (let i = 0; i < berechtigungenWunschliste.length; i++) {
+                const user = await getUserById(berechtigungenWunschliste[i].benutzerid)
+                berechtigungenWunschliste[i].benutzername = user[0].benutzername;
+                delete berechtigungenWunschliste[i].benutzerid;
+            }
+            return res.send(berechtigungenWunschliste)
+        }
+    } catch (err) {
+        console.log("error creating wishlist: \n", err);
+        return res.status(500).json({message: "Internal Server Error"});
+    }
+});
+
+router.get("/products", authenticateToken, async (req, res) => {
+    const userid = req.jwtpayload.userid;
+    try {
+        let {wunschlisteid} = req.body;
+        wunschlisteid = parseInt(wunschlisteid);
+        if (wunschlisteid === undefined) {
+            return res.status(400).json({
+                error: 'All fields are required: wunschlisteid'
+            });
+        }
+
+        const wunschlisten = await getAlleWunschlistenByBenutzer(userid);
+        let found = false;
+        for (let i = 0; i < wunschlisten.length; i++) {
+            if (wunschlisten[i].wunschlisteid === wunschlisteid) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            return res.status(403).json({message: "Zugriff auf Wunschliste verweigert"});
+        }
+
+        const products = await getProdukteByWunschliste(wunschlisteid)
+        res.send(products)
     } catch (err) {
         console.log("error creating wishlist: \n", err);
         return res.status(500).json({message: "Internal Server Error"});
@@ -230,7 +353,7 @@ router.delete("/delete", authenticateToken, async (req, res) => {
             }
         }
         if(!found){
-            return res.status(403).json({message: "Wunschliste nicht gefundens"})
+            return res.status(403).json({message: "Kein Owner"})
         }
         await deleteAllProductsFromWunschliste(wunschlisteid);
         await deleteAllPermissionsFromWunschliste(wunschlisteid);

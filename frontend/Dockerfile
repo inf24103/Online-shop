@@ -1,8 +1,14 @@
 # Verwende die offizielle Node.js LTS Version als Basis-Image
-FROM node:18-alpine AS base
+FROM node:18-alpine
+
+# Zeitzonenpaket installieren
+RUN apk add --no-cache tzdata
+
+# Setze Zeitzone
+ENV TZ=Europe/Berlin
 
 # Setze das Arbeitsverzeichnis im Container
-WORKDIR /app/frontend
+WORKDIR /app
 
 # Kopiere package.json und package-lock.json (falls vorhanden)
 COPY package*.json ./
@@ -17,4 +23,4 @@ COPY . .
 EXPOSE 5000
 
 # Starte die Anwendung
-CMD ["npm", "start"] 
+CMD ["npm", "start"]
