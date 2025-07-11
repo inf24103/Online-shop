@@ -49,12 +49,18 @@ router.get('/product/search', async (req, res) => {
     minMenge = minMenge === "" ? null : minMenge;
     kategorie = kategorie === "" ? null : kategorie;
     sortierung = sortierung === "" ? null : sortierung;
+
+    let sortierungArray = [];
+    if (typeof sortierung === "string" && sortierung !== "") {
+        sortierungArray = sortierung.split(",").map(s => s.trim());
+    }
+
     try {
-        const result = await searchProdukte(name, maxPreis, minMenge, kategorie, sortierung);
+        const result = await searchProdukte(name, maxPreis, minMenge, kategorie, sortierungArray);
         res.status(200).json(result);
     } catch (error) {
         console.error('Fehler bei der Produktsuche:', error);
-        res.status(500).json({error: 'Interner Serverfehler'});
+        res.status(500).json({ error: 'Interner Serverfehler' });
     }
 });
 
