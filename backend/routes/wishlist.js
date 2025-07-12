@@ -184,6 +184,7 @@ router.get("/berechtigungen/:wishlistid", authenticateToken, async (req, res) =>
             const berechtigungenWunschliste = await getBerechtigungenByWunschlisteId(wunschlisteid)
             for (let i = 0; i < berechtigungenWunschliste.length; i++) {
                 const user = await getUserById(berechtigungenWunschliste[i].benutzerid)
+                if(userid === user[0].benutzerid) continue
                 berechtigungenWunschliste[i].benutzername = user[0].benutzername;
                 delete berechtigungenWunschliste[i].benutzerid;
             }
