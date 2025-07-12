@@ -11,7 +11,7 @@ function updateCartCount() {
     }
 }
 
-const IMAGE_BASE_URL = 'http://localhost:5000/';
+const IMAGE_BASE_URL = 'http://localhost:3000/';
 
 async function fetchCart() {
     const userToken = localStorage.getItem('adminToken');

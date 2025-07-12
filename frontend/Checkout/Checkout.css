@@ -1,19 +1,14 @@
-/* Checkout.css */
-
-/* Allgemeine Container-Stile */
 .container {
-    max-width: 1400px; /* Erhöhte max-width, um mehr Platz zu bieten */
+    max-width: 1400px;
     margin: 20px auto;
     padding: 20px;
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-
-    /* NEU: Grid für das Hauptlayout der Checkout-Seite */
     display: grid;
-    grid-template-columns: 2fr 1fr; /* Links (Summary) nimmt 2 Teile, Rechts (Form) 1 Teil */
-    gap: 30px; /* Abstand zwischen den Spalten */
-    align-items: start; /* Oben ausrichten */
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    align-items: start;
 }
 
 h1 {
@@ -21,7 +16,7 @@ h1 {
     text-align: center;
     color: #333;
     margin-bottom: 20px;
-    grid-column: 1 / -1; /* Nimmt die volle Breite im Grid ein */
+    grid-column: 1 / -1;
 }
 
 .checkout-summary {
@@ -29,7 +24,6 @@ h1 {
     border: 1px solid #ddd;
     border-radius: 6px;
     background-color: #f9f9f9;
-    /* flex-Eigenschaften entfernt, da Grid das Layout steuert */
 }
 
 .checkout-form-section {
@@ -37,7 +31,6 @@ h1 {
     border: 1px solid #ddd;
     border-radius: 6px;
     background-color: #f9f9f9;
-    /* flex-Eigenschaften entfernt, da Grid das Layout steuert */
 }
 
 .checkout-summary h2,
@@ -48,15 +41,14 @@ h1 {
     padding-bottom: 10px;
 }
 
-/* NEU: Styles für die Produktkarten im Checkout-Summary */
-.checkout-product-grid { /* Dies ist der Container für die Produktkarten */
+.checkout-product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* 250px Minimum, dann gleichmäßig */
-    gap: 15px; /* Abstand zwischen den Produktkarten */
-    padding: 0; /* Keine extra Polsterung hier */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    padding: 0;
 }
 
-.product-item { /* Übernommen von productstyle.css für die Produktkarten */
+.product-item {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -69,7 +61,7 @@ h1 {
     overflow: hidden;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     text-align: left;
-    height: auto; /* Höhe flexibel halten */
+    height: auto;
 }
 
 .product-item:hover {
@@ -79,7 +71,7 @@ h1 {
 
 .product-item img {
     width: 100%;
-    height: 150px; /* Etwas kleiner als auf der Produktseite, um Platz zu sparen */
+    height: 150px;
     object-fit: contain;
     display: block;
     margin: 0 auto 10px auto;
@@ -95,12 +87,12 @@ h1 {
 }
 
 .product-item h3 {
-    font-size: 1.2em; /* Etwas kleiner als auf der Produktseite, aber größer als zuvor */
+    font-size: 1.2em;
     margin: 0 0 5px 0;
     color: #222;
     text-align: left;
     line-height: 1.3;
-    max-height: 2.6em; /* max 2 Zeilen für Titel */
+    max-height: 2.6em;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -127,12 +119,12 @@ h1 {
     color: #555;
 }
 
-.product-item .product-description { /* Optional: falls du Beschreibung anzeigen willst */
+.product-item .product-description {
     font-size: 0.85em;
     color: #777;
     margin-top: 5px;
     flex-grow: 1;
-    max-height: 3.5em; /* Limit für Beschreibung (ca. 2-3 Zeilen) */
+    max-height: 3.5em;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -147,18 +139,15 @@ h1 {
     color: #555;
 }
 
-
-.item-subtotal { /* Stil für den Preis pro Artikel (Gesamtpreis für Menge des Artikels) */
+.item-subtotal {
     font-size: 1.2em;
     font-weight: bold;
     color: #333;
-    align-self: flex-end; /* Rechts ausrichten */
-    white-space: nowrap; /* Verhindert Umbruch */
-    margin-top: 10px; /* Abstand zum Inhalt */
+    align-self: flex-end;
+    white-space: nowrap;
+    margin-top: 10px;
 }
 
-
-/* Gesamtsumme des Warenkorbs */
 .cart-total {
     text-align: right;
     font-size: 1.2em;
@@ -166,10 +155,9 @@ h1 {
     margin-top: 20px;
     padding-top: 15px;
     border-top: 2px solid #eee;
-    clear: both; /* Stellt sicher, dass es unter den Produktkarten liegt */
+    clear: both;
 }
 
-/* Formular-Stile (unverändert) */
 .checkout-form .form-group {
     margin-bottom: 15px;
 }
@@ -222,7 +210,6 @@ h1 {
     background-color: #218838;
 }
 
-/* Lade-Overlay (unverändert) */
 .loading-overlay {
     position: fixed;
     top: 0;
@@ -265,12 +252,11 @@ h1 {
     color: #333;
 }
 
-/* Leerer Warenkorb-Nachricht (unverändert) */
 .empty-cart-message {
     text-align: center;
     padding: 50px 0;
     color: #666;
-    grid-column: 1 / -1; /* Nimmt die volle Breite, wenn Warenkorb leer */
+    grid-column: 1 / -1;
 }
 
 .empty-cart-message p {
@@ -293,20 +279,19 @@ h1 {
     background-color: #0056b3;
 }
 
-/* Media Queries */
-@media (max-width: 992px) { /* Übergang zu einer Spalte für kleinere Tablets */
+@media (max-width: 992px) {
     .container {
-        grid-template-columns: 1fr; /* Eine Spalte */
+        grid-template-columns: 1fr;
         gap: 20px;
     }
 
     h1 {
-        grid-column: auto; /* Nicht mehr über alle Spalten gehen */
+        grid-column: auto;
     }
 
     .checkout-summary,
     .checkout-form-section {
-        margin-bottom: 0; /* Kein zusätzlicher Margin mehr */
+        margin-bottom: 0;
     }
 }
 
@@ -316,7 +301,7 @@ h1 {
     }
 
     .checkout-product-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Kleinere Karten auf mobilen Geräten */
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 10px;
     }
 
@@ -345,7 +330,7 @@ h1 {
     }
 
     .checkout-product-grid {
-        grid-template-columns: 1fr; /* Eine Karte pro Zeile auf sehr kleinen Bildschirmen */
+        grid-template-columns: 1fr;
     }
 
     .product-item img {

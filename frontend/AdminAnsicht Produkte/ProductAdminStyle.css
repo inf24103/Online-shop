@@ -1,3 +1,8 @@
+html {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
 body {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     margin: 0;
@@ -6,15 +11,15 @@ body {
 }
 
 .admin-container {
-    max-width: 1200px;
-    margin: 30px auto;
-    padding: 0 20px;
+    margin: 30px 20px; /* Bleibt wie zuletzt geändert, für volle Breite */
+    padding: 0;
 }
 
 .admin-header {
     display: flex;
     justify-content: flex-end;
     margin-bottom: 1rem;
+    padding: 0 20px; /* Padding für den Inhalt */
 }
 
 #add-product-btn {
@@ -57,6 +62,8 @@ body {
     margin-bottom: 1rem;
     border-radius: 8px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    margin-left: 20px; /* Anpassung für Padding des Containers */
+    margin-right: 20px;
 }
 
 #product-form input,
@@ -88,7 +95,7 @@ body {
     display: flex;
     justify-content: center;
     margin-top: 25px;
-    padding: 0 20px;
+    padding: 0;
 }
 
 .filter form {
@@ -99,17 +106,19 @@ body {
     padding: 20px;
     justify-content: center;
     width: 100%;
-    max-width: 900px;
+    max-width: none; /* Volle Breite */
     height: auto;
     border: 1px solid #ccc;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    margin-left: 20px; /* Anpassung für Padding des Containers */
+    margin-right: 20px;
 }
 
 input[type="search"],
 input[type="number"],
-input[type="text"],
+input[type="text"], /* Hinzugefügt für das 'name' Feld im Admin-Formular */
 select {
     padding: 12px 12px;
     border: 1px solid #cccccc;
@@ -134,7 +143,7 @@ select {
     background-color: #555;
 }
 
-button {
+button { /* General button style, if not overridden */
     padding: 10px 20px;
     background-color: #333;
     color: white;
@@ -149,91 +158,114 @@ button:hover {
     background-color: #555;
 }
 
+/* Anpassung der Produktkarten-Grid für die Admin-Ansicht */
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(305px, 1fr));
+    /* Angepasst an das Produkt-Seiten Grid */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
     padding: 20px;
-    margin: 0 auto;
+    margin: 30px 20px 0 20px; /* Angepasstes Margin für die Grid-Außenränder */
     box-sizing: border-box;
-    margin-top: 30px;
+    justify-content: center; /* Zentriert die Karten, wenn sie nicht die volle Breite einnehmen */
 }
 
-.product-card {
+/* Anpassung der einzelnen Produktkarte (ehemals .product-card, jetzt gestylt wie .product) */
+.product-card { /* Diese Klasse wird für die einzelnen Produktelemente verwendet */
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
-    height: auto;
-    padding: 10px;
+    justify-content: space-between; /* Passt sich der Produktseite an */
+
+    height: 400px; /* Feste Höhe wie auf der Produktseite */
+
+    padding: 15px; /* Anpassung des Paddings */
     background-color: white;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Angepasster Schatten */
+    border: 1px solid #eee; /* Angepasster Rand */
+    border-radius: 8px; /* Angepasster Radius */
     font-size: 14px;
     margin-bottom: 0;
     overflow: hidden;
-    transition: box-shadow 0.3s ease;
-    position: relative;
-    padding-bottom: 50px;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Übergänge wie auf Produktseite */
+    text-align: center; /* Textzentrierung wie auf Produktseite */
+
+    position: relative; /* Beibehalten für Button-Group, falls benötigt */
+    /* padding-bottom: 50px; /* Entfernt, da die Buttons jetzt innerhalb des Flexbox-Flows sind */
 }
 
+/* Hover-Effekt wie auf Produktseite */
 .product-card:hover {
-    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* Bild-Stile wie auf Produktseite */
 .product-card img {
     width: 100%;
-    max-width: 300px;
-    height: auto;
+    height: 180px; /* Feste Höhe wie auf Produktseite */
+    object-fit: contain; /* Angepasst auf 'contain' */
     display: block;
-    object-fit: cover;
-    justify-self: center;
-    align-self: center;
-    border-radius: 8px;
-    margin-bottom: 10px;
+    margin: 0 auto 10px auto; /* Zentriert das Bild */
+    border-radius: 4px;
+    background-color: #f9f9f9; /* Hintergrund für Bilder */
+    max-width: none; /* Entfernt die max-width */
 }
 
+/* H3-Stile wie auf Produktseite */
 .product-card h3 {
-    font-size: 20px;
-    margin: 5px 0 6px 0;
+    font-size: 1.2em; /* Angepasste Schriftgröße */
+    margin: 0 0 8px 0; /* Angepasstes Margin */
     color: #222;
-    text-align: left;
+    text-align: center; /* Zentriert */
+    height: 2.8em; /* Begrenzt auf 2 Zeilen */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
+/* P-Stile wie auf Produktseite */
 .product-card p {
-    font-size: 16px;
-    margin-left: 0;
-    color: #222;
-    text-align: left;
+    font-size: 0.95em; /* Angepasste Schriftgröße */
+    margin: 5px 0; /* Angepasstes Margin */
+    color: #666;
+    text-align: center; /* Zentriert */
+    flex-grow: 1; /* Nimmt verfügbaren Platz ein */
+    overflow: hidden;
 }
 
+.product-card p strong {
+    font-size: 1.1em;
+    color: #333;
+}
+
+/* Anpassung der Button-Gruppe für Edit/Delete, wie der Warenkorb-Button auf der Produktseite */
 .product-card .button-group {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
+    /* Positionierung auf 'static' ändern, da es jetzt Teil des Flexbox-Flows ist */
+    position: static;
     display: flex;
+    flex-direction: column; /* Buttons untereinander */
     gap: 10px;
-    margin-top: auto;
+    margin-top: auto; /* Schiebt die Gruppe nach unten */
+    width: 100%; /* Nimmt volle Breite der Karte ein */
+    padding: 0 5px; /* Kleiner Innenabstand */
+    box-sizing: border-box;
 }
 
 .product-card .button-group button {
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    opacity: 0.9;
-    transition: background-color 0.3s, opacity 0.3s;
-    font-size: 0.9rem;
-    position: static;
-    width: auto;
+    padding: 10px 15px; /* Angepasstes Padding */
+    margin: 0; /* Wichtig, um alte Margins zu entfernen */
+    font-weight: normal;
+    display: block;
+    width: 100%; /* Volle Breite im Button-Group */
+    transition: background-color 0.3s ease;
+    border-radius: 5px; /* Angepasster Radius */
+    font-size: 1em; /* Angepasste Schriftgröße */
+    opacity: 1; /* Standardmäßig volle Deckkraft */
 }
 
-.product-card .button-group button:hover {
-    opacity: 1;
-}
-
+/* Individuelle Button-Farben bleiben */
 .product-card .delete-btn {
     background-color: #dc3545;
 }
@@ -250,6 +282,7 @@ button:hover {
     background-color: #0056b3;
 }
 
+/* Collapsible Formularelemente bleiben */
 .collapsible {
     overflow: hidden;
     max-height: 0;
@@ -262,6 +295,7 @@ button:hover {
     opacity: 1;
 }
 
+/* Media Queries Anpassungen */
 @media (max-width: 760px) {
     .filter form {
         flex-direction: column;
@@ -269,6 +303,8 @@ button:hover {
         gap: 10px;
         padding: 10px;
         height: auto;
+        margin-left: 10px; /* Angepasst an kleinere Bildschirme */
+        margin-right: 10px;
     }
 
     input[type="search"],
@@ -282,15 +318,21 @@ button:hover {
 
     .product-grid {
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        padding: 10px;
+        padding: 15px; /* Angepasst */
+        gap: 15px; /* Angepasst */
+        margin: 30px 10px 0 10px; /* Angepasst */
     }
 
-    .product-card {
+    .product-card { /* Angepasst an das .product mobile Verhalten */
         height: auto;
+        font-size: 15px;
+        max-width: 400px; /* Begrenzt die Breite auf kleineren Bildschirmen */
+        margin: 0 auto; /* Zentriert die Karte */
+        padding: 15px;
     }
 
     .product-card img {
-        width: 100%;
+        height: 150px; /* Angepasst */
         margin-top: 10px;
     }
 
@@ -307,16 +349,49 @@ button:hover {
         margin-top: 10px;
         width: 100%;
         justify-content: center;
+        flex-direction: column; /* Buttons bleiben untereinander */
     }
     .product-card .button-group button {
         flex: 1;
         padding: 0.8rem;
         font-size: 1rem;
     }
+
+    #product-form-container {
+        margin-left: 10px; /* Angepasst */
+        margin-right: 10px;
+    }
 }
 
 @media (max-width: 480px) {
-    .product-grid {
-        grid-template-columns: 1fr;
+    /* Anpassungen für kleinere Bildschirme wie auf Produktseite */
+    .filter form {
+        gap: 8px;
+        padding: 10px;
+    }
+
+    input[type="search"],
+    input[type="number"],
+    input[type="text"],
+    select,
+    button {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+
+    .product-card {
+        padding: 10px;
+    }
+
+    .product-card img {
+        height: 120px;
+    }
+
+    .product-card h3 {
+        font-size: 1.1em;
+    }
+
+    .product-card p {
+        font-size: 0.85em;
     }
 }

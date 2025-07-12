@@ -5,7 +5,7 @@ const addressForm = document.getElementById('address-form');
 const loadingOverlay = document.getElementById('loading-overlay');
 const addressFormTitle = document.getElementById('address-form-title');
 
-const IMAGE_BASE_URL = 'http://localhost:5000/';
+const IMAGE_BASE_URL = 'http://localhost:3000/';
 
 function updateCartCount() {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -159,7 +159,7 @@ async function renderCheckoutSummary() {
                 <p class="product-quantity">Menge: ${itemQuantity}</p>
                 <p class="product-stock-info">${stockInfo}</p>
             </div>
-            <strong class="item-subtotal">€${itemTotalPrice.toFixed(2)}</strong>
+            <strong>€${itemTotalPrice.toFixed(2)}</strong>
         `;
         checkoutItemsContainer.appendChild(item);
     });
@@ -187,18 +187,34 @@ function hideLoadingOverlay() {
 }
 
 async function sendOrderToBackend(orderData, userToken) {
-    try {
-        const headers = {
-            'Content-Type': 'application/json'
-        };
-        if (userToken) {
-            headers['Authorization'] = `Bearer ${userToken}`;
-        }
+    if (!userToken) {
+        throw new Error("Bitte loggen Sie sich ein, um die Bestellung abzuschließen.");
+    }
 
-        const response = await fetch('http://localhost:3000/api/inv/kaeufe/kaufen', {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(orderData)
+    try {
+        const baseUrl = 'http://localhost:3000/api/inv/kaeufe/kaufen';
+        const params = new URLSearchParams({
+            firstName: orderData.address.firstName,
+            lastName: orderData.address.lastName,
+            street: orderData.address.street,
+            zipCode: orderData.address.zipCode,
+            city: orderData.address.city,
+            country: orderData.address.country,
+            email: orderData.address.email,
+            phone: orderData.address.phone,
+            totalPrice: orderData.totalPrice.toString(),
+            paymentMethod: orderData.paymentMethod,
+            isGuest: orderData.isGuest ? 'true' : 'false',
+        });
+        params.append('items', JSON.stringify(orderData.items));
+
+        const headers = {
+            'Authorization': `Bearer ${userToken}`
+        };
+
+        const response = await fetch(`${baseUrl}?${params.toString()}`, {
+            method: 'GET',
+            headers: headers
         });
 
         if (!response.ok) {
@@ -212,6 +228,7 @@ async function sendOrderToBackend(orderData, userToken) {
         throw error;
     }
 }
+
 
 async function clearCartAfterPurchase(userToken) {
     if (userToken) {
@@ -232,7 +249,6 @@ async function clearCartAfterPurchase(userToken) {
     }
     localStorage.removeItem("cart");
     window.dispatchEvent(new CustomEvent('cartCleared'));
-    console.log("Warenkorb geleert.");
 }
 
 addressForm.addEventListener('submit', async (event) => {

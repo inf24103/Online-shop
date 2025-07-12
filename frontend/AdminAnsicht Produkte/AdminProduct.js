@@ -4,6 +4,7 @@ const formContainer = document.getElementById("product-form-container");
 const addBtn = document.getElementById("add-product-btn");
 let editingProductId = null;
 const saveProductButton = form.querySelector('button[type="submit"]');
+const IMAGE_BASE_URL = 'http://localhost:3000/';
 
 addBtn.addEventListener("click", () => {
     formContainer.classList.toggle("open");
@@ -14,19 +15,49 @@ addBtn.addEventListener("click", () => {
     }
 });
 
+async function uploadImage(file) {
+    const formData = new FormData();
+    formData.append("bild", file);
+
+    const res = await fetch("http://localhost:3000/api/upload/image", {
+        method: "POST",
+        body: formData,
+        credentials: "include"
+    });
+
+    if (!res.ok) throw new Error("Bild-Upload fehlgeschlagen");
+
+    const data = await res.json();
+    return data.bildId;
+}
+
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const produktData = {
-        produktname: document.getElementById("name").value.trim(),
-        preis: parseFloat(document.getElementById("price").value),
-        verfuegbareMenge: parseInt(document.getElementById("menge").value),
-        kategorie: document.getElementById("category").value.trim(),
-        bild: document.getElementById("image").value.trim(),
-        beschreibung: document.getElementById("description").value.trim(),
-    };
+    const imageFile = document.getElementById("image").files[0];
+    if (!imageFile) {
+        alert("Bitte wähle ein Bild aus.");
+        return;
+    }
 
     try {
+
+        const formData = new FormData();
+        formData.append("produktname", document.getElementById("name").value.trim());
+        formData.append("preis", parseFloat(document.getElementById("price").value));
+        formData.append("verfuegbareMenge", parseInt(document.getElementById("menge").value));
+        formData.append("kategorie", document.getElementById("category").value.trim());
+        formData.append("beschreibung", document.getElementById("description").value.trim());
+
+        const imageInput = document.getElementById("image");
+        if (imageInput.files.length > 0) {
+            formData.append("bild", imageInput.files[0]);
+        } else {
+            alert("Bitte wähle ein Bild aus.");
+            return;
+        }
+
+
         let res;
         if (editingProductId) {
             res = await fetch(`http://localhost:3000/api/inv/product/${editingProductId}`, {
@@ -42,11 +73,8 @@ form.addEventListener("submit", async (e) => {
         } else {
             res = await fetch("http://localhost:3000/api/inv/product/new", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
                 credentials: "include",
-                body: JSON.stringify(produktData)
+                body: formData,
             });
             if (!res.ok) throw new Error("Fehler beim Erstellen des Produkts");
             alert("Produkt erfolgreich erstellt!");
@@ -58,10 +86,12 @@ form.addEventListener("submit", async (e) => {
         editingProductId = null;
         saveProductButton.textContent = "Produkt speichern";
     } catch (err) {
-        alert("Operation fehlgeschlagen: " + err.message);
+        alert("Fehler: " + err.message);
         console.error(err);
     }
 });
+
+
 
 
 async function loadProducts(filters = {}) {
@@ -84,8 +114,9 @@ async function loadProducts(filters = {}) {
         products.forEach(product => {
             const card = document.createElement("div");
             card.className = "product-card";
+            const imageUrl = product.bild ? `${IMAGE_BASE_URL}${product.bild}` : 'https://via.placeholder.com/200';
             card.innerHTML = `
-                ${product.bild ? `<img src="${product.bild}" alt="${product.produktname}">` : ''}
+                ${product.bild ? `<img src="${imageUrl}" alt="${product.produktname}">` : ''}
                 <h3>${product.produktname}</h3>
                 <p><strong>Preis:</strong> €${parseFloat(product.preis).toFixed(2)}</p>
                 <p><strong>Kategorie:</strong> ${product.kategorie}</p>
