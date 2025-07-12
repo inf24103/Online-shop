@@ -195,11 +195,10 @@ router.get("/berechtigungen/:wishlistid", authenticateToken, async (req, res) =>
     }
 });
 
-router.get("/products", authenticateToken, async (req, res) => {
+router.get("/products/:wishlistid", authenticateToken, async (req, res) => {
     const userid = req.jwtpayload.userid;
     try {
-        let {wunschlisteid} = req.body;
-        wunschlisteid = parseInt(wunschlisteid);
+        const wunschlisteid = parseInt(req.params.wishlistid)
         if (wunschlisteid === undefined) {
             return res.status(400).json({
                 error: 'All fields are required: wunschlisteid'
@@ -238,7 +237,8 @@ router.get("/others", authenticateToken, async (req, res) => {
         const berechtigungen = await getBerechtigungenByWunschlisteId(wunschlisten[i].wunschlisteid)
         for (let j = 0; j < berechtigungen.length; j++) {
             if(berechtigungen[j].berechtigung === 'owner') {
-                wunschlisten[i].ownerUserId = berechtigungen[j].benutzerid;
+                const owner = await getUserById(berechtigungen[j].benutzerid);
+                wunschlisten[i].ownerUsername = owner[0].benutzername
                 break
             }
         }

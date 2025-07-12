@@ -3,6 +3,7 @@ import morgan from "morgan";
 import {mountRoutes} from "./routes/router.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import * as path from "node:path";
 import {
     createProductWarenkorbTable,
     createProduktTable, createWarenkorbTable,
@@ -27,12 +28,11 @@ const port = 3000
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
+app.use(express.static(path.join("./productBilder", ".")));
 app.use(cors({
     origin: "http://localhost:5000",
     credentials: true
 }));
-
 // configure logging before each api call
 morgan.token('source', function () {
     return 'Morgan:';
