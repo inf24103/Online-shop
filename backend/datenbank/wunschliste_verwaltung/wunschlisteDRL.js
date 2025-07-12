@@ -41,7 +41,7 @@ export const getAlleWunschlistenByBenutzer = async (benutzerid) => {
 
 export const getProdukteByWunschliste = async (wunschlisteid) => {
     const sql = `
-        SELECT p.produktid, p.produktname, p.beschreibung, p.preis
+        SELECT p.produktid, p.produktname, p.preis, p.bild, p.kategorie, p.beschreibung
         FROM Produkt p
         JOIN Wunschliste_Produkt wp ON p.produktid = wp.produktid
         WHERE wp.wunschlisteid = $1;
