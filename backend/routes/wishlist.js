@@ -195,11 +195,10 @@ router.get("/berechtigungen/:wishlistid", authenticateToken, async (req, res) =>
     }
 });
 
-router.get("/products", authenticateToken, async (req, res) => {
+router.get("/products/:wishlistid", authenticateToken, async (req, res) => {
     const userid = req.jwtpayload.userid;
     try {
-        let {wunschlisteid} = req.body;
-        wunschlisteid = parseInt(wunschlisteid);
+        const wunschlisteid = parseInt(req.params.wishlistid)
         if (wunschlisteid === undefined) {
             return res.status(400).json({
                 error: 'All fields are required: wunschlisteid'
