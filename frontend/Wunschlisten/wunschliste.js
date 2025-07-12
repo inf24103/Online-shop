@@ -33,14 +33,30 @@ async function loadWunschlisten() {
         if(geteilteListen.length === 0) {
             geteilte.innerHTML += "Keine Wunschlisten gefunden";
         } else {
-            geteilteListen.forEach(w => {
+            for (const w of geteilteListen) {
+                let benutzername = "unbekannt";
+
+                try {
+                    const resUser = await fetch(`http://localhost:3000/api/user/${w.ownerUserId}`, {
+                        credentials: "include"
+                    });
+
+                    if (resUser.ok) {
+                        const userData = await resUser.json();
+                        benutzername = userData.benutzername || "unbekannt";
+                    }
+                } catch (err) {
+                    console.warn("Fehler beim Laden des Benutzernamens:", err);
+                }
+
                 geteilte.innerHTML += `
                     <div class="wunschliste-card">
                         <h3>${w.wunschlistename}</h3>
-                        <p>Von: ${w.benutzername}</p>
+                        <p>Von: ${benutzername}</p>
                     </div>`;
-            });
+            }
         }
+
 
     } catch (e) {
         console.error(e);
