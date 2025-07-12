@@ -50,10 +50,12 @@
     vertical-align: middle;
     filter: grayscale(100%);
     transition: 0.2s;
+    transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 .navitem img:hover {
     filter: none;
+    transform: scale(1.2);
 }
 
 .navitem:hover {

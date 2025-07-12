@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Wunschlisten</title>
+  <link rel="stylesheet" href="/Wunschlisten/wunschliste.css">
+</head>
+<body>
+<h1>Deine Wunschlisten</h1>
+<button class="back-btn" onclick="history.back()">← Zurück</button>
+<div class="filter">
+  <form onsubmit="event.preventDefault(); openModal();">
+    <button class="erstellen">Neue Wunschliste</button>
+  </form>
+</div>
+<div class="wunschlisten-wrapper">
+  <div class="wunschlisten-spalte" id="eigene-wunschlisten">
+    <h2>Meine Wunschlisten</h2>
+    <p>Lade Wunschlisten...</p>
+  </div>
+
+  <div class="wunschlisten-spalte" id="geteilte-wunschlisten">
+    <h2>Geteilte Wunschlisten</h2>
+    <p>Lade Wunschlisten...</p>
+  </div>
+</div>
+
+<!--Wunschliste erstellen-->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <h3>Neue Wunschliste erstellen</h3>
+    <input type="text" id="wunschname" placeholder="Name" required>
+    <textarea id="beschreibung" placeholder="Beschreibung" rows="3" required></textarea>
+    <div class="modal-buttons">
+      <button class="erstellen" onclick="submitWunschliste()">Erstellen</button>
+      <button class="abbrechen" onclick="closeModal()">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+
+<!--Wunschliste bearbeiten-->
+
+<div id="edit-modal" class="modal">
+  <div class="modal-content edit-modal-content">
+    <h3 id="edit-title">Wunschliste bearbeiten</h3>
+    <div id="edit-beschreibung" style="margin-bottom: 12px; color: #444;">
+      <!-- Hier wird die Beschreibung eingefügt -->
+    </div>
+
+    <form id="share-form" class="freigabe-formular" onsubmit="freigabeHinzufuegen(event)">
+      <input type="text" id="benutzernameFreigabe" placeholder="Benutzername eingeben" required />
+      <select id="berechtigungsFreigabe">
+        <option value="read">Lesen</option>
+        <option value="write">Schreiben</option>
+      </select>
+      <button type="submit" class="btn-schwarz">Hinzufügen</button>
+    </form>
+
+    <!--Liste für bereits angelegte Mitglieder-->
+    <div id="freigabe-liste">
+      <!--Wird befüllt-->
+    </div>
+    <button class="delete-btn" onclick="loeschen(currentBearbeiteId); closeEditModal()">Löschen</button>
+    <h3>Meine Produkte</h3>
+    <div id="produkte-liste" class="produkte-grid">
+      <!--Hier werden die Produkte geladen-->
+    </div>
+
+  <div style="text-align: right;">
+    <button onclick="closeEditModal()">Schließen</button>
+  </div>
+</div>
+</div>
+
+
+<div id="produkt-wunschlisten-modal" class="modal">
+  <div class="modal-content">
+    <h3>Wunschliste hinzufügen</h3>
+    <div id="wunschlisten-checkbox-liste">
+      <!--Hier werden Checkboxen eingefügt-->
+    </div>
+    <button onclick="schliesseProduktModal()">Schließen</button>
+  </div>
+</div>
+</body>
+<script src="/Wunschlisten/wunschliste.js"></script>
+<script src="/Wunschlisten/produkte_wunschliste.js"></script>
+</html>

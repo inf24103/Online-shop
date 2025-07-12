@@ -2,32 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="/public/navbar.css">
+  <link rel="stylesheet" href="/Profilverwaltung/profilstyle.css">
   <title>Profilverwaltung</title>
 </head>
 <body>
-<header class="navbar">
-  <div class="nav-inner">
-    <a href="/user/index.html" class="logo-link">
-      <img src="/pictures/fitura_logo.png" alt="logo" class="logo">
-    </a>
+<div class="profile-wrapper">
+  <div class="profile-container">
 
-    <nav class="nav-links">
-      <a href="/ProductPage/productpage.html" class="navitem">Products</a>
-      <a href="#Einkaufsliste" class="navitem icon-link" id="einkaufsliste">
-        <img src="/pictures/einkaufswagen.png">
-      </a>
-      <a href="/LoginPage/loginpage.html" class="navitem icon-link" id="account" title="Profil / Login">
-        <img src="/pictures/account_icon.png" alt="" class="account-icon">
-      </a>
-    </nav>
+    <section id="profile-content" class="profile-left">
+      <p>Lade Profil...</p>
+    </section>
+    <section id="profile-extra" class="profile-right">
+      <!-- Hier kommen die Bestellungen hin-->
+    </section>
   </div>
-</header>
-<!-- Sidebar – direkt unter </header> -->
-<aside id="sidebar" class="sidebar">
-  <button class="sidebar-close" aria-label="Schließen">&times;</button>
-  <ul id="sidebar-menu"></ul>
-</aside>
+</div>
+<script src="/Profilverwaltung/profile.js"></script>
 </body>
-<script src="/public/sidebar.js"></script>
 </html>
