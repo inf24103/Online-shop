@@ -16,7 +16,6 @@ let scrollPosition = 0;
 
 const IMAGE_BASE_URL = 'http://localhost:3000/';
 const API_INV_BASE_URL = 'http://localhost:3000/api/inv';
-const API_USER_BASE_URL = 'http://localhost:3000/api/user';
 
 function getCurrentUserToken() {
     return localStorage.getItem('userToken');
