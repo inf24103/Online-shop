@@ -237,7 +237,8 @@ router.get("/others", authenticateToken, async (req, res) => {
         const berechtigungen = await getBerechtigungenByWunschlisteId(wunschlisten[i].wunschlisteid)
         for (let j = 0; j < berechtigungen.length; j++) {
             if(berechtigungen[j].berechtigung === 'owner') {
-                wunschlisten[i].ownerUserId = berechtigungen[j].benutzerid;
+                const owner = await getUserById(berechtigungen[j].benutzerid);
+                wunschlisten[i].ownerUsername = owner[0].benutzername
                 break
             }
         }
