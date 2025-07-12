@@ -1,4 +1,4 @@
-import { query } from '../index.js';
+import {query} from '../index.js';
 
 /* Wunschliste erstellen */
 export const createWunschliste = async (beschreibung, wunschlistename) => {
@@ -28,6 +28,24 @@ export const updateBerechtigung = async (wunschlisteid, benutzerid, neueBerechti
     const params = [wunschlisteid, benutzerid, neueBerechtigung];
 
     return await query(sql, params)
+};
+
+export const updateBeschreibung = async (wunschlisteid, neueBeschreibung) => {
+    const sql = `
+        UPDATE Wunschliste
+        SET beschreibung = $2
+        WHERE wunschlisteid = $1;
+    `;
+    return await query(sql, [wunschlisteid, neueBeschreibung]);
+};
+
+export const updateName = async (wunschlisteid, newName) => {
+    const sql = `
+        UPDATE Wunschliste
+        SET wunschlistename = $2
+        WHERE wunschlisteid = $1;
+    `;
+    return await query(sql, [wunschlisteid, newName]);
 };
 
 export const deleteProduktFromWunschliste = async (wunschlisteid, produktid) => {
