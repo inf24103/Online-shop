@@ -1,5 +1,5 @@
 function zeigeProdukteDerWunschliste(wunschlisteId) {
-    fetch(`http://localhost:3000/api/wun/products?wunschlisteid=${wunschlisteId}`, {
+    fetch(`http://localhost:3000/api/wun/products/${wunschlisteId}`, {
         method: "GET",
         credentials: "include"
     })

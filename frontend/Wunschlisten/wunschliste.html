@@ -47,6 +47,7 @@
     <div id="edit-beschreibung" style="margin-bottom: 12px; color: #444;">
       <!-- Hier wird die Beschreibung eingefügt -->
     </div>
+
     <form id="share-form" class="freigabe-formular" onsubmit="freigabeHinzufuegen(event)">
       <input type="text" id="benutzernameFreigabe" placeholder="Benutzername eingeben" required />
       <select id="berechtigungsFreigabe">
@@ -61,13 +62,15 @@
       <!--Wird befüllt-->
     </div>
     <button class="delete-btn" onclick="loeschen(currentBearbeiteId); closeEditModal()">Löschen</button>
-  </div>
-  <div style="test-align: right;">
+    <h3>Meine Produkte</h3>
+    <div id="produkte-liste" class="produkte-grid">
+      <!--Hier werden die Produkte geladen-->
+    </div>
+
+  <div style="text-align: right;">
     <button onclick="closeEditModal()">Schließen</button>
   </div>
-  <div id="produkte-liste" class="produkte-grid">
-    <!--Hier werden die Produkte geladen-->
-  </div>
+</div>
 </div>
 
 

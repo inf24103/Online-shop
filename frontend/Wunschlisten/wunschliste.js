@@ -14,7 +14,7 @@ async function loadWunschlisten() {
         const geteilteListen = await geteilteRes.json();
 
         eigene.innerHTML = "<h2>Meine Wunschlisten</h2>";
-        if(eigeneListen.length === 0) {
+        if (eigeneListen.length === 0) {
             eigene.innerHTML += "Keine Wunschlisten gefunden";
         } else {
             eigeneListen.forEach(w => {
@@ -30,34 +30,20 @@ async function loadWunschlisten() {
         }
 
         geteilte.innerHTML = "<h2>Geteilte Wunschlisten</h2>";
-        if(geteilteListen.length === 0) {
+        if (geteilteListen.length === 0) {
             geteilte.innerHTML += "Keine Wunschlisten gefunden";
         } else {
-            for (const w of geteilteListen) {
-                let benutzername = "unbekannt";
-
-                try {
-                    const resUser = await fetch(`http://localhost:3000/api/user/${w.ownerUserId}`, {
-                        credentials: "include"
-                    });
-
-                    if (resUser.ok) {
-                        const userData = await resUser.json();
-                        benutzername = userData.benutzername || "unbekannt";
-                    }
-                } catch (err) {
-                    console.warn("Fehler beim Laden des Benutzernamens:", err);
-                }
-
+            geteilteListen.forEach(w => {
                 geteilte.innerHTML += `
-                    <div class="wunschliste-card">
-                        <h3>${w.wunschlistename}</h3>
-                        <p>Von: ${benutzername}</p>
-                    </div>`;
-            }
+        <div class="wunschliste-card">
+            <h3>${w.wunschlistename}</h3>
+            <p>${w.beschreibung}</p>
+            <p>Von: <strong>${w.ownerUsername}</strong></p>
+            <p>Berechtigung: ${w.berechtigung}</p>
+            <button onclick="zeigeProdukteDerWunschliste(${w.wunschlisteid})">Anzeigen</button>
+        </div>`;
+            });
         }
-
-
     } catch (e) {
         console.error(e);
         eigene.innerHTML = "Fehler beim Laden!";
@@ -67,7 +53,7 @@ async function loadWunschlisten() {
 }
 
 async function loeschen(id) {
-    if(confirm("Wirklich Löschen?")) {
+    if (confirm("Wirklich Löschen?")) {
         try {
             const res = await fetch("http://localhost:3000/api/wun/delete", {
                 method: "DELETE",
@@ -77,7 +63,7 @@ async function loeschen(id) {
                 },
                 body: JSON.stringify({wunschlisteid: id})
             });
-            if(res.ok) {
+            if (res.ok) {
                 await loadWunschlisten();
             } else {
                 alert("Löschen fehlgeschlagen!");
@@ -92,6 +78,7 @@ async function loeschen(id) {
 function openModal() {
     document.getElementById("modal").style.display = "block";
 }
+
 function closeModal() {
     document.getElementById("modal").style.display = "none";
     document.getElementById("wunschname").value = "";
@@ -102,7 +89,7 @@ async function submitWunschliste() {
     const name = document.getElementById("wunschname").value.trim();
     const beschreibung = document.getElementById("beschreibung").value.trim();
 
-    if(!name || !beschreibung) {
+    if (!name || !beschreibung) {
         alert("Bitte alle Felder ausfüllen.");
         return;
     }
@@ -120,7 +107,7 @@ async function submitWunschliste() {
             credentials: "include"
         });
 
-        if(res.ok) {
+        if (res.ok) {
             closeModal();
             loadWunschlisten();
         } else {
@@ -179,7 +166,7 @@ async function freigabeHinzufuegen(event) {
     const benutzer = document.getElementById("benutzernameFreigabe").value.trim();
     const rechte = document.getElementById("berechtigungsFreigabe").value;
 
-    if(!benutzer) return;
+    if (!benutzer) return;
 
     try {
         const res = await fetch("http://localhost:3000/api/wun/authorize", {
@@ -198,9 +185,9 @@ async function freigabeHinzufuegen(event) {
         console.log("Status: ", res.status);
         console.log("Text: ", text)
 
-        if(res.ok) {
+        if (res.ok) {
             bearbeiten(currentBearbeiteId);
-        } else if(res.status === 400) {
+        } else if (res.status === 400) {
             alert("Benutzer nicht gefunden");
         } else {
             alert("Feher!");
@@ -228,7 +215,7 @@ async function berechtigungAendern(wunschlisteid, benutzername, neueBerechtigung
 
         const text = await res.text();
 
-        if(res.status === 200) {
+        if (res.status === 200) {
             alert("Berechtigung erfolgreich geändert")
         } else {
             console.warn("Fehlertext: ", text);
@@ -254,7 +241,7 @@ async function freigabeEntfernen(wunschlisteid, benutzername) {
             })
         });
 
-        if(res.ok) {
+        if (res.ok) {
             bearbeiten(wunschlisteid);
         } else {
             alert("Fehler beim Entfernen der Freigabe");
@@ -299,15 +286,15 @@ function zeigeProduktZuWunschlistenModal(produktId) {
     const listeContainer = document.getElementById("wunschlisten-checkbox-liste");
     listeContainer.innerHTML = "Lade Wunschlisten...";
 
-    fetch("http://localhost:3000/api/wun/my", { credentials: "include" })
+    fetch("http://localhost:3000/api/wun/my", {credentials: "include"})
         .then(res => res.json())
         .then(async listen => {
-            for(const w of listen) {
+            for (const w of listen) {
                 const resProdukte = await fetch("http://localhost:3000/api/wun/products", {
                     method: "GET",
                     credentials: "include",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ wunschlisteid : w.wunschlisteid})
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({wunschlisteid: w.wunschlisteid})
                 });
                 const produkte = await resProdukte.json();
                 const istDrin = produkte.some(p => p.produktid === produktId);
@@ -338,7 +325,7 @@ function toggleProduktInWunschliste(wunschlisteid, produktId, hinzufuegen) {
     fetch("http://localhost:3000/api/wun/update", {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
             productID: produktId,
             aktion: hinzufuegen ? "add" : "remove",
@@ -346,7 +333,7 @@ function toggleProduktInWunschliste(wunschlisteid, produktId, hinzufuegen) {
         })
     })
         .then(res => {
-            if(!res.ok) {
+            if (!res.ok) {
                 throw new Error("Fehler beim Speichern der Änderungen");
             }
         })
