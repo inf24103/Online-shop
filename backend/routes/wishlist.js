@@ -354,7 +354,7 @@ router.delete("/delete", authenticateToken, async (req, res) => {
         }
         let found = false;
         for (let i = 0; i < eigeneWishlists.length; i++) {
-            if (eigeneWishlists[0].wunschlisteid === wunschlisteid) {
+            if (eigeneWishlists[i].wunschlisteid === wunschlisteid) {
                 found = true;
                 break;
             }
