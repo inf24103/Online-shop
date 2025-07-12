@@ -1,0 +1,19 @@
+meta {
+  name: updateBeschreibung
+  type: http
+  seq: 8
+}
+
+post {
+  url: http://localhost:3000/api/wun/update
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "inhalt": "updateBeschreibung",
+    "aktion": "updateBeschreibung",
+    "wunschlisteid": "1"
+  }
+}
