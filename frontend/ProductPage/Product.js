@@ -9,12 +9,20 @@ const closeButton = productDetailModal.querySelector('.close-button');
 const addToCartModalButton = productDetailModal ? productDetailModal.querySelector('.add-to-cart-modal') : null;
 let currentProductInModal = null;
 const filterForm = document.querySelector(".filter form");
-let allProductsCache = [];
-let currentCart = [];
+let allProductsCache = []; // Cache für alle Produkte, mit originaler Menge
+let currentCart = []; // Aktueller Warenkorb-Zustand (vom Backend oder LocalStorage)
 
 let scrollPosition = 0;
 
 const IMAGE_BASE_URL = 'http://localhost:3000/';
+const API_INV_BASE_URL = 'http://localhost:3000/api/inv'; // Neue Konstante
+const API_USER_BASE_URL = 'http://localhost:3000/api/user'; // Neue Konstante
+
+// Hilfsfunktion zur Bestimmung des aktuellen Tokens (userToken oder adminToken)
+function getCurrentUserToken() {
+    return localStorage.getItem('userToken'); // Oder 'adminToken', je nachdem, was du nutzt
+}
+
 
 function renderProducts(productList) {
     const container = document.querySelector('.product-card');
@@ -26,6 +34,7 @@ function renderProducts(productList) {
     }
 
     productList.forEach(product => {
+        // 'menge' ist die verbleibende Menge nach Warenkorb-Synchronisation
         const isOutOfStock = product.menge <= 0;
         let stockMessage ='';
 
@@ -37,7 +46,7 @@ function renderProducts(productList) {
             stockMessage = 'Im Vorrat';
         }
 
-        const imageUrl = product.bild ? `${IMAGE_BASE_URL}${product.bild}` : 'https://via.placeholder.com/200';
+        const imageUrl = product.bild ? `${IMAGE_BASE_URL}${product.bild}` : 'https://via.placeholder.com/200?text=No+Image';
 
         const card = document.createElement('div');
         card.classList.add('product');
@@ -57,6 +66,7 @@ function renderProducts(productList) {
         container.appendChild(card);
 
         card.addEventListener('click', (event) => {
+            // Nur das Modal öffnen, wenn nicht der "In den Warenkorb"-Button geklickt wurde
             if (!event.target.classList.contains('add-to-cart-initial')) {
                 openProductModal(product);
             }
@@ -64,9 +74,10 @@ function renderProducts(productList) {
 
         const AddToCartButton = card.querySelector('.add-to-cart-initial');
         AddToCartButton.addEventListener('click', async (event) => {
-            event.stopPropagation();
+            event.stopPropagation(); // Verhindert, dass das Modal geöffnet wird
             if (product.menge > 0) {
-                await addToCartAPI(product);
+                // Hier wird versucht, 1 Stück hinzuzufügen
+                await addToCartAPI(product, 1);
             } else {
                 alert("Dieses Produkt ist leider nicht mehr vorrätig.");
             }
@@ -80,15 +91,15 @@ filterForm.addEventListener("submit", function (event) {
     const filters = {};
 
     const nameFilter = filterForm.elements["name"].value.trim();
-    filters.name = nameFilter;
+    if (nameFilter) filters.name = nameFilter; // Nur hinzufügen, wenn Wert vorhanden
 
     const maxPriceValue = filterForm.elements["maxPreis"].value.trim();
     const maxPriceFilter = parseFloat(maxPriceValue);
-    filters.maxPreis = !isNaN(maxPriceFilter) && maxPriceValue !== '' ? maxPriceFilter : 0;
+    if (!isNaN(maxPriceFilter) && maxPriceValue !== '') filters.maxPreis = maxPriceFilter;
 
     const minMengeValue = filterForm.elements["minMenge"].value.trim();
     const minMengeFilter = parseInt(minMengeValue);
-    filters.minMenge = !isNaN(minMengeFilter) && minMengeValue !== '' ? minMengeFilter : 0;
+    if (!isNaN(minMengeFilter) && minMengeValue !== '') filters.minMenge = minMengeFilter;
 
     const selectedCategory = filterForm.elements["kategorie"].value;
     if (selectedCategory && selectedCategory !== "Kategorie" && selectedCategory !== "All") {
@@ -104,10 +115,10 @@ filterForm.addEventListener("submit", function (event) {
         filters.sortierung = "";
     }
 
-    fetchProducts(filters, 'http://localhost:3000/api/inv/product/search/');
+    fetchProducts(filters, `${API_INV_BASE_URL}/product/search/`);
 });
 
-async function fetchProducts(filters = {}, baseUrl = 'http://localhost:3000/api/inv/product/all') {
+async function fetchProducts(filters = {}, baseUrl = `${API_INV_BASE_URL}/product/all`) {
     const query = new URLSearchParams(filters).toString();
     const url = query ? `${baseUrl}?${query}` : baseUrl;
 
@@ -118,12 +129,14 @@ async function fetchProducts(filters = {}, baseUrl = 'http://localhost:3000/api/
         }
         const productsFromApi = await response.json();
 
-        allProductsCache = productsFromApi.map(p => ({ ...p,
-            originalMenge: p.menge
+        // Speichere die originalen Mengen, bevor der Warenkorb synchronisiert wird
+        allProductsCache = productsFromApi.map(p => ({
+            ...p,
+            originalMenge: p.menge // Originalmenge aus der Datenbank
         }));
 
-        await loadAndSyncCart();
-        renderProducts(allProductsCache);
+        await loadAndSyncCart(); // Synchronisiere den Warenkorb und aktualisiere Mengen
+        renderProducts(allProductsCache); // Render die Produkte mit den aktualisierten Mengen
 
     } catch (error) {
         console.error("Fehler beim Laden der Produkte:", error);
@@ -132,32 +145,50 @@ async function fetchProducts(filters = {}, baseUrl = 'http://localhost:3000/api/
     }
 }
 
+// Wird beim DOMContentLoaded aufgerufen
 window.addEventListener("DOMContentLoaded", () => {
-    fetchProducts({}, 'http://localhost:3000/api/inv/product/search/');
+    fetchProducts({}, `${API_INV_BASE_URL}/product/search/`);
 });
 
 async function addToCartAPI(productToAdd, anzahl = 1) {
-    const userToken = localStorage.getItem('adminToken');
+    const userToken = getCurrentUserToken(); // Holt den aktuellen Token
 
-    if (productToAdd.menge < anzahl) {
-        alert("Nicht genügend Produkte auf Lager!");
+    // Produkt im Cache finden, um die aktuelle Menge zu überprüfen
+    const productInCache = allProductsCache.find(p => p.produktid === productToAdd.produktid);
+    if (!productInCache) {
+        alert("Fehler: Produktinformationen nicht gefunden. Bitte Seite neu laden.");
+        return;
+    }
+
+    // Menge im Warenkorb für dieses Produkt finden
+    const currentQuantityInCart = currentCart.find(item => item.produktid === productToAdd.produktid)?.anzahl || 0;
+
+    // Überprüfen, ob genügend Bestand für die zusätzlich gewünschte Menge vorhanden ist
+    if (productInCache.originalMenge < (currentQuantityInCart + anzahl)) {
+        alert(`Nicht genügend Produkte auf Lager! Maximal verfügbar: ${productInCache.originalMenge - currentQuantityInCart}`);
         return;
     }
 
     if (userToken) {
+        // Benutzer ist angemeldet, verwende Backend-Warenkorb
         try {
-            const response = await fetch('http://localhost:3000/api/inv/warenkorb/add', {
+            const response = await fetch(`${API_INV_BASE_URL}/warenkorb/add`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${userToken}`
                 },
-                body: JSON.stringify({ produktid: productToAdd.produktid, anzahl })
+                body: JSON.stringify({ produktid: productToAdd.produktid, anzahl }) // Füge die gewünschte Anzahl hinzu
             });
 
             if (!response.ok) {
                 if (response.status === 401 || response.status === 403) {
                     alert("Sitzung abgelaufen oder nicht autorisiert. Bitte neu anmelden.");
+                    // Hier sollte der userToken entfernt und der lokale Warenkorb gelöscht werden,
+                    // da der Backend-Warenkorb nicht zugänglich ist.
+                    localStorage.removeItem('userToken');
+                    localStorage.removeItem('cart'); // Auch lokalen Warenkorb leeren
+                    updateCartCount(); // Warenkorb-Anzeige aktualisieren
                     window.location.href = "../LoginPage/loginpage.html";
                     return;
                 }
@@ -166,54 +197,74 @@ async function addToCartAPI(productToAdd, anzahl = 1) {
             }
 
             const result = await response.json();
-            const updatedProductIndex = allProductsCache.findIndex(p => p.produktid === productToAdd.produktid);
-            if (updatedProductIndex !== -1) {
-                allProductsCache[updatedProductIndex].menge -= anzahl;
-                renderProducts(allProductsCache);
-            }
-            updateCartCount();
+            // Nach erfolgreichem Hinzufügen zum Backend-Warenkorb, den Cache und die Anzeige aktualisieren
+            await loadAndSyncCart(); // Ruft den aktualisierten Warenkorb vom Backend ab und aktualisiert Mengen
+            renderProducts(allProductsCache); // Rendert Produkte neu mit korrigierter Menge
+            alert("Produkt erfolgreich zum Warenkorb hinzugefügt!"); // Bestätigungsnachricht
             return result;
         } catch (error) {
-            console.error("Fehler beim Hinzufügen zum Warenkorb:", error);
+            console.error("Fehler beim Hinzufügen zum Warenkorb (API):", error);
             alert("Fehler beim Hinzufügen zum Warenkorb: " + error.message);
         }
     } else {
+        // Benutzer ist nicht angemeldet, verwende LocalStorage-Warenkorb
         let cart = JSON.parse(localStorage.getItem("cart")) || [];
         const existingItemIndex = cart.findIndex(item => item.produktid === productToAdd.produktid);
 
         if (existingItemIndex !== -1) {
+            // Prüfen, ob die Gesamtmenge die Originalmenge nicht übersteigt
+            if (cart[existingItemIndex].quantity + anzahl > productInCache.originalMenge) {
+                alert(`Sie können nicht mehr als ${productInCache.originalMenge} dieses Produkts hinzufügen.`);
+                return;
+            }
             cart[existingItemIndex].quantity += anzahl;
         } else {
+            // Prüfen, ob die gewünschte Menge die Originalmenge nicht übersteigt
+            if (anzahl > productInCache.originalMenge) {
+                alert(`Nicht genügend Produkte auf Lager! Maximal verfügbar: ${productInCache.originalMenge}`);
+                return;
+            }
             cart.push({ ...productToAdd, quantity: anzahl });
         }
         localStorage.setItem("cart", JSON.stringify(cart));
 
-        const updatedProductIndex = allProductsCache.findIndex(p => p.produktid === productToAdd.produktid);
-        if (updatedProductIndex !== -1) {
-            allProductsCache[updatedProductIndex].menge -= anzahl;
-            renderProducts(allProductsCache);
-        }
+        // Aktualisiere den Cache und die Anzeige für den lokalen Warenkorb
+        await loadAndSyncCart(); // Aktualisiert die Menge im Cache basierend auf dem lokalen Warenkorb
+        renderProducts(allProductsCache);
         updateCartCount();
+        alert("Produkt lokal zum Warenkorb hinzugefügt."); // Bestätigungsnachricht
         return { message: "Produkt lokal zum Warenkorb hinzugefügt." };
     }
 }
 
 function updateCartCount() {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const count = cart.reduce((sum, item) => sum + (item.quantity || item.anzahl || 0), 0);
-    const cartCountElement = document.getElementById("cart-count");
-    if(cartCountElement) {
-        cartCountElement.textContent = count;
+    const userToken = getCurrentUserToken();
+    if (userToken) {
+        // Wenn angemeldet, Warenkorb-Anzeige von Backend-Daten ableiten (da loadAndSyncCart das aktualisiert hat)
+        const count = currentCart.reduce((sum, item) => sum + (item.anzahl || 0), 0);
+        const cartCountElement = document.getElementById("cart-count");
+        if(cartCountElement) {
+            cartCountElement.textContent = count;
+        }
+    } else {
+        // Wenn nicht angemeldet, Warenkorb-Anzeige vom lokalen Warenkorb ableiten
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const count = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
+        const cartCountElement = document.getElementById("cart-count");
+        if(cartCountElement) {
+            cartCountElement.textContent = count;
+        }
     }
 }
 
+// Passt die Mengen der Produkte im Cache basierend auf dem aktuellen Warenkorb an
 async function loadAndSyncCart() {
-    const userToken = localStorage.getItem('adminToken');
-    let tempProducts = [...allProductsCache];
+    const userToken = getCurrentUserToken();
+    let tempProducts = [...allProductsCache]; // Eine Kopie des Caches
 
     if (userToken) {
         try {
-            const response = await fetch('http://localhost:3000/api/inv/warenkorb/myproducts', {
+            const response = await fetch(`${API_INV_BASE_URL}/warenkorb/myproducts`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -224,58 +275,77 @@ async function loadAndSyncCart() {
                 const backendCartItems = await response.json();
                 currentCart = backendCartItems.map(item => ({ ...item.product, anzahl: item.anzahl }));
 
+                // Aktualisiere die Mengen im tempProducts basierend auf dem Backend-Warenkorb
                 tempProducts = tempProducts.map(product => {
                     const cartItem = currentCart.find(item => item.produktid === product.produktid);
-                    if (cartItem) {
-                        return { ...product,
-                            menge: product.originalMenge - cartItem.anzahl
-                        };
-                    }
-                    return product;
+                    // Die verfügbare Menge ist die Originalmenge minus der Menge im Warenkorb
+                    const newMenge = product.originalMenge - (cartItem ? cartItem.anzahl : 0);
+                    return { ...product, menge: Math.max(0, newMenge) }; // Menge nicht unter 0 fallen lassen
                 });
-            } else {
+
+                // Optional: Lokalen Warenkorb mit Backend-Daten synchronisieren, wenn angemeldet
+                // Dies kann hilfreich sein, falls der Backend-Warenkorb beim Logout nicht sofort verfügbar ist
+                localStorage.setItem("cart", JSON.stringify(currentCart.map(item => ({...item, quantity: item.anzahl}))));
+
+            } else if (response.status === 401 || response.status === 403) {
+                // Token abgelaufen oder ungültig, den lokalen Zustand leeren
+                console.warn("Sitzung abgelaufen oder nicht autorisiert während Warenkorb-Synchronisation. Lokaler Warenkorb wird geleert.");
+                localStorage.removeItem('userToken');
+                localStorage.removeItem('cart');
                 currentCart = [];
+                // Mengen in tempProducts auf original zurücksetzen, da kein eingeloggter Warenkorb existiert
+                tempProducts = tempProducts.map(product => ({ ...product, menge: product.originalMenge }));
+            } else {
+                console.error("Fehler beim Abrufen des Warenkorbs für Synchronisation:", response.statusText);
+                currentCart = [];
+                // Im Fehlerfall den Cache auf Originalmengen setzen, da wir den Warenkorb nicht kennen
+                tempProducts = tempProducts.map(product => ({ ...product, menge: product.originalMenge }));
             }
         } catch (error) {
-            console.error("Fehler beim Abrufen des Warenkorbs für Synchronisation:", error);
+            console.error("Fehler beim Abrufen des Warenkorbs für Synchronisation (API):", error);
             currentCart = [];
+            // Im Fehlerfall den Cache auf Originalmengen setzen
+            tempProducts = tempProducts.map(product => ({ ...product, menge: product.originalMenge }));
         }
     } else {
+        // Benutzer ist nicht angemeldet, Warenkorb kommt nur aus LocalStorage
         currentCart = JSON.parse(localStorage.getItem("cart")) || [];
         tempProducts = tempProducts.map(product => {
             const cartItem = currentCart.find(item => item.produktid === product.produktid);
-            if (cartItem) {
-                return { ...product,
-                    menge: product.originalMenge - cartItem.quantity
-                };
-            }
-            return product;
+            // Die verfügbare Menge ist die Originalmenge minus der Menge im lokalen Warenkorb
+            const newMenge = product.originalMenge - (cartItem ? cartItem.quantity : 0);
+            return { ...product, menge: Math.max(0, newMenge) }; // Menge nicht unter 0 fallen lassen
         });
     }
-    allProductsCache = tempProducts;
-    updateCartCount();
+    allProductsCache = tempProducts; // Aktualisiere den globalen Cache
+    updateCartCount(); // Aktualisiere die Warenkorb-Anzeige
 }
 
 function openProductModal(product){
     currentProductInModal = product;
-    const imageUrl = product.bild ? `${IMAGE_BASE_URL}${product.bild}` : 'https://via.placeholder.com/200';
+    const imageUrl = product.bild ? `${IMAGE_BASE_URL}${product.bild}` : 'https://via.placeholder.com/200?text=No+Image';
     modalImage.src = imageUrl;
     modalImage.alt = product.produktname;
     modalName.textContent = product.produktname;
     modalDescription.textContent = product.beschreibung || 'Keine detaillierte Beschreibung verfügbar.';
     modalCategory.textContent = `Kategorie: ${product.kategorie}`;
     modalPrice.textContent = `Preis: €${parseFloat(product.preis).toFixed(2)}`;
+
+    // Menge im Modal und Button-Status basierend auf der aktuellen 'menge' im Cache
+    const productInCache = allProductsCache.find(p => p.produktid === product.produktid);
+    const availableQuantity = productInCache ? productInCache.menge : 0;
+
     if (modalQuantity) {
-        modalQuantity.textContent = `Verfügbare Menge: ${product.menge}`;
+        modalQuantity.textContent = `Verfügbare Menge: ${availableQuantity}`;
         if (addToCartModalButton) {
-            if (product.menge <= 0) {
+            if (availableQuantity <= 0) {
                 addToCartModalButton.disabled = true;
                 addToCartModalButton.textContent = 'Nicht vorrätig';
                 addToCartModalButton.style.backgroundColor = '#ccc';
             } else {
                 addToCartModalButton.disabled = false;
                 addToCartModalButton.textContent = 'In den Warenkorb';
-                addToCartModalButton.style.backgroundColor = '#333';
+                addToCartModalButton.style.backgroundColor = '#333'; // Oder deine Standardfarbe
             }
         }
     }
@@ -310,36 +380,40 @@ productDetailModal.addEventListener('click', (event) =>{
 if(addToCartModalButton){
     addToCartModalButton.addEventListener("click", async (event) =>{
         event.stopPropagation();
-        if (currentProductInModal && currentProductInModal.menge > 0){
-            await addToCartAPI(currentProductInModal);
-            if (modalQuantity) {
-                modalQuantity.textContent = `Verfügbare Menge: ${currentProductInModal.menge}`;
-                if (currentProductInModal.menge <= 0) {
-                    addToCartModalButton.disabled = true;
-                    addToCartModalButton.textContent = 'Nicht vorrätig';
-                    addToCartModalButton.style.backgroundColor = '#ccc';
+        if (currentProductInModal) {
+            // Menge im Modal basierend auf Cache überprüfen, nicht currentProductInModal.menge,
+            // da currentProductInModal nicht sofort aktualisiert wird.
+            const productInCache = allProductsCache.find(p => p.produktid === currentProductInModal.produktid);
+            if (productInCache && productInCache.menge > 0){
+                await addToCartAPI(currentProductInModal, 1); // Füge 1 zum Warenkorb hinzu
+                // Aktualisiere das Modal nach dem Hinzufügen zum Warenkorb
+                if (modalQuantity) {
+                    const updatedProductInCache = allProductsCache.find(p => p.produktid === currentProductInModal.produktid);
+                    if (updatedProductInCache) {
+                        modalQuantity.textContent = `Verfügbare Menge: ${updatedProductInCache.menge}`;
+                        if (updatedProductInCache.menge <= 0) {
+                            addToCartModalButton.disabled = true;
+                            addToCartModalButton.textContent = 'Nicht vorrätig';
+                            addToCartModalButton.style.backgroundColor = '#ccc';
+                        }
+                    }
                 }
+            } else {
+                alert("Dieses Produkt ist leider nicht mehr vorrätig.");
             }
-        } else {
-            alert("Dieses Produkt ist leider nicht mehr vorrätig.");
         }
     });
 }
 
-window.addEventListener("DOMContentLoaded", () =>{
-    fetchProducts({}, 'http://localhost:3000/api/inv/product/search/');
+// Listener für 'cartItemRemoved' (wenn etwas aus dem Warenkorb entfernt wird)
+window.addEventListener('cartItemRemoved', async (event) => {
+    // Menge im Cache aktualisieren und Produkte neu rendern
+    await loadAndSyncCart(); // Ruft den aktuellen Warenkorb-Status ab und aktualisiert Cache
+    renderProducts(allProductsCache); // Rendert die Produkte neu mit den korrigierten Mengen
 });
 
-window.addEventListener('cartItemRemoved', async (event) => {
-    const { produktid, anzahl } = event.detail;
-
-    const updatedProductIndex = allProductsCache.findIndex(p => p.produktid === produktid);
-    if (updatedProductIndex !== -1) {
-        allProductsCache[updatedProductIndex].menge = Math.min(
-            allProductsCache[updatedProductIndex].originalMenge,
-            allProductsCache[updatedProductIndex].menge + anzahl
-        );
-        renderProducts(allProductsCache);
-    }
-    await loadAndSyncCart();
+// Listener für 'cartCleared' (wenn der gesamte Warenkorb geleert wird)
+window.addEventListener('cartCleared', async () => {
+    await loadAndSyncCart(); // Ruft den aktuellen Warenkorb-Status ab und aktualisiert Cache
+    renderProducts(allProductsCache); // Rendert die Produkte neu mit den korrigierten Mengen
 });
