@@ -39,37 +39,39 @@
     <div id="product-form-container" class="collapsible">
         <form id="product-form">
             <label for="name">Produktname:</label> <input type="search" id="name" placeholder="Produktname" required/>
-
             <label for="price">Preis (€):</label> <input type="number" id="price" placeholder="Preis (€)" step="0.01" required/>
-
             <label for="menge">Menge:</label> <input type="number" id="menge" placeholder="Menge" required/>
-
             <label for="category">Kategorie:</label> <input type="text" id="category" placeholder="Kategorie" required/>
-
-            <label for="image">Produktbild:</label> <input type="file" id="image" accept="image/*" /> <div id="current-image-display"></div> <label for="description">Beschreibung:</label> <textarea id="description" placeholder="Beschreibung"></textarea>
-
+            <div id="image-input-group">
+                <label for="image">Produktbild:</label>
+                <input type="file" id="image" accept="image/*" />
+                <div id="current-image-display"></div>
+            </div>
+            <label for="description">Beschreibung:</label> <textarea id="description" placeholder="Beschreibung"></textarea>
             <button type="submit">Produkt speichern</button>
         </form>
     </div>
 
     <div class="filter">
-        <form id="filter-form" onsubmit="return false;">
-            <input type="text" id="filter-name" placeholder="Filtern nach Name"/>
-            <select id="filter-category">
+        <form id="filter-form">
+            <input type="search" name="name" placeholder="Filtern nach Name">
+            <select name="kategorie">
                 <option value="All">Alle Kategorien</option>
                 <option value="Sportbekleidung">Sportbekleidung</option>
                 <option value="Fitnesszubehör">Fitnesszubehör</option>
                 <option value="Trainingsgerät">Trainingsgerät</option>
                 <option value="Supplement">Supplement</option>
             </select>
-            <input type="number" id="filter-maxpreis" placeholder="Maximalpreis (€)" step="0.01" />
-            <input type="number" id="filter-minmenge" placeholder="Mindestmenge" />
-            <select id="filter-sort">
+            <input type="number" name="maxPreis" min="1" placeholder="Max. Preis (€)">
+            <input type="number" name="minMenge" min="0" placeholder="Min. Menge">
+            <select name="sortierung">
                 <option value="">Sortieren nach</option>
                 <option value="preis_asc">Preis aufsteigend</option>
                 <option value="preis_desc">Preis absteigend</option>
+                <option value="name_asc">Name A-Z</option>
+                <option value="name_desc">Name Z-A</option>
             </select>
-            <button id="filter-btn" type="submit">Filtern</button>
+            <button type="submit">🔍 Filtern</button>
         </form>
     </div>
     <div id="product-list" class="product-grid"></div>

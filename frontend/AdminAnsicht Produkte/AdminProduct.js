@@ -3,10 +3,16 @@ const list = document.getElementById("product-list");
 const formContainer = document.getElementById("product-form-container");
 const addBtn = document.getElementById("add-product-btn");
 let editingProductId = null;
+let currentProductImage = null;
+let downloadedImageFile = null;
+
 const saveProductButton = form.querySelector('button[type="submit"]');
 const adminNotification = document.getElementById('adminNotification');
 const currentImageDisplay = document.getElementById("current-image-display");
+const imageInput = document.getElementById("image");
 const IMAGE_BASE_URL = 'http://localhost:3000/';
+
+const filterForm = document.querySelector(".filter form");
 
 function showAdminNotification(message, type = 'success') {
     if (adminNotification) {
@@ -21,15 +27,68 @@ function showAdminNotification(message, type = 'success') {
     }
 }
 
+function displaySelectedImage(file, imageUrl = null) {
+    if (currentImageDisplay) {
+        currentImageDisplay.innerHTML = '';
+
+        const imgElement = document.createElement('img');
+        imgElement.style.maxWidth = '150px';
+        imgElement.style.height = 'auto';
+        imgElement.style.marginTop = '10px';
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imgElement.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            const notice = document.createElement('p');
+            notice.style.color = 'green';
+            notice.style.fontWeight = 'bold';
+            notice.textContent = 'Neues Bild wird hochgeladen.';
+            currentImageDisplay.appendChild(notice);
+        } else if (imageUrl) {
+            imgElement.src = imageUrl;
+            const notice = document.createElement('p');
+            notice.style.color = 'gray';
+            notice.style.fontWeight = 'normal';
+            notice.textContent = 'Altes Bild wird beibehalten, falls kein neues ausgewählt wird.';
+            currentImageDisplay.appendChild(notice);
+        } else {
+            currentImageDisplay.innerHTML = '<p>Kein Bild ausgewählt.</p>';
+            return;
+        }
+        currentImageDisplay.appendChild(imgElement);
+    }
+}
+
+imageInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        downloadedImageFile = null;
+        displaySelectedImage(file);
+    } else {
+        if (editingProductId && currentProductImage) {
+            displaySelectedImage(null, currentProductImage);
+        } else {
+            currentImageDisplay.innerHTML = '<p>Kein Bild ausgewählt.</p>';
+        }
+    }
+});
+
 addBtn.addEventListener("click", () => {
     formContainer.classList.toggle("open");
     if (formContainer.classList.contains("open")) {
         form.reset();
         editingProductId = null;
+        currentProductImage = null;
+        downloadedImageFile = null;
         saveProductButton.textContent = "Produkt speichern";
         if (currentImageDisplay) {
             currentImageDisplay.innerHTML = '';
         }
+        document.getElementById("image-input-group").style.display = 'block';
+        imageInput.value = '';
     }
 });
 
@@ -41,7 +100,6 @@ form.addEventListener("submit", async (e) => {
     const menge = parseInt(document.getElementById("menge").value);
     const kategorie = document.getElementById("category").value.trim();
     const beschreibung = document.getElementById("description").value.trim();
-    const imageInput = document.getElementById("image");
     const imageFile = imageInput.files[0];
 
     if (!produktname || isNaN(preis) || isNaN(menge) || !kategorie || !beschreibung) {
@@ -64,8 +122,14 @@ form.addEventListener("submit", async (e) => {
             patchFormData.append("menge", menge);
             patchFormData.append("kategorie", kategorie);
             patchFormData.append("beschreibung", beschreibung);
+
             if (imageFile) {
                 patchFormData.append("bild", imageFile);
+            } else if (downloadedImageFile) {
+                patchFormData.append("bild", downloadedImageFile);
+            } else {
+                showAdminNotification("Fehler: Es muss ein Bild ausgewählt oder ein vorhandenes beibehalten werden.", 'error');
+                return;
             }
 
             res = await fetch(`http://localhost:3000/api/inv/product/${editingProductId}`, {
@@ -110,15 +174,19 @@ form.addEventListener("submit", async (e) => {
             successMessage = "Produkt erfolgreich erstellt!";
         }
         showAdminNotification(successMessage, 'success');
-        await loadProducts();
+        const currentFilters = getCurrentFilterValues();
+        await loadProducts(currentFilters);
         form.reset();
         formContainer.classList.remove("open");
         editingProductId = null;
+        currentProductImage = null;
+        downloadedImageFile = null;
         saveProductButton.textContent = "Produkt speichern";
         if (currentImageDisplay) {
             currentImageDisplay.innerHTML = '';
         }
-
+        document.getElementById("image-input-group").style.display = 'block';
+        imageInput.value = '';
     } catch (err) {
         showAdminNotification("Fehler: " + err.message, 'error');
         console.error("Fehler im Submit-Handler:", err);
@@ -127,9 +195,7 @@ form.addEventListener("submit", async (e) => {
 
 async function loadProducts(filters = {}) {
     const query = new URLSearchParams(filters).toString();
-    const url = query
-        ? `http://localhost:3000/api/inv/product/search/?${query}`
-        : `http://localhost:3000/api/inv/product/all`;
+    const url = `${IMAGE_BASE_URL}api/inv/product/search${query ? `?${query}` : ''}`;
 
     try {
         const res = await fetch(url, { credentials: "include" });
@@ -202,20 +268,35 @@ async function editProduct(id) {
         document.getElementById("category").value = productData.kategorie || '';
         document.getElementById("description").value = productData.beschreibung || '';
 
-        document.getElementById("image").value = '';
-        if (currentImageDisplay) {
-            if (productData.bild) {
-                const imageUrl = productData.bild.startsWith("http")
-                    ? productData.bild
-                    : `${IMAGE_BASE_URL}${productData.bild}`;
-                currentImageDisplay.innerHTML = `
-                    <p>Aktuelles Bild:</p>
-                    <img src="${imageUrl}" alt="Aktuelles Produktbild" style="max-width: 150px; height: auto; margin-top: 10px;">
-                `;
-            } else {
-                currentImageDisplay.innerHTML = '';
+        imageInput.value = '';
+
+        currentProductImage = productData.bild
+            ? (productData.bild.startsWith("http") ? productData.bild : `${IMAGE_BASE_URL}${productData.bild}`)
+            : null;
+
+        if (currentProductImage) {
+            displaySelectedImage(null, currentProductImage);
+            try {
+                const imageRes = await fetch(currentProductImage);
+                if (imageRes.ok) {
+                    const blob = await imageRes.blob();
+                    const filename = currentProductImage.substring(currentProductImage.lastIndexOf('/') + 1);
+                    downloadedImageFile = new File([blob], filename, { type: blob.type });
+                    console.log("Altes Bild erfolgreich heruntergeladen:", downloadedImageFile);
+                } else {
+                    console.warn("Konnte altes Bild nicht herunterladen:", imageRes.statusText);
+                    downloadedImageFile = null;
+                }
+            } catch (imageErr) {
+                console.error("Fehler beim Herunterladen des alten Bildes:", imageErr);
+                downloadedImageFile = null;
             }
+        } else {
+            currentImageDisplay.innerHTML = '<p>Kein Bild vorhanden.</p>';
+            downloadedImageFile = null;
         }
+
+        document.getElementById("image-input-group").style.display = 'block';
 
         formContainer.classList.add("open");
         editingProductId = id;
@@ -243,27 +324,47 @@ async function deleteProduct(id) {
             throw new Error(`Fehler beim Löschen: ${errorData.message || res.statusText}`);
         }
         showAdminNotification("Produkt erfolgreich gelöscht!", 'error');
-        await loadProducts();
+        const currentFilters = getCurrentFilterValues();
+        await loadProducts(currentFilters);
     } catch (err) {
         showAdminNotification("Produkt konnte nicht gelöscht werden: " + err.message, 'error');
         console.error("Fehler in deleteProduct:", err);
     }
 }
 
-document.getElementById("filter-btn").addEventListener("click", () => {
-    const name = document.getElementById("filter-name").value.trim();
-    const category = document.getElementById("filter-category").value.trim();
-    const sort = document.getElementById("filter-sort").value;
-    const maxPreis = document.getElementById("filter-maxpreis")?.value;
-    const minMenge = document.getElementById("filter-minmenge")?.value;
-
+function getCurrentFilterValues() {
     const filters = {};
-    if (name) filters.name = name;
-    if (category) filters.kategorie = category;
-    if (sort) filters.sortierung = sort;
-    if (maxPreis) filters.maxPreis = maxPreis;
-    if (minMenge) filters.minMenge = minMenge;
 
+    const nameFilter = filterForm.elements["name"].value.trim();
+    if (nameFilter) filters.name = nameFilter;
+
+    const maxPriceValue = filterForm.elements["maxPreis"].value.trim();
+    const maxPriceFilter = parseFloat(maxPriceValue);
+    if (!isNaN(maxPriceFilter) && maxPriceValue !== '') filters.maxPreis = maxPriceFilter;
+
+    const minMengeValue = filterForm.elements["minMenge"].value.trim();
+    const minMengeFilter = parseInt(minMengeValue);
+    if (!isNaN(minMengeFilter) && minMengeValue !== '') filters.minMenge = minMengeFilter;
+
+    const selectedCategory = filterForm.elements["kategorie"].value;
+    if (selectedCategory && selectedCategory !== "All") {
+        filters.kategorie = selectedCategory;
+    } else {
+        delete filters.kategorie;
+    }
+
+    const selectedSort = filterForm.elements["sortierung"].value;
+    if (selectedSort && selectedSort !== "") {
+        filters.sortierung = selectedSort;
+    } else {
+        delete filters.sortierung;
+    }
+    return filters;
+}
+
+filterForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+    const filters = getCurrentFilterValues();
     loadProducts(filters);
 });
 

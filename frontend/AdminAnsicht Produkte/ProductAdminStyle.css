@@ -171,7 +171,7 @@ button:hover {
 
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 20px;
     padding: 20px;
     margin: 30px 20px 0 20px;
@@ -397,7 +397,7 @@ button:hover {
     }
 
     .product-grid {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         padding: 15px;
         gap: 15px;
         margin: 30px 10px 0 10px;
