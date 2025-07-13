@@ -25,10 +25,11 @@ function zeigeProduktHinzufuegenModal(wunschlisteid) {
 
             container.innerHTML = "";
             produkte.forEach(p => {
+                const imageURL = `http://localhost:3000/${p.bild}`;
                 const card = document.createElement("div");
                 card.className = "produkt-card";
                 card.innerHTML = `
-                    <img src="localhost:3000/${p.bild}" alt="${p.produktname}" class="card-img-top">
+                    ${p.bild ? `<img src="${imageURL}" alt="${p.produktname}">` : ''}
                     <h4>${p.produktname}</h4>
                     <p>${p.beschreibung}</p>
                     <p>${p.kategorie}</p>
@@ -65,7 +66,7 @@ function produktZurWunschlisteHinzufuegen(produktid) {
     })
         .then(res => {
             if(!res.ok) console.error("Fehler beim Hinzufügen des Produkts!");
-            alert("Produkt hinzugefügt!");
+            zeigeToast("Produkt hinzugefügt", "error");
         })
         .catch(err => {
             console.error("Fehler beim Hinzufügen des Produkts!");

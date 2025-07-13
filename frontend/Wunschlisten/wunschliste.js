@@ -54,7 +54,6 @@ async function loadWunschlisten() {
 }
 
 async function loeschen(id) {
-    if (confirm("Wirklich Löschen?")) {
         try {
             const res = await fetch("http://localhost:3000/api/wun/delete", {
                 method: "DELETE",
@@ -66,14 +65,15 @@ async function loeschen(id) {
             });
             if (res.ok) {
                 await loadWunschlisten();
+                zeigeToast("Wunschliste gelöscht", "success");
             } else {
-                alert("Löschen fehlgeschlagen!");
+                zeigeToast("Löschen fehlgeschlagen!", "error");
             }
 
         } catch (e) {
             console.error(e);
         }
-    }
+
 }
 
 function openModal() {
@@ -91,7 +91,7 @@ async function submitWunschliste() {
     const beschreibung = document.getElementById("beschreibung").value.trim();
 
     if (!name || !beschreibung) {
-        alert("Bitte alle Felder ausfüllen.");
+        zeigeToast("Bitte alle Felder ausfüllen.", "error");
         return;
     }
 
@@ -111,8 +111,9 @@ async function submitWunschliste() {
         if (res.ok) {
             closeModal();
             loadWunschlisten();
+            zeigeToast("Wunschliste erstellt", "success");
         } else {
-            alert("Fehler beim Erstellen der Wunschliste.");
+            zeigeToast("Fehler beim Erstellen der Wunschliste.", "error");
         }
 
     } catch (e) {
@@ -151,7 +152,7 @@ function bearbeiten(id) {
         .then(data => zeigeFreigabe(data))
         .catch(err => {
             console.error(err);
-            alert("Fehler beim Laden der Freigabe");
+            zeigeToast("Fehler beim Laden der Freigabe", "error");
         });
     zeigeProdukteDerWunschliste(id);
 }
@@ -189,9 +190,9 @@ async function freigabeHinzufuegen(event) {
         if (res.ok) {
             bearbeiten(currentBearbeiteId);
         } else if (res.status === 400) {
-            alert("Benutzer nicht gefunden");
+            zeigeToast("Benutzer nicht gefunden", "error");
         } else {
-            alert("Feher!");
+            zeigeToast("Fehler", "error");
         }
 
     } catch (e) {
@@ -217,10 +218,10 @@ async function berechtigungAendern(wunschlisteid, benutzername, neueBerechtigung
         const text = await res.text();
 
         if (res.status === 200) {
-            alert("Berechtigung erfolgreich geändert")
+            zeigeToast("Berechtigung erfolgreich geändert", "success");
         } else {
             console.warn("Fehlertext: ", text);
-            alert("Fehler");
+            zeigeToast("Fehler", "error");
         }
 
     } catch (e) {
@@ -230,7 +231,7 @@ async function berechtigungAendern(wunschlisteid, benutzername, neueBerechtigung
 
 async function freigabeEntfernen(wunschlisteid, benutzername) {
     try {
-        const res = await fetch("http://localhost:3000/api/wun/authorize", {
+        const res = await fetch("http://localhost:3000/api/wun/removeUser", {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json"
@@ -244,8 +245,9 @@ async function freigabeEntfernen(wunschlisteid, benutzername) {
 
         if (res.ok) {
             bearbeiten(wunschlisteid);
+            zeigeToast("Freigabe entfernt", "success");
         } else {
-            alert("Fehler beim Entfernen der Freigabe");
+            zeigeToast("Fehler beim Entfernen der Freigabe", "error");
         }
     } catch (e) {
         console.error(e);
@@ -340,7 +342,7 @@ function toggleProduktInWunschliste(wunschlisteid, produktId, hinzufuegen) {
         })
         .catch(err => {
             console.error(err);
-            alert("Fehler beim Speichern");
+            zeigeToast("Fehler beim Speichern", "error");
         })
 }
 

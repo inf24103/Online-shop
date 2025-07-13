@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>User-Verwaltung</title>
-  <link rel="stylesheet" href="../Userverwaltung/userverwaltungstyle.css">
-    <link rel="stylesheet" href="../public/navbar.css">
+    <link rel="stylesheet" href="/Userverwaltung/userverwaltungstyle.css">
+    <link rel="stylesheet" href="/public/navbar.css">
+    <link rel="stylesheet" href="/public/toast.css">
 </head>
 <body>
 <h1>User-Verwaltung</h1>
 <button class="back-btn" onclick="history.back()">← Zurück</button>
 <div class="filter">
-  <form method="post" action="">
-    <input type="number" name="search" placeholder="User-ID">
-    <button type="submit">Filter</button>
-    <button type="button" id="reset-filter">Filter zurücksetzen</button>
-  </form>
+    <form method="post" action="">
+        <input type="number" name="search" placeholder="User-ID">
+        <button type="submit">Filter</button>
+        <button type="button" id="reset-filter">Filter zurücksetzen</button>
+    </form>
 </div>
 <div class="userlist">
 
@@ -22,4 +23,5 @@
 </body>
 <script src="../Userverwaltung/userverwaltung.js"></script>
 <script src="../public/sidebar.js"></script>
+<script src="/public/toast.js"></script>
 </html>

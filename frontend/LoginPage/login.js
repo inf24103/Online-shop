@@ -18,15 +18,15 @@
                     headers: {"Content-Type": "application/json"}
                 })
                 if(res.status === 401) {
-                    alert("Benutzername oder Passwort ungültig");
+                    zeigeToast("Benutzername oder Passwort ungültig", "error");
                 }
                 if(res.status === 200) {
                     form.reset();
-                    window.location.href = "../user/index.html";
+                    window.location.href = "/user/index.html";
                 }
             } catch (e) {
                 console.error(e);
-                alert("Es ist ein Fehler aufgetreten!");
+                zeigeToast("Es ist ein Fehler aufgetreten!", "error");
             }
         })
     })

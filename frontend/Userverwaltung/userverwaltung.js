@@ -33,7 +33,7 @@ async function loadUserData() {
             window.location.href = "../unauthorized/unauthorized.html";
             return;
         }
-        if(!res.ok) alert("Es ist ein Fehler aufgetreten!");
+        if(!res.ok) zeigeToast("Es ist ein Fehler aufgetreten!", "error");
 
         const users = await res.json();
 
@@ -98,7 +98,7 @@ function render (users) {
                 if(res.ok) {
                     card.querySelector("p:last-of-type").textContent = "Status: gesperrt";
                 } else {
-                    alert("Sperren fehlgeschlagen");
+                    zeigeToast("Sperren fehlgeschlagen", "error");
                 }
             } catch (e) {
                 console.error(e);
@@ -116,7 +116,7 @@ function render (users) {
                 if(res.ok) {
                     card.remove();
                 } else {
-                    alert("Löschen fehlgeschlagen");
+                    zeigeToast("Löschen fehlgeschlagen", "error");
                 }
             } catch (e) {
                 console.error(e);

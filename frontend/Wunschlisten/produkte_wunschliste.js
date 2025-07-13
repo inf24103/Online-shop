@@ -24,8 +24,10 @@ function zeigeProdukteDerWunschliste(wunschlisteId, berechtigung = "owner") {
 
             produkte.forEach(p => {
                 const card = document.createElement("div");
+                const imageURL = `http://localhost:3000/${p.bild}`;
                 card.className = "produkt-card";
                 card.innerHTML = `
+                ${p.bild ? `<img src="${imageURL}" alt="${p.produktname}">` : ''}
                 <h4>${p.produktname}</h4>
                 <p>${p.beschreibung}</p>
                 <p><strong>${parseFloat(p.preis).toFixed(2)} €</strong></p>
