@@ -303,10 +303,7 @@ router.delete('/warenkorb/:id', authenticateToken, async (req, res) => {
         const currentQuantity = productInCart.anzahl;
         const newQuantity = currentQuantity - 1;
 
-        if (newQuantity > 5) {
-            await deleteProductInWarenkorb(produktId, warenkorb[0].warenkorbid);
-            res.status(200).json({message: 'Produkt aus dem Warenkorb entfernt'});
-        } else if (newQuantity > 0) {
+        if (newQuantity > 0) {
             await updateProductQuantity(warenkorb[0].warenkorbid, produktId, -1);
             res.status(200).json({message: 'Produktanzahl im Warenkorb verringert'});
         } else {
