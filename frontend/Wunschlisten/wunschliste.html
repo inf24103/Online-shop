@@ -94,6 +94,21 @@
 <div id="produkt-hinzufuegen-modal" class="modal">
   <div class="modal-content produkt-hinzufuegen-content">
     <h3>Produkt zur Wunschliste hinzufügen</h3>
+    <!--Filterbereich-->
+
+    <div class="filterbereich">
+      <input type="text" id="filter-name" placeholder="Produktname">
+      <select name="kategorie" id="kat_filter">
+        <option value="All">Alle Kategorien</option>
+        <option value="Sportbekleidung">Sportbekleidung</option>
+        <option value="Fitnesszubehör">Fitnesszubehör</option>
+        <option value="Trainingsgerät">Trainingsgerät</option>
+        <option value="Supplement">Supplement</option>
+      </select>
+      <button type="submit" onclick="filterProdukteInWunschliste()">🔍 Filtern</button>
+    </div>
+
+
     <div id="alle-produkte-liste" class="produkte-grid-scroll">
       <!--Hier werden alle Produkte angezeigt-->
     </div>

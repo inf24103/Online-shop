@@ -1,12 +1,16 @@
 let listEl;
 let form;
-let input;
+let inputId;
+let inputName;
+let inputStatus;
 let resetBtn;
 
 document.addEventListener("DOMContentLoaded", () => {
     listEl = document.querySelector(".userlist");
     form = document.querySelector(".filter form");
-    input = form.elements.search;
+    inputId = form.elements.searchId;
+    inputName = form.elements.searchName;
+    inputStatus = form.elements.searchStatus;
     resetBtn = document.getElementById("reset-filter");
 
     loadUserData();
@@ -19,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 })
 
-async function loadUserData() {
+async function loadUserData(filtered = false) {
     listEl.innerHTML = "Lade Benutzerdaten...";
 
     try {
@@ -37,7 +41,27 @@ async function loadUserData() {
 
         const users = await res.json();
 
-        render(users);
+        if (filtered) {
+            const id = inputId.value.trim();
+            const name = inputName.value.trim().toLowerCase();
+            const status = inputStatus.value;
+
+            const gefiltert = users.filter(user => {
+                const matchId = id === "" || user.benutzerid.toString() === id;
+                const matchName = name === "" || (
+                    user.benutzername.toLowerCase().includes(name) ||
+                    user.vorname.toLowerCase().includes(name) ||
+                    user.nachname.toLowerCase().includes(name)
+                );
+                const matchStatus = status === "" || user.kontostatus.toLowerCase() === status;
+
+                return matchId && matchName && matchStatus;
+            });
+
+            render(gefiltert);
+        } else {
+            render(users);
+        }
 
     } catch (error) {
         console.log(error);
@@ -55,6 +79,13 @@ function render (users) {
     users.forEach(user => {
         const card = document.createElement("div");
         card.className = "user-card";
+
+
+        if(user.kontostatus?.toLowerCase() === "gesperrt") {
+            card.classList.add("gesperrt");
+        }
+
+
         card.innerHTML = `
         <h3>ID ${user.benutzerid}</h3>
         <p><strong>Benutzername:</strong> ${user.benutzername}</p>
@@ -64,7 +95,7 @@ function render (users) {
         <p><strong>Straße:</strong> ${user.strasse} ${user.hausnummer}</p>
         <p><strong>Telefon:</strong> ${user.telefonnr}</p>
         <p><strong>Rolle:</strong> ${user.rolle}</p>
-        <p><strong>Status:</strong> ${user.kontostatus}</p> 
+        <p class="status"><strong>Status:</strong> ${user.kontostatus}</p>
         `
 
         //Löschen Button
@@ -85,20 +116,51 @@ function render (users) {
         //Sperren/Entsperren Button
         const lockBtn = document.createElement("button");
         lockBtn.className = "sperren";
-        lockBtn.title = "Benutzer sperren";
-        lockBtn.innerHTML = `<img src="../pictures/sperr_icon.png" alt="Sperren">`;
+
+        //Überprüfen, ob User gesperrt ist
+        const istGesperrt = user.kontostatus?.toLowerCase() === "gesperrt";
+
+        //Icon und Titel setzen
+        lockBtn.title = istGesperrt ? "Benutzer entsperren" : "Benutzer sperren";
+        lockBtn.innerHTML = `<img src="../pictures/sperr_icon.png" alt="${istGesperrt ? "Entsperren" : "Sperren"}">`;
+
         lockBtn.addEventListener("click", async () => {
-            const ok = confirm("Benutzer sperren?");
-            if(!ok) return;
+            const aktion = istGesperrt ? "entsperren" : "sperren";
+
+            const endpoint = istGesperrt
+                ? `http://localhost:3000/api/user/unblock/${user.benutzerid}`
+                : `http://localhost:3000/api/user/block/${user.benutzerid}`;
+
             try {
-                const res = await fetch(`http://localhost:3000/api/user/block/${user.benutzerid}`, {
+                const res = await fetch(endpoint, {
                     method: "PUT",
                     credentials: "include"
                 });
-                if(res.ok) {
-                    card.querySelector("p:last-of-type").textContent = "Status: gesperrt";
+
+                if (res.ok) {
+                    //Status aktualisieren
+                    const statusEl = card.querySelector(".status");
+                    if (statusEl) {
+                        statusEl.innerHTML = `<strong>Status:</strong> ${istGesperrt ? "entsperrt" : "gesperrt"}`;
+                    }
+
+                    if (istGesperrt) {
+                        card.classList.remove("gesperrt");
+                        lockBtn.title = "Benutzer sperren";
+                    } else {
+                        card.classList.add("gesperrt");
+                        lockBtn.title = "Benutzer entsperren";
+                    }
+
+                    const iconImg = lockBtn.querySelector("img");
+                    if (iconImg) {
+                        iconImg.alt = istGesperrt ? "Sperren" : "Entsperren";
+                    }
+
+                    // Seite neu laden, um aktuellen Status korrekt darzustellen
+                    loadUserData();
                 } else {
-                    zeigeToast("Sperren fehlgeschlagen", "error");
+                    zeigeToast(`${aktion.charAt(0).toUpperCase() + aktion.slice(1)} fehlgeschlagen`, "error");
                 }
             } catch (e) {
                 console.error(e);
@@ -130,38 +192,65 @@ function render (users) {
 }
 
 async function handleSearch(e) {
+
     e.preventDefault();
-    const id = input.value.trim();
+    loadUserData(true);
 
-    if(id === "") {
-        loadUserData();
-        return;
-    }
+}
 
-    listEl.textContent = "Suche...";
+//Modal öffnen / schließen
+document.getElementById("open-admin-modal").addEventListener("click", () => {
+    document.getElementById("admin-modal").classList.remove("hidden");
+});
+
+document.getElementById("close-admin-modal").addEventListener("click", () => {
+    document.getElementById("admin-modal").classList.add("hidden");
+});
+
+//Admin erstellen
+async function createAdmin() {
+    const form = document.getElementById("admin-form");
+    const data = {
+        username: form.username.value.trim(),
+        firstname: form.firstname.value.trim(),
+        lastname: form.lastname.value.trim(),
+        email: form.email.value.trim(),
+        password: form.password.value.trim(),
+        street: form.street.value.trim(),
+        housenumber: form.housenumber.value.trim(),
+        zipcode: form.zipcode.value.trim(),
+        village: form.village.value.trim(),
+        telephone: form.telephone.value.trim()
+    };
 
     try {
-        const res = await fetch(`http://localhost:3000/api/user/${id}`, {
-            credentials: "include"
+
+        const res = await fetch("http://localhost:3000/api/auth/registeradmin", {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
         });
 
-        if(res.status === 404) {
-            listEl.textContent = "Es wurde kein Benutzer gefunden";
-            return;
-        }
-        if(!res.ok) {
-            listEl.textContent = "Es ist ein Fehler aufgetreten";
-            return;
-        }
+        if(res.ok) {
+            zeigeToast("Admin erfolgreich erstellt", "success");
 
-        const data = await res.json();
-        const users = data.user;
-        render(users)
+            document.getElementById("admin-modal").classList.add("hidden");
+            form.reset();
+            loadUserData();
+        } else {
 
+            zeigeToast("Fehler beim Erstellen des Admins", "error");
+
+        }
 
     } catch (e) {
         console.error(e);
-        listEl.textContent = "Fehler bei der Suche";
+        zeigeToast("Fehler beim Erstellen des Admins", "error");
     }
-
 }
+
+document.getElementById("admin-form").addEventListener("submit", async e => {
+    e.preventDefault();
+    await createAdmin();
+})

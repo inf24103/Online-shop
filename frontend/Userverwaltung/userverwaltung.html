@@ -12,13 +12,42 @@
 <button class="back-btn" onclick="history.back()">← Zurück</button>
 <div class="filter">
     <form method="post" action="">
-        <input type="number" name="search" placeholder="User-ID">
+        <input type="number" name="searchId" placeholder="User-ID">
+        <input type="text" name="searchName" placeholder="Name / Benutzername">
+        <select name="searchStatus">
+            <option value="">Alle</option>
+            <option value="gesperrt">Gesperrt</option>
+            <option value="entsperrt">Entsperrt</option>
+        </select>
         <button type="submit">Filter</button>
         <button type="button" id="reset-filter">Filter zurücksetzen</button>
+        <button type="button" id="open-admin-modal">Admin erstellen</button>
     </form>
 </div>
 <div class="userlist">
 
+</div>
+<div id="admin-modal" class="modal hidden">
+    <div class="modal-content">
+        <h2>Neuen Admin erstellen</h2>
+
+        <form id="admin-form">
+            <input name="username" placeholder="Benutzername" required>
+            <input name="firstname" placeholder="Vorname" required>
+            <input name="lastname" placeholder="Nachname" required>
+            <input name="email" placeholder="Email" required>
+            <input name="password" type="password" placeholder="Passwort" required>
+            <input name="street" placeholder="Straße" required>
+            <input name="housenumber" placeholder="Hausnummer" required>
+            <input name="zipcode" placeholder="PLZ" required>
+            <input name="village" placeholder="Stadt" required>
+            <input name="telephone" placeholder="Telefonnummer" required>
+            <div class="button-row">
+                <button type="submit">Account erstellen</button>
+                <button type="button" id="close-admin-modal">Abbrechen</button>
+            </div>
+        </form>
+    </div>
 </div>
 </body>
 <script src="../Userverwaltung/userverwaltung.js"></script>

@@ -98,6 +98,36 @@ input[type="text"], select {
     gap: 15px;
 }
 
+.filterbereich {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filterbereich input,
+.filterbereich select {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.filterbereich button {
+    padding: 8px 16px;
+    border: none;
+    background-color: #0a75c2;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.filterbereich button:hover {
+    background-color: #095a9f;
+}
+
 .produkte-grid-scroll {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
