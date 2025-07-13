@@ -221,9 +221,7 @@ async function loadProducts(filters = {}) {
             const card = document.createElement("div");
             card.className = "product-card";
 
-            const imageUrl = product.bild
-                ? (product.bild.startsWith('http') ? product.bild : `${IMAGE_BASE_URL}${product.bild}`)
-                : 'https://via.placeholder.com/200';
+            const imageUrl = product.bild ? (product.bild.startsWith('http') ? product.bild : `${IMAGE_BASE_URL}${product.bild}`) : 'https://via.placeholder.com/200';
 
             card.innerHTML = `
                 <img src="${imageUrl}" alt="${product.produktname}" style="max-width: 200px;">
