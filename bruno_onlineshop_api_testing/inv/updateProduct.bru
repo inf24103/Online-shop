@@ -1,23 +1,32 @@
 meta {
   name: updateProduct
   type: http
-  seq: 5
+  seq: 6
 }
 
 patch {
-  url: http://localhost:3000/api/inv/product/1
-  body: json
+  url: http://localhost:3000/api/inv/product/new
+  body: multipartForm
   auth: inherit
 }
 
 body:json {
   {
-    "produktname": "-ehjidtfzdfhrdhfoflgjkchs ",
-    "preis": 99,
+    "produktname": "4",
+    "preis": 999.99,
     "verfuegbareMenge": 20,
-    "bild": 4567,
+    "bild": "aa",
     "kategorie": "Accessoires",
     "kurzbeschreibung": "Stylische Sonnenbrille",
     "beschreibung": "Eine stylische Sonnenbrille mit dem Mercedes-Benz Logo. Ideal für sonnige Tage."
   }
+}
+
+body:multipart-form {
+  produktname: test
+  preis: 50
+  verfuegbareMenge: 20
+  kategorie: supplement
+  bild: @file(/Users/WALDMJA/Library/CloudStorage/OneDrive-Mercedes-Benz(corpdir.onmicrosoft.com)/Dokumente/Uni/Semester 2/Web_Engeneering/360_F_24042314_1ORW3tuCIUTeXX8ydIXX5Q3l5EbYoO9g.webp)
+  beschreibung: ein TestProdukt
 }
