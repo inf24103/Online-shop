@@ -28,6 +28,7 @@ function zeigeProduktHinzufuegenModal(wunschlisteid) {
                 const card = document.createElement("div");
                 card.className = "produkt-card";
                 card.innerHTML = `
+                    <img src="localhost:3000/${p.bild}" alt="${p.produktname}" class="card-img-top">
                     <h4>${p.produktname}</h4>
                     <p>${p.beschreibung}</p>
                     <p>${p.kategorie}</p>
@@ -56,10 +57,11 @@ function produktZurWunschlisteHinzufuegen(produktid) {
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            productID: produktid,
-            aktion: "add",
-            wunschlisteid: aktuelleWunschlisteId
+            inhalt: String(produktid),
+            aktion: "addProdukt",
+            wunschlisteid: String(aktuelleWunschlisteId)
         })
+
     })
         .then(res => {
             if(!res.ok) console.error("Fehler beim Hinzufügen des Produkts!");

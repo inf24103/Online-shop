@@ -83,8 +83,7 @@ input[type="text"], select {
 
 #produkte-liste {
     display: grid;
-    grid-template-rows: repeat(3, auto);
-    grid-auto-flow: column;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 15px;
     margin-top: 20px;
 }
@@ -101,8 +100,15 @@ input[type="text"], select {
 
 .produkte-grid-scroll {
     display: grid;
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 15px;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 6px;
 }
 
 .sticky-buttons {
@@ -223,6 +229,7 @@ button:hover {
 
 .modal-content {
     background-color: #ffffff;
+    position: relative;
     margin: 10% auto;
     padding: 20px 25px;
     border-radius: 8px;
@@ -264,6 +271,25 @@ button:hover {
     flex: 1;
     margin: 0 5px;
 }
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1001;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #444;
+}
+
+.close-button:hover {
+    color: #000;
+}
+
+
 
 .wunschlisten-wrapper {
     display: flex;
@@ -362,7 +388,6 @@ button:hover {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 16px;
-    margin-top: 16px;
 }
 
 @media (max-width: 600px) {
@@ -373,8 +398,6 @@ button:hover {
     }
 
     #produkte-liste {
-        grid-auto-flow: row;
-        grid-template-rows: unset;
         grid-template-columns: 1fr;
     }
 }

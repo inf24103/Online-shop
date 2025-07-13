@@ -1,4 +1,8 @@
-function zeigeProdukteDerWunschliste(wunschlisteId) {
+let aktuelleBerechtigung = "owner";
+
+function zeigeProdukteDerWunschliste(wunschlisteId, berechtigung = "owner") {
+    aktuelleBerechtigung = berechtigung;
+
     fetch(`http://localhost:3000/api/wun/products/${wunschlisteId}`, {
         method: "GET",
         credentials: "include"
@@ -25,9 +29,10 @@ function zeigeProdukteDerWunschliste(wunschlisteId) {
                 <h4>${p.produktname}</h4>
                 <p>${p.beschreibung}</p>
                 <p><strong>${parseFloat(p.preis).toFixed(2)} €</strong></p>
-                <button class="icon-btn" onclick="produktAusWunschlisteEntfernen(${currentBearbeiteId}, ${p.produktid})" title="Löschen">
-                    <img src="/pictures/muelleimer.png" alt="Löschen" class="icon-img">
-                </button>
+                ${berechtigung === "write" || berechtigung === "owner" ? `
+                    <button class="icon-btn" onclick="produktAusWunschlisteEntfernen(${currentBearbeiteId}, ${p.produktid})" title="Löschen">
+                        <img src="/pictures/muelleimer.png" alt="Löschen" class="icon-img">
+                    </button>` : ""}
             `;
                 container.appendChild(card);
             });
@@ -46,8 +51,8 @@ function produktAusWunschlisteEntfernen(wunschlisteId, produktId) {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            productID: produktId,
-            aktion: "remove",
+            inhalt: String(produktId),
+            aktion: "removeProdukt",
             wunschlisteid: wunschlisteId
         })
     })
@@ -55,7 +60,7 @@ function produktAusWunschlisteEntfernen(wunschlisteId, produktId) {
             if(!res.ok) {
                 throw new Error("Fehler beim Entfernen des Produkts");
             } else {
-                zeigeProdukteDerWunschliste(wunschlisteId);
+                zeigeProdukteDerWunschliste(wunschlisteId, aktuelleBerechtigung);
             }
         })
         .catch(err => {

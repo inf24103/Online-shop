@@ -35,12 +35,13 @@ async function loadWunschlisten() {
         } else {
             geteilteListen.forEach(w => {
                 geteilte.innerHTML += `
-        <div class="wunschliste-card">
-            <h3>${w.wunschlistename}</h3>
-            <p>${w.beschreibung}</p>
-            <p>Von: <strong>${w.ownerUsername}</strong></p>
-            <p>Berechtigung: ${w.berechtigung}</p>
-            <button onclick="zeigeProdukteDerWunschliste(${w.wunschlisteid})">Anzeigen</button>
+                    <div class="wunschliste-card">
+                    <h3>${w.wunschlistename}</h3>
+                    <p>Von: <strong>${w.ownerUsername}</strong></p>
+                    <!-- ALT: onclick="zeigeProdukteDerWunschliste(...)" -->
+                    <button onclick="zeigeGeteilteWunschliste(${w.wunschlisteid}, '${w.berechtigung}', '${w.beschreibung.replace(/'/g, "\\'")}','${w.wunschlistename.replace(/'/g, "\\'")}')">
+                        Anzeigen
+                    </button>
         </div>`;
             });
         }
@@ -341,6 +342,31 @@ function toggleProduktInWunschliste(wunschlisteid, produktId, hinzufuegen) {
             console.error(err);
             alert("Fehler beim Speichern");
         })
+}
+
+function zeigeGeteilteWunschliste(wunschlisteid, berechtigung, beschreibung, titel) {
+
+    currentBearbeiteId = wunschlisteid;
+
+    //Modal vorbereiten
+    const modal = document.getElementById("edit-modal");
+    document.getElementById("edit-title").textContent = titel;
+    document.getElementById("edit-beschreibung").textContent = beschreibung;
+
+    //Owner-Sachen ausblenden
+    document.getElementById("share-form").style.display = "none";
+    document.querySelector(".delete-btn").style.display = "none";
+
+    //Produkte hinzufügen nur bei write Rechten
+    const addBtnWrapper = document.getElementById("produkte-hinzufuegen-button-wrapper");
+    addBtnWrapper.style.display = (berechtigung === "write") ? "block" : "none";
+
+    //Modal anzeigen
+    modal.style.display = "block";
+
+    //Produkte laden
+    zeigeProdukteDerWunschliste(wunschlisteid, berechtigung);
+
 }
 
 window.addEventListener("DOMContentLoaded", loadWunschlisten);
