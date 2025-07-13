@@ -4,78 +4,101 @@ const placeOrderButton = document.getElementById('place-order-button');
 const addressForm = document.getElementById('address-form');
 const loadingOverlay = document.getElementById('loading-overlay');
 const addressFormTitle = document.getElementById('address-form-title');
+const thankYouNotification = document.getElementById('thankYouNotification');
 
 const IMAGE_BASE_URL = 'http://localhost:3000/';
+const API_INV_BASE_URL = 'http://localhost:3000/api/inv';
+const API_USER_BASE_URL = 'http://localhost:3000/api/user';
 
 function updateCartCount() {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const count = cart.reduce((sum, item) => sum + (item.quantity || item.anzahl || 0), 0);
     const cartCountElement = document.getElementById("cart-count");
-    if(cartCountElement) {
+    if (cartCountElement) {
         cartCountElement.textContent = count;
     }
 }
 
 async function fetchCart() {
-    const userToken = localStorage.getItem('adminToken');
+    const isLoggedIn = document.cookie.includes('token=');
 
-    if (userToken) {
+    if (isLoggedIn) {
         try {
-            const response = await fetch('http://localhost:3000/api/inv/warenkorb/myproducts', {
+            const response = await fetch(`${API_INV_BASE_URL}/warenkorb/myproducts`, {
                 method: 'GET',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}`
                 }
             });
+
             if (!response.ok) {
                 if (response.status === 401 || response.status === 403) {
-                    console.warn("Sitzung abgelaufen oder nicht autorisiert. Leere den lokalen Warenkorb.");
-                    localStorage.removeItem('adminToken');
+                    console.warn("Sitzung abgelaufen oder nicht autorisiert. Leere lokalen Warenkorb.");
+                    localStorage.removeItem('cart');
+                    updateCartCount();
                     return [];
                 }
-                throw new Error(`Fehler beim Laden des Warenkorbs: ${response.statusText}`);
+                throw new Error(`Fehler beim Laden des Backend-Warenkorbs: ${response.statusText}`);
             }
             const cartData = await response.json();
-            return cartData.map(item => ({ ...item.product, anzahl: item.anzahl }));
+            const backendCart = cartData.map(item => ({
+                produktid: item.produktid,
+                produktname: item.produktname,
+                preis: item.preis,
+                bild: item.bild,
+                kategorie: item.kategorie,
+                beschreibung: item.beschreibung,
+                anzahl: item.anzahl,
+                quantity: item.anzahl,
+                originalMenge: item.menge
+            }));
+            localStorage.setItem("cart", JSON.stringify(backendCart));
+            return backendCart;
         } catch (error) {
             console.error("Fehler beim Abrufen des Warenkorbs vom Backend:", error);
             alert("Fehler beim Laden Ihres Warenkorbs. Bitte versuchen Sie es erneut.");
-            return [];
+            const localCart = JSON.parse(localStorage.getItem("cart")) || [];
+            return localCart.map(item => ({
+                ...item,
+                anzahl: item.quantity || item.anzahl || 1,
+                quantity: item.quantity || item.anzahl || 1,
+                originalMenge: item.originalMenge || item.menge || Infinity
+            }));
         }
-    } else {
-        const localCart = JSON.parse(localStorage.getItem("cart")) || [];
-        return localCart.map(item => ({
-            produktid: item.produktid,
-            produktname: item.produktname,
-            preis: item.preis,
-            bild: item.bild,
-            kategorie: item.kategorie,
-            beschreibung: item.beschreibung,
-            anzahl: item.quantity || 1
-        }));
     }
+
+    const localCart = JSON.parse(localStorage.getItem("cart")) || [];
+    return localCart.map(item => ({
+        ...item,
+        anzahl: item.quantity || item.anzahl || 1,
+        quantity: item.quantity || item.anzahl || 1,
+        originalMenge: item.originalMenge || item.menge || Infinity
+    }));
 }
 
-async function fetchUserData(token) {
+async function fetchUserData() {
+    const isLoggedIn = document.cookie.includes('token=');
+    if (!isLoggedIn) {
+        return null;
+    }
     try {
-        const response = await fetch('http://localhost:3000/api/user/me', {
+        const response = await fetch(`${API_USER_BASE_URL}/me`, {
             method: 'GET',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
             }
         });
         if (!response.ok) {
             if (response.status === 401 || response.status === 403) {
-                console.warn("Benutzerdaten-Abruf fehlgeschlagen: Token ungültig oder nicht autorisiert.");
-                localStorage.removeItem('adminToken');
+                console.warn("Benutzerdaten-Abruf fehlgeschlagen: Sitzung abgelaufen oder nicht autorisiert.");
                 return null;
             }
             throw new Error(`Fehler beim Laden der Benutzerdaten: ${response.statusText}`);
         }
         const userData = await response.json();
-        return userData;
+        return userData[0];
     } catch (error) {
         console.error("Fehler beim Abrufen der Benutzerdaten:", error);
         return null;
@@ -86,23 +109,27 @@ function fillAddressForm(userData) {
     const formFields = addressForm.querySelectorAll('input:not([type="hidden"])');
 
     if (userData) {
-        document.getElementById('firstName').value = userData.firstName || '';
-        document.getElementById('lastName').value = userData.lastName || '';
-        document.getElementById('street').value = userData.address?.street || '';
-        document.getElementById('zipCode').value = userData.address?.zipCode || '';
-        document.getElementById('city').value = userData.address?.city || '';
-        document.getElementById('country').value = userData.address?.country || 'Deutschland';
+        document.getElementById('firstName').value = userData.vorname || '';
+        document.getElementById('lastName').value = userData.nachname || '';
+        document.getElementById('street').value = userData.strasse || '';
+        document.getElementById('zipCode').value = userData.plz || '';
+        document.getElementById('city').value = userData.ort || '';
+        document.getElementById('country').value = userData.land || 'Deutschland';
         document.getElementById('email').value = userData.email || '';
-        document.getElementById('phone').value = userData.phone || '';
+        document.getElementById('phone').value = userData.telefonnr || '';
 
         formFields.forEach(field => {
             field.setAttribute('readonly', 'readonly');
+            field.style.backgroundColor = '#e9e9e9';
+            field.style.cursor = 'not-allowed';
         });
         addressFormTitle.textContent = "Ihre hinterlegte Liefer- und Rechnungsadresse";
         placeOrderButton.textContent = "Kauf abschließen";
     } else {
         formFields.forEach(field => {
             field.removeAttribute('readonly');
+            field.style.backgroundColor = '';
+            field.style.cursor = '';
             if (field.id !== 'country') {
                 field.value = '';
             } else {
@@ -116,7 +143,7 @@ function fillAddressForm(userData) {
 
 async function renderCheckoutSummary() {
     const cartItems = await fetchCart();
-    const userToken = localStorage.getItem('adminToken');
+    const isLoggedIn = document.cookie.includes('token=');
 
     checkoutItemsContainer.innerHTML = "";
     let total = 0;
@@ -145,7 +172,7 @@ async function renderCheckoutSummary() {
         total += itemTotalPrice;
 
         const imageUrl = product.bild ? `${IMAGE_BASE_URL}${product.bild}` : 'https://via.placeholder.com/150';
-        const stockInfo = product.anzahl !== undefined ? `Verfügbar: ${product.anzahl}` : '';
+        const stockInfo = product.originalMenge !== undefined ? `Verfügbar: ${product.originalMenge}` : '';
 
         const item = document.createElement("div");
         item.className = "product-item checkout-item";
@@ -168,11 +195,16 @@ async function renderCheckoutSummary() {
     placeOrderButton.disabled = false;
     updateCartCount();
 
-    if (userToken) {
-        const userData = await fetchUserData(userToken);
+    if (isLoggedIn) {
+        const userData = await fetchUserData();
         fillAddressForm(userData);
     } else {
         fillAddressForm(null);
+        placeOrderButton.textContent = "Bitte Anmelden zum Kauf";
+        placeOrderButton.onclick = () => {
+            alert("Bitte melden Sie sich an, um den Kauf abzuschließen.");
+            window.location.href = "../LoginPage/loginpage.html";
+        };
     }
 }
 
@@ -186,39 +218,30 @@ function hideLoadingOverlay() {
     document.body.style.overflow = '';
 }
 
-async function sendOrderToBackend(orderData, userToken) {
-    if (!userToken) {
-        throw new Error("Bitte loggen Sie sich ein, um die Bestellung abzuschließen.");
-    }
-
+async function sendOrderToBackend() {
     try {
-        const baseUrl = 'http://localhost:3000/api/inv/kaeufe/kaufen';
-        const params = new URLSearchParams({
-            firstName: orderData.address.firstName,
-            lastName: orderData.address.lastName,
-            street: orderData.address.street,
-            zipCode: orderData.address.zipCode,
-            city: orderData.address.city,
-            country: orderData.address.country,
-            email: orderData.address.email,
-            phone: orderData.address.phone,
-            totalPrice: orderData.totalPrice.toString(),
-            paymentMethod: orderData.paymentMethod,
-            isGuest: orderData.isGuest ? 'true' : 'false',
-        });
-        params.append('items', JSON.stringify(orderData.items));
+        const isLoggedIn = document.cookie.includes('token=');
+        if (!isLoggedIn) {
+            throw new Error("Für diese Art des Checkouts ist eine Anmeldung erforderlich.");
+        }
 
-        const headers = {
-            'Authorization': `Bearer ${userToken}`
-        };
+        const baseUrl = `${API_INV_BASE_URL}/kaeufe/kaufen`;
 
-        const response = await fetch(`${baseUrl}?${params.toString()}`, {
+        const response = await fetch(baseUrl, {
             method: 'GET',
-            headers: headers
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            }
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
+            let errorData;
+            try {
+                errorData = await response.json();
+            } catch (jsonError) {
+                throw new Error(`Fehler beim Senden der Bestellung: ${response.status} ${response.statusText}`);
+            }
             throw new Error(errorData.message || `Fehler beim Senden der Bestellung: ${response.statusText}`);
         }
 
@@ -229,24 +252,7 @@ async function sendOrderToBackend(orderData, userToken) {
     }
 }
 
-
-async function clearCartAfterPurchase(userToken) {
-    if (userToken) {
-        try {
-            const response = await fetch('http://localhost:3000/api/inv/warenkorb/clear', {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${userToken}`
-                }
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.error("Fehler beim Leeren des Backend-Warenkorbs:", errorData.message);
-            }
-        } catch (error) {
-            console.error("Fehler beim Aufruf zum Leeren des Backend-Warenkorbs:", error);
-        }
-    }
+async function clearLocalCartAfterPurchase() {
     localStorage.removeItem("cart");
     window.dispatchEvent(new CustomEvent('cartCleared'));
 }
@@ -256,9 +262,16 @@ addressForm.addEventListener('submit', async (event) => {
 
     showLoadingOverlay();
 
-    const userToken = localStorage.getItem('adminToken');
-    const currentCartItems = await fetchCart();
+    const isLoggedIn = document.cookie.includes('token=');
 
+    if (!isLoggedIn) {
+        alert("Bitte melden Sie sich an, um den Kauf abzuschließen.");
+        hideLoadingOverlay();
+        window.location.href = "../LoginPage/loginpage.html";
+        return;
+    }
+
+    const currentCartItems = await fetchCart();
     if (currentCartItems.length === 0) {
         alert("Ihr Warenkorb ist leer. Bitte fügen Sie Produkte hinzu, um fortzufahren.");
         hideLoadingOverlay();
@@ -271,14 +284,13 @@ addressForm.addEventListener('submit', async (event) => {
         street: document.getElementById('street').value.trim(),
         zipCode: document.getElementById('zipCode').value.trim(),
         city: document.getElementById('city').value.trim(),
-        country: document.getElementById('country').value.trim(),
         email: document.getElementById('email').value.trim(),
         phone: document.getElementById('phone').value.trim()
     };
 
     if (!addressData.firstName || !addressData.lastName || !addressData.street ||
-        !addressData.zipCode || !addressData.city || !addressData.country || !addressData.email) {
-        alert("Bitte füllen Sie alle erforderlichen Felder aus (Vorname, Nachname, Straße, PLZ, Ort, Land, E-Mail).");
+        !addressData.zipCode || !addressData.city || !addressData.email) {
+        alert("Bitte füllen Sie alle erforderlichen Felder aus (Vorname, Nachname, Straße, PLZ, Ort, E-Mail).");
         hideLoadingOverlay();
         return;
     }
@@ -288,33 +300,32 @@ addressForm.addEventListener('submit', async (event) => {
         return;
     }
 
-    const orderData = {
-        address: addressData,
-        items: currentCartItems.map(item => ({
-            productId: item.produktid,
-            quantity: item.anzahl,
-            price: parseFloat(item.preis)
-        })),
-        totalPrice: parseFloat(checkoutTotalPriceElement.textContent.replace('€', '').replace(',', '.')),
-        paymentMethod: document.querySelector('input[name="paymentMethod"]').value,
-        isGuest: !userToken
-    };
-
     try {
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-        const orderResponse = await sendOrderToBackend(orderData, userToken);
+        const orderResponse = await sendOrderToBackend();
         console.log("Bestellung erfolgreich platziert:", orderResponse);
 
-        alert("Vielen Dank für Ihre Bestellung! Ihre Bestellung wurde erfolgreich aufgegeben.");
+        await clearLocalCartAfterPurchase();
 
-        await clearCartAfterPurchase(userToken);
+        thankYouNotification.classList.add('show');
 
-        window.location.href = "../ProductPage/productpage.html";
+        setTimeout(() => {
+            thankYouNotification.classList.remove('show');
+            window.location.href = "../SignUpPage/signup.html";
+        }, 2000);
 
     } catch (error) {
         console.error("Fehler beim Abschließen der Bestellung:", error);
-        alert("Es gab ein Problem beim Abschließen Ihrer Bestellung: " + error.message + ". Bitte versuchen Sie es erneut.");
+        let userErrorMessage = "Es gab ein Problem beim Abschließen Ihrer Bestellung. Bitte versuchen Sie es erneut.";
+        if (error.message.includes("401") || error.message.includes("403")) {
+            userErrorMessage = "Ihre Sitzung ist abgelaufen oder Sie sind nicht angemeldet. Bitte loggen Sie sich erneut ein.";
+        } else if (error.message.includes("400") || error.message.includes("Bestand")) {
+            userErrorMessage = "Einige Produkte im Warenkorb sind nicht mehr in ausreichender Menge verfügbar. Bitte überprüfen Sie Ihren Warenkorb.";
+        } else if (error.message.includes("404")) {
+            userErrorMessage = "Der Server konnte die Bestellfunktion nicht finden. Bitte kontaktieren Sie den Support.";
+        }
+        alert(userErrorMessage + ` (Details: ${error.message})`);
     } finally {
         hideLoadingOverlay();
     }

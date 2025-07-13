@@ -5,55 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Produktverwaltung</title>
     <link rel="stylesheet" href="ProductAdminStyle.css">
+    <link rel="stylesheet" href="../public/navbar.css">
+    <link rel="stylesheet" href="../public/page_layout.css">
+    <link rel="stylesheet" href="../public/footer.css">
 </head>
 <body>
-    <div class="admin-container">
-        <div class="admin-header">
-            <button id="add-product-btn" aria-label="Produkt hinzufügen"></button>
+<header class="navbar">
+    <div class="nav-inner">
+        <a href="../ProductPage/productpage.html" class="logo-link">
+            <img src="../pictures/fitura_logo_small.png" alt="Shop Logo" class="logo">
+        </a>
+        <div class="nav-links">
+            <a href="../ProductPage/productpage.html" class="navitem">Produkte</a>
+            <a href="../Warenkorb/Warenkorb.html" class="navitem icon-link">
+                <img src="../pictures/einkaufswagen.png" alt="Warenkorb">
+                Warenkorb (<span id="cart-count">0</span>)
+            </a>
+            <a href="../AdminAnsicht%20Produkte/ProductpageAdmin.html" id="account" class="navitem icon-link">
+                <img src="../pictures/account_icon.png" alt="Konto" class="profile-btn">
+            </a>
+            <a href="#" id="einkaufsliste" class="navitem icon-link" style="display: none;">
+                <img src="../pictures/einkaufswagen.png" alt="Einkaufsliste">
+            </a>
+            <a href="../KaufHistory/KaufHistory.html">History</a>
         </div>
-
-        <div id="product-form-container" class="collapsible">
-            <form id="product-form">
-                <input type="search" id="name" placeholder="Produktname" required/>
-                <input type="number" id="price" placeholder="Preis (€)" step="0.01" required/>
-                <input type="number" id="menge" placeholder="Menge" required/>
-                <input type="text" id="category" placeholder="Kategorie" required/>
-                <input type="file" id="image" accept="image/*" required/>
-                <textarea id="description" placeholder="Beschreibung"></textarea>
-                <button type="submit">Produkt speichern</button>
-            </form>
-        </div>
-
-        <div class="filter">
-            <form id="filter-form" onsubmit="return false;">
-                <input type="text" id="filter-name" placeholder="Filtern nach Name"/>
-                <select type="text" id="filter-category" placeholder="Kategorie">
-                    <option value="All">Alle Kategorien</option>
-                    <option value="Sportbekleidung">Sportbekleidung</option>
-                    <option value="Fitnesszubehör">Fitnesszubehör</option>
-                    <option value="Trainingsgerät">Trainingsgerät</option>
-                    <option value="Supplement">Supplement</option>
-                </select>
-                <input type="number" id="filter-maxpreis" placeholder="Maximalpreis (€)" step="0.01" />
-                <input type="number" id="filter-minmenge" placeholder="Mindestmenge" />
-                <select id="filter-sort">
-                    <option value="">Sortieren nach</option>
-                    <option value="preis_asc">Preis aufsteigend</option>
-                    <option value="preis_desc">Preis absteigend</option>
-                </select>
-                <button id="filter-btn" type="submit">Filtern</button>
-            </form>
-        </div>
-        <div id="product-list" class="product-grid"></div>
     </div>
-    <script src="AdminProduct.js"></script>
+</header>
+<div class="admin-container">
+    <div class="admin-header">
+        <button id="add-product-btn" aria-label="Produkt hinzufügen"></button>
+    </div>
+
+    <div id="product-form-container" class="collapsible">
+        <form id="product-form">
+            <label for="name">Produktname:</label> <input type="search" id="name" placeholder="Produktname" required/>
+
+            <label for="price">Preis (€):</label> <input type="number" id="price" placeholder="Preis (€)" step="0.01" required/>
+
+            <label for="menge">Menge:</label> <input type="number" id="menge" placeholder="Menge" required/>
+
+            <label for="category">Kategorie:</label> <input type="text" id="category" placeholder="Kategorie" required/>
+
+            <label for="image">Produktbild:</label> <input type="file" id="image" accept="image/*" /> <div id="current-image-display"></div> <label for="description">Beschreibung:</label> <textarea id="description" placeholder="Beschreibung"></textarea>
+
+            <button type="submit">Produkt speichern</button>
+        </form>
+    </div>
+
+    <div class="filter">
+        <form id="filter-form" onsubmit="return false;">
+            <input type="text" id="filter-name" placeholder="Filtern nach Name"/>
+            <select id="filter-category">
+                <option value="All">Alle Kategorien</option>
+                <option value="Sportbekleidung">Sportbekleidung</option>
+                <option value="Fitnesszubehör">Fitnesszubehör</option>
+                <option value="Trainingsgerät">Trainingsgerät</option>
+                <option value="Supplement">Supplement</option>
+            </select>
+            <input type="number" id="filter-maxpreis" placeholder="Maximalpreis (€)" step="0.01" />
+            <input type="number" id="filter-minmenge" placeholder="Mindestmenge" />
+            <select id="filter-sort">
+                <option value="">Sortieren nach</option>
+                <option value="preis_asc">Preis aufsteigend</option>
+                <option value="preis_desc">Preis absteigend</option>
+            </select>
+            <button id="filter-btn" type="submit">Filtern</button>
+        </form>
+    </div>
+    <div id="product-list" class="product-grid"></div>
+</div>
+<div id="adminNotification" class="admin-notification"></div>
+<script src="AdminProduct.js"></script>
 </body>
 </html>
-<!--<input type="text" id="filter-name" placeholder="Filtern nach Name">
-                <input type="text" id="filter-category" placeholder="Kategorie">
-                <select id="filter-sort">
-                    <option value="">Sortieren nach</option>
-                    <option value="preis_asc">Preis aufsteigend</option>
-                    <option value="preis_desc">Preis absteigend</option>
-                </select>
-                <button id="filter-btn">Filtern</button>-->

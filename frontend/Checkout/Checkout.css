@@ -31,6 +31,8 @@ h1 {
     border: 1px solid #ddd;
     border-radius: 6px;
     background-color: #f9f9f9;
+    position: sticky;
+    top: 20px;
 }
 
 .checkout-summary h2,
@@ -242,6 +244,31 @@ h1 {
     margin-bottom: 15px;
 }
 
+.thank-you-notification {
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #28a745;
+    color: white;
+    padding: 15px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    font-size: 1.2em;
+    font-weight: bold;
+    z-index: 1001;
+    opacity: 0;
+    visibility: hidden;
+    transition: bottom 0.5s ease-out, opacity 0.5s ease-out, visibility 0.5s ease-out;
+    white-space: nowrap;
+}
+
+.thank-you-notification.show {
+    bottom: 30px;
+    opacity: 1;
+    visibility: visible;
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -292,10 +319,13 @@ h1 {
     .checkout-summary,
     .checkout-form-section {
         margin-bottom: 0;
+        position: static;
+        top: auto;
+        z-index: auto;
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 760px) {
     .container {
         padding: 15px;
     }
@@ -322,6 +352,14 @@ h1 {
     .item-subtotal {
         font-size: 0.9em;
     }
+    .thank-you-notification {
+        font-size: 1em;
+        padding: 12px 20px;
+        bottom: -80px;
+    }
+    .thank-you-notification.show {
+        bottom: 20px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -339,5 +377,15 @@ h1 {
 
     .product-item h3 {
         font-size: 1em;
+    }
+    .thank-you-notification {
+        width: calc(100% - 40px);
+        left: 20px;
+        transform: translateX(0);
+        text-align: center;
+        bottom: -60px;
+    }
+    .thank-you-notification.show {
+        bottom: 15px;
     }
 }

@@ -1,114 +1,90 @@
 const cartContainer = document.querySelector('.cart-items');
 const totalPriceElement = document.getElementById('total-price');
 const checkoutButton = document.getElementById('checkout-button');
-
-// API Base URLs
+const DeleteNotification = document.getElementById('deleteNotification');
 const API_INV_BASE_URL = 'http://localhost:3000/api/inv';
+const IMAGE_BASE_URL = 'http://localhost:3000/';
 
-// Hilfsfunktion zur Bestimmung des aktuellen Tokens (userToken oder adminToken)
-function getCurrentUserToken() {
-    return localStorage.getItem('userToken'); // Wichtig: 'userToken' verwenden
+function showDeleteNotification() {
+    if (DeleteNotification) {
+        DeleteNotification.classList.add('show');
+        setTimeout(() => {
+            DeleteNotification.classList.remove('show');
+        }, 2000);
+    }
 }
 
 function updateCartCount() {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const count = cart.reduce((sum, item) => sum + (item.quantity || item.anzahl || 0), 0);
     const cartCountElement = document.getElementById("cart-count");
-    if(cartCountElement) {
+    if (cartCountElement) {
         cartCountElement.textContent = count;
     }
 }
 
-const IMAGE_BASE_URL = 'http://localhost:3000/';
-
 async function fetchCart() {
-    const userToken = getCurrentUserToken();
+    const isLoggedIn = document.cookie.includes('token=');
 
-    if (userToken) {
+    if (isLoggedIn) {
         try {
             const response = await fetch(`${API_INV_BASE_URL}/warenkorb/myproducts`, {
                 method: 'GET',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}`
                 }
             });
+
             if (!response.ok) {
                 if (response.status === 401 || response.status === 403) {
                     console.warn("Sitzung abgelaufen oder nicht autorisiert. Leere lokalen Warenkorb.");
-                    localStorage.removeItem('userToken');
                     localStorage.removeItem('cart');
                     updateCartCount();
                     return [];
                 }
-                throw new Error(`Fehler beim Laden des Warenkorbs: ${response.statusText}`);
+                throw new Error(`Fehler beim Laden des Backend-Warenkorbs: ${response.statusText}`);
             }
             const cartData = await response.json();
-            // Backend-Antwort in LocalStorage spiegeln, 'anzahl' und 'quantity' sowie 'menge' (verfügbarer Bestand)
-            // Es ist entscheidend, dass das Backend hier die aktuelle Verfügbarkeit (menge) des Produkts mitliefert.
-            // Falls nicht, müsste ein zusätzlicher Aufruf für jedes Produkt erfolgen.
-            // Annahme: Das Backend liefert 'menge' im Produktobjekt zurück, oder wir müssen es abrufen.
-            const mappedCartData = await Promise.all(cartData.map(async item => {
-                let productDetails = item.product;
-                // Wenn das Backend die Menge nicht direkt im Warenkorb-Product-Objekt liefert,
-                // müssen wir sie hier separat abrufen.
-                if (!productDetails.menge && userToken) {
-                    try {
-                        const productInfoResponse = await fetch(`${API_INV_BASE_URL}/product/${item.product.produktid}`, {
-                            headers: { 'Authorization': `Bearer ${userToken}` }
-                        });
-                        if (productInfoResponse.ok) {
-                            const details = await productInfoResponse.json();
-                            productDetails.menge = details.menge; // Aktuelle Menge aus der Produktdatenbank
-                        } else {
-                            console.warn(`Konnte Produktdetails für ID ${item.product.produktid} nicht abrufen.`);
-                        }
-                    } catch (error) {
-                        console.error(`Fehler beim Abrufen der Produktmenge für ID ${item.product.produktid}:`, error);
-                    }
-                }
-                return {
-                    ...productDetails,
-                    anzahl: item.anzahl,
-                    quantity: item.anzahl,
-                    // Die Menge, die zum Zeitpunkt des Hinzufügens oder der letzten Aktualisierung verfügbar war,
-                    // sollte hier als 'originalMenge' oder 'availableStock' gespeichert werden,
-                    // um sie bei der Überprüfung zu nutzen, falls das Backend die aktuelle Menge nicht mitliefert.
-                    // Besser ist, wenn das Backend immer die aktuelle Menge liefert.
-                    availableStock: productDetails.menge // <-- Dies ist die aktuelle Verfügbarkeit aus der DB
-                };
+
+            const backendCart = cartData.map(item => ({
+                produktid: item.produktid,
+                produktname: item.produktname,
+                preis: item.preis,
+                bild: item.bild,
+                kategorie: item.kategorie,
+                beschreibung: item.beschreibung,
+                anzahl: item.anzahl,
+                originalMenge: item.menge
             }));
-            localStorage.setItem("cart", JSON.stringify(mappedCartData));
-            return mappedCartData;
+
+            localStorage.setItem("cart", JSON.stringify(backendCart));
+            return backendCart;
         } catch (error) {
             console.error("Fehler beim Abrufen des Warenkorbs vom Backend:", error);
             alert("Fehler beim Laden Ihres Warenkorbs. Bitte versuchen Sie es erneut.");
-            localStorage.removeItem('userToken');
-            localStorage.removeItem('cart');
-            updateCartCount();
-            return [];
+            const localCart = JSON.parse(localStorage.getItem("cart")) || [];
+            return localCart.map(item => ({
+                ...item,
+                anzahl: item.quantity || item.anzahl || 1,
+                quantity: item.quantity || item.anzahl || 1,
+                originalMenge: item.originalMenge || item.menge || Infinity
+            }));
         }
-    } else {
-        // Wenn kein Token vorhanden, Warenkorb nur aus LocalStorage laden
-        const localCart = JSON.parse(localStorage.getItem("cart")) || [];
-        return localCart.map(item => ({
-            produktid: item.produktid,
-            produktname: item.produktname,
-            preis: item.preis,
-            bild: item.bild,
-            kategorie: item.kategorie,
-            beschreibung: item.beschreibung,
-            anzahl: item.quantity || 1,
-            quantity: item.quantity || 1, // Konsistenz für quantity
-            menge: item.menge, // Die ursprünglich im localStorage gespeicherte Menge
-            availableStock: item.availableStock || item.menge || Infinity // Verfügbarer Bestand für Gast-User
-        }));
     }
+
+    const localCart = JSON.parse(localStorage.getItem("cart")) || [];
+    return localCart.map(item => ({
+        ...item,
+        anzahl: item.quantity || item.anzahl || 1,
+        quantity: item.quantity || item.anzahl || 1,
+        originalMenge: item.originalMenge || item.menge || Infinity
+    }));
 }
 
 async function renderCart() {
     const cartItems = await fetchCart();
-    const userToken = getCurrentUserToken();
+    const isLoggedIn = document.cookie.includes('token=');
 
     cartContainer.innerHTML = "";
     let total = 0;
@@ -121,6 +97,10 @@ async function renderCart() {
             <p>Entdecken Sie unsere Produkte und füllen Sie ihn!</p>
             <a href="../ProductPage/productpage.html">
                 <button>Zum Shop</button>
+            </a>
+            <p>Falls Sie nicht angemeldet sind, machen Sie das bitte bevor Ihr Warenkorb verloren geht!</p>
+            <a href="../LoginPage/loginpage.html">
+                <button>Zum LogIn</button>
             </a>
         `;
         cartContainer.appendChild(emptyMessageDiv);
@@ -136,75 +116,75 @@ async function renderCart() {
         checkoutButton.style.display = 'block';
     }
 
+    const itemsToRender = [];
+
     for (const product of cartItems) {
-        const imageUrl = product.bild ? `${IMAGE_BASE_URL}${product.bild}` : 'https://via.placeholder.com/100?text=No+Image';
+        let itemQuantity = product.anzahl;
+        let maxAvailableQuantity = product.originalMenge;
 
-        const itemQuantity = product.anzahl;
-        const itemPrice = parseFloat(product.preis);
-        const itemTotalPrice = itemPrice * itemQuantity;
-        total += itemTotalPrice;
-
-        // Bestimme die maximal verfügbare Menge für dieses Produkt
-        // Dies sollte die aktuelle Menge aus der Datenbank sein (für eingeloggte Nutzer)
-        // oder die zuletzt bekannte Menge im localStorage für Gäste.
-        let maxAvailableQuantity = Infinity;
-        if (userToken) {
-            // Wenn der User eingeloggt ist, sollte die Menge im 'product.availableStock'
-            // aus fetchCart aktuell sein (direkt vom Backend).
-            maxAvailableQuantity = product.availableStock !== undefined ? product.availableStock : Infinity;
-            if (maxAvailableQuantity === Infinity) {
-                console.warn(`Aktuelle Bestandsmenge für Produkt ID ${product.produktid} konnte nicht ermittelt werden (angemeldeter Benutzer).`);
-            }
-        } else {
-            // Für Gast-Benutzer: nutze die im localStorage gespeicherte "availableStock"
-            // Dies erfordert, dass die Produktseite diese Menge korrekt in den localStorage schreibt.
-            maxAvailableQuantity = product.availableStock !== undefined ? product.availableStock : Infinity;
-            if (maxAvailableQuantity === Infinity) {
-                console.warn(`Aktuelle Bestandsmenge für Produkt ID ${product.produktid} konnte nicht ermittelt werden (Gast-Benutzer).`);
-            }
-        }
-
-        // Korrektur: Wenn die im Warenkorb befindliche Menge die maximal verfügbare Menge übersteigt,
-        // passe die angezeigte Menge an und informiere den Nutzer.
-        let displayQuantity = itemQuantity;
         if (itemQuantity > maxAvailableQuantity) {
-            displayQuantity = maxAvailableQuantity;
-            // Aktualisiere den Warenkorb im Hintergrund, falls die Menge zu hoch ist
-            if (userToken) {
-                await updateQuantityBackend(product.produktid, maxAvailableQuantity, userToken);
+            console.warn(`Menge für "${product.produktname}" (${itemQuantity}) überschreitet verfügbaren Bestand (${maxAvailableQuantity}). Korrigiere.`);
+            itemQuantity = maxAvailableQuantity;
+
+            alert(`Die Menge für "${product.produktname}" wurde auf die maximal verfügbare Menge von ${maxAvailableQuantity} korrigiert.`);
+
+            if (isLoggedIn) {
+                await updateQuantityInBackendCart(product.produktid, itemQuantity);
             } else {
                 let localCart = JSON.parse(localStorage.getItem("cart")) || [];
                 const itemIndex = localCart.findIndex(item => item.produktid === product.produktid);
                 if (itemIndex !== -1) {
-                    localCart[itemIndex].quantity = maxAvailableQuantity;
-                    localCart[itemIndex].anzahl = maxAvailableQuantity;
+                    localCart[itemIndex].quantity = itemQuantity;
+                    localCart[itemIndex].anzahl = itemQuantity;
                     localStorage.setItem("cart", JSON.stringify(localCart));
                 }
             }
-            alert(`Die Menge für "${product.produktname}" wurde auf die maximal verfügbare Menge von ${maxAvailableQuantity} korrigiert.`);
-            // Wichtig: renderCart wird nach diesem Alert nochmal aufgerufen, um die Änderungen widerzuspiegeln
-            // Daher ist es besser, hier nur die Anzeige anzupassen und den vollständigen Re-Render am Ende der Funktion zu haben
-            // oder den renderCart nach dem Alert in updateQuantity aufzurufen.
-            // Für diesen Fall lassen wir renderCart die Korrektur durchführen und rendern am Ende einmal neu.
+            await renderCart();
+            return;
         }
 
-        const item = document.createElement("div");
-        item.className = "cart-item";
+        if (itemQuantity <= 0) {
+            if (isLoggedIn) {
+                await removeItem(product.produktid);
+            }
+            continue;
+        }
 
-        item.innerHTML = `
+        itemsToRender.push({
+            ...product,
+            anzahl: itemQuantity,
+            quantity: itemQuantity
+        });
+    }
+
+    if (!isLoggedIn) {
+        localStorage.setItem("cart", JSON.stringify(itemsToRender));
+    }
+
+    for (const product of itemsToRender) {
+        const itemQuantity = product.anzahl;
+        const imageUrl = product.bild ? `${IMAGE_BASE_URL}${product.bild}` : 'https://via.placeholder.com/100?text=No+Image';
+        const itemPrice = parseFloat(product.preis);
+        const itemTotalPrice = itemPrice * itemQuantity;
+        total += itemTotalPrice;
+
+        const itemElement = document.createElement("div");
+        itemElement.className = "cart-item";
+
+        itemElement.innerHTML = `
             <img src="${imageUrl}" alt="${product.produktname}">
             <div>
                 <h3>${product.produktname}</h3>
-                <p>€${itemPrice.toFixed(2)} x <span class="item-quantity-display">${displayQuantity}</span></p>
+                <p>€${itemPrice.toFixed(2)} x <span class="item-quantity-display">${itemQuantity}</span></p>
                 <div>
-                    <button class="update-quantity-btn" data-productid="${product.produktid}" data-change="-1" data-max-qty="${maxAvailableQuantity}">-</button>
-                    <button class="update-quantity-btn" data-productid="${product.produktid}" data-change="+1" data-max-qty="${maxAvailableQuantity}">+</button>
+                    <button class="update-quantity-btn" data-productid="${product.produktid}" data-change="-1" data-max-qty="${product.originalMenge}">-</button>
+                    <button class="update-quantity-btn" data-productid="${product.produktid}" data-change="+1" data-max-qty="${product.originalMenge}">+</button>
                     <button class="remove-item-btn" data-productid="${product.produktid}">Entfernen</button>
                 </div>
             </div>
-            <strong>€${(itemPrice * displayQuantity).toFixed(2)}</strong>
+            <strong>€${(itemPrice * itemQuantity).toFixed(2)}</strong>
         `;
-        cartContainer.appendChild(item);
+        cartContainer.appendChild(itemElement);
     }
 
     totalPriceElement.textContent = `€${total.toFixed(2)}`;
@@ -217,24 +197,27 @@ function addCartItemEventListeners() {
         button.onclick = async (event) => {
             const produktid = parseInt(event.target.dataset.productid);
             const change = parseInt(event.target.dataset.change);
-            // 'data-max-qty' wird aus dem DOM gelesen, was gut ist, aber die ultimative Quelle sollte immer der Backend-Check sein
-            // insbesondere bei Mengenänderungen.
-            const maxAvailableFromData = parseInt(event.target.dataset.maxQty);
-            await updateQuantity(produktid, change, maxAvailableFromData);
+            await updateItemQuantity(produktid, change);
         };
     });
 
     document.querySelectorAll('.remove-item-btn').forEach(button => {
         button.onclick = async (event) => {
             const produktid = parseInt(event.target.dataset.productid);
-            await removeItemFromCart(produktid);
+            await removeItem(produktid);
         };
     });
+
+    if (checkoutButton) {
+        checkoutButton.onclick = () => {
+            window.location.href = "../CheckoutPage/checkout.html";
+        };
+    }
 }
 
-async function updateQuantity(produktid, change, currentMaxAvailableFromUI) {
-    const userToken = getCurrentUserToken();
-    let currentCartItems = await fetchCart(); // Holt den aktuellsten Warenkorb-Stand vom Backend/localStorage
+async function updateItemQuantity(produktid, change) {
+    const isLoggedIn = document.cookie.includes('token=');
+    let currentCartItems = JSON.parse(localStorage.getItem("cart")) || [];
     const existingItem = currentCartItems.find(item => item.produktid === produktid);
 
     if (!existingItem) {
@@ -245,87 +228,64 @@ async function updateQuantity(produktid, change, currentMaxAvailableFromUI) {
 
     const newAnzahl = existingItem.anzahl + change;
 
-    let actualMaxAvailable = currentMaxAvailableFromUI; // Startwert aus UI-Datenattribut
-
-    // Wichtiger Bestands-Check: Immer die aktuellste Menge vom Backend holen, wenn angemeldet.
-    if (userToken) {
+    let actualMaxAvailable = existingItem.originalMenge;
+    if (isLoggedIn) {
         try {
-            const productInfoResponse = await fetch(`${API_INV_BASE_URL}/product/${produktid}`, {
-                headers: { 'Authorization': `Bearer ${userToken}` }
-            });
+            const productInfoResponse = await fetch(`${API_INV_BASE_URL}/product/${produktid}`);
             if (productInfoResponse.ok) {
                 const productDetails = await productInfoResponse.json();
-                actualMaxAvailable = productDetails.menge; // Tatsächliche verfügbare Menge aus DB
+                actualMaxAvailable = productDetails[0].menge;
             } else {
                 console.warn(`Konnte aktuelle Produktmenge für ID ${produktid} nicht abrufen. Verwende vorhandenen Wert.`);
-                // Fallback: Wenn der API-Aufruf fehlschlägt, den Wert aus dem existingItem verwenden
-                // existingItem.availableStock sollte der zuletzt vom Backend geholte Wert sein
-                actualMaxAvailable = existingItem.availableStock || Infinity;
             }
         } catch (error) {
             console.error(`Fehler beim Abrufen der Produktmenge für ID ${produktid}:`, error);
-            actualMaxAvailable = existingItem.availableStock || Infinity;
-        }
-    } else {
-        // Für Gast-Benutzer: Die "availableStock" im localStorage ist die einzige Quelle.
-        // Diese muss von der Produktseite beim Hinzufügen zum Warenkorb korrekt gesetzt werden.
-        actualMaxAvailable = existingItem.availableStock || Infinity;
-        if (actualMaxAvailable === Infinity) {
-            console.warn("Originalmenge für Gast-Warenkorb-Produkt nicht gefunden, unbegrenzte Menge angenommen.");
         }
     }
 
     if (newAnzahl > actualMaxAvailable) {
         alert(`Es sind nur noch ${actualMaxAvailable} Stück von diesem Produkt verfügbar.`);
-        // Wenn die neue Menge das Maximum überschreitet, setze sie auf das Maximum
-        if (existingItem.anzahl !== actualMaxAvailable) { // Nur aktualisieren, wenn nicht bereits Maximum
-            if (userToken) {
-                await updateQuantityBackend(produktid, actualMaxAvailable, userToken);
+        if (existingItem.anzahl !== actualMaxAvailable) {
+            if (isLoggedIn) {
+                await updateQuantityInBackendCart(produktid, actualMaxAvailable);
             } else {
-                let localCart = JSON.parse(localStorage.getItem("cart")) || [];
-                const itemIndex = localCart.findIndex(item => item.produktid === produktid);
+                const itemIndex = currentCartItems.findIndex(item => item.produktid === produktid);
                 if (itemIndex !== -1) {
-                    localCart[itemIndex].quantity = actualMaxAvailable;
-                    localCart[itemIndex].anzahl = actualMaxAvailable;
-                    localStorage.setItem("cart", JSON.stringify(localCart));
+                    currentCartItems[itemIndex].quantity = actualMaxAvailable;
+                    currentCartItems[itemIndex].anzahl = actualMaxAvailable;
+                    localStorage.setItem("cart", JSON.stringify(currentCartItems));
                 }
-                renderCart(); // Neu rendern, um die korrigierte Menge anzuzeigen
+                renderCart();
             }
-        }
-        return; // Beende die Funktion hier, da die Menge bereits korrigiert oder ein Fehler aufgetreten ist.
-    }
-
-    if (newAnzahl <= 0) {
-        if (confirm("Möchten Sie dieses Produkt wirklich aus dem Warenkorb entfernen?")) {
-            await removeItemFromCart(produktid);
         }
         return;
     }
 
-    // Wenn alle Prüfungen bestanden sind, die Menge aktualisieren
-    if (userToken) {
-        await updateQuantityBackend(produktid, newAnzahl, userToken);
-    } else {
-        let localCart = JSON.parse(localStorage.getItem("cart")) || [];
-        const itemIndex = localCart.findIndex(item => item.produktid === produktid);
+    if (newAnzahl <= 0) {
+        await removeItem(produktid);
+        return;
+    }
 
+    if (isLoggedIn) {
+        await updateQuantityInBackendCart(produktid, newAnzahl);
+    } else {
+        const itemIndex = currentCartItems.findIndex(item => item.produktid === produktid);
         if (itemIndex !== -1) {
-            localCart[itemIndex].quantity = newAnzahl;
-            localCart[itemIndex].anzahl = newAnzahl;
-            localStorage.setItem("cart", JSON.stringify(localCart));
+            currentCartItems[itemIndex].quantity = newAnzahl;
+            currentCartItems[itemIndex].anzahl = newAnzahl;
+            localStorage.setItem("cart", JSON.stringify(currentCartItems));
             renderCart();
         }
     }
 }
 
-// Hilfsfunktion für Backend-Mengenaktualisierung, um Code-Redundanz zu vermeiden
-async function updateQuantityBackend(produktid, anzahl, userToken) {
+async function updateQuantityInBackendCart(produktid, anzahl) {
     try {
         const response = await fetch(`${API_INV_BASE_URL}/warenkorb/add`, {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${userToken}`
             },
             body: JSON.stringify({ produktid, anzahl })
         });
@@ -333,7 +293,6 @@ async function updateQuantityBackend(produktid, anzahl, userToken) {
         if (!response.ok) {
             if (response.status === 401 || response.status === 403) {
                 alert("Sitzung abgelaufen oder nicht autorisiert. Bitte neu anmelden.");
-                localStorage.removeItem('userToken');
                 localStorage.removeItem('cart');
                 updateCartCount();
                 window.location.href = "../LoginPage/loginpage.html";
@@ -342,36 +301,29 @@ async function updateQuantityBackend(produktid, anzahl, userToken) {
             const errorData = await response.json();
             throw new Error(`Fehler beim Aktualisieren der Menge: ${errorData.message || response.statusText}`);
         }
-        // Nach erfolgreicher Aktualisierung muss der Warenkorb neu geladen und gerendert werden,
-        // um die konsistenten Daten anzuzeigen, die das Backend zurückgibt.
-        renderCart();
+        await renderCart();
     } catch (error) {
         console.error("Fehler beim Aktualisieren der Menge (Backend):", error);
         alert("Fehler beim Aktualisieren der Menge: " + error.message);
     }
 }
 
+async function removeItem(produktid) {
+    const isLoggedIn = document.cookie.includes('token=');
 
-async function removeItemFromCart(produktid) {
-    const userToken = getCurrentUserToken();
-    const currentCartItems = await fetchCart();
-    const removedItem = currentCartItems.find(item => item.produktid === produktid);
-    const removedQuantity = removedItem ? (removedItem.anzahl || removedItem.quantity) : 0; // Use anzahl or quantity
-
-    if (userToken) {
+    if (isLoggedIn) {
         try {
             const response = await fetch(`${API_INV_BASE_URL}/warenkorb/${produktid}`, {
                 method: 'DELETE',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}`
                 }
             });
 
             if (!response.ok) {
                 if (response.status === 401 || response.status === 403) {
                     alert("Sitzung abgelaufen oder nicht autorisiert. Bitte neu anmelden.");
-                    localStorage.removeItem('userToken');
                     localStorage.removeItem('cart');
                     updateCartCount();
                     window.location.href = "../LoginPage/loginpage.html";
@@ -379,15 +331,8 @@ async function removeItemFromCart(produktid) {
                 }
                 throw new Error(`Fehler beim Entfernen aus dem Warenkorb: ${response.statusText}`);
             }
-            alert("Produkt erfolgreich aus dem Warenkorb entfernt!");
-            renderCart();
-
-            if (removedItem) {
-                const cartItemRemovedEvent = new CustomEvent('cartItemRemoved', {
-                    detail: { produktid: produktid, anzahl: removedQuantity }
-                });
-                window.dispatchEvent(cartItemRemovedEvent);
-            }
+            await renderCart();
+            showDeleteNotification();
 
         } catch (error) {
             console.error("Fehler beim Entfernen des Produkts (API):", error);
@@ -396,29 +341,16 @@ async function removeItemFromCart(produktid) {
     } else {
         let localCart = JSON.parse(localStorage.getItem("cart")) || [];
         const initialLength = localCart.length;
-        const itemToRemove = localCart.find(item => item.produktid === produktid);
         localCart = localCart.filter(item => item.produktid !== produktid);
 
         if (localCart.length < initialLength) {
             localStorage.setItem("cart", JSON.stringify(localCart));
-            alert("Produkt erfolgreich aus dem Warenkorb entfernt!");
             renderCart();
-
-            if (itemToRemove) {
-                const cartItemRemovedEvent = new CustomEvent('cartItemRemoved', {
-                    detail: { produktid: produktid, anzahl: itemToRemove.quantity || itemToRemove.anzahl }
-                });
-                window.dispatchEvent(cartItemRemovedEvent);
-            }
+            showDeleteNotification();
         }
     }
 }
 
-window.addEventListener('cartCleared', () => {
-    renderCart();
-});
-
 window.addEventListener("DOMContentLoaded", () => {
     renderCart();
-    updateCartCount();
 });
