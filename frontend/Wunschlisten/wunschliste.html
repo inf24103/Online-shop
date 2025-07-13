@@ -62,6 +62,9 @@
       <!--Wird befüllt-->
     </div>
     <button class="delete-btn" onclick="loeschen(currentBearbeiteId); closeEditModal()">Löschen</button>
+    <div id="produkte-hinzufuegen-button-wrapper">
+      <button class="hinzufuegen-btn" onclick="zeigeProduktHinzufuegenModal(currentBearbeiteId)">Produkte hinzufügen</button>
+    </div>
     <h3>Meine Produkte</h3>
     <div id="produkte-liste" class="produkte-grid">
       <!--Hier werden die Produkte geladen-->
@@ -83,7 +86,23 @@
     <button onclick="schliesseProduktModal()">Schließen</button>
   </div>
 </div>
+
+<!--Produkt hinzufügen Modal-->
+
+<div id="produkt-hinzufuegen-modal" class="modal">
+  <div class="modal-content produkt-hinzufuegen-content">
+    <h3>Produkt zur Wunschliste hinzufügen</h3>
+    <div id="alle-produkte-liste" class="produkte-grid-scroll">
+      <!--Hier werden alle Produkte angezeigt-->
+    </div>
+    <div class="modal-buttons sticky buttons">
+      <button onclick="zurueckZuModal()">Schließen</button>
+    </div>
+  </div>
+</div>
+
 </body>
 <script src="/Wunschlisten/wunschliste.js"></script>
 <script src="/Wunschlisten/produkte_wunschliste.js"></script>
+<script src="/Wunschlisten/addProduct.js"></script>
 </html>
