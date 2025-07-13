@@ -1,0 +1,52 @@
+<!Doctype html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="../public/navbar.css">
+    <link rel="stylesheet" href="../public/page_layout.css">
+    <link rel="stylesheet" href="../public/footer.css">
+    <title>Warenkorb</title>
+    <link rel="stylesheet" href="Warenkorb.css">
+</head>
+
+<body>
+<div id="deleteNotification" class="delete-notification">
+    Produkt aus dem Warenkorb entfernt!
+</div>
+<header class="navbar">
+    <div class="nav-inner">
+        <a href="../ProductPage/productpage.html" class="logo-link">
+            <img src="../pictures/fitura_logo_small.png" alt="Shop Logo" class="logo">
+        </a>
+        <div class="nav-links">
+            <a href="../ProductPage/productpage.html" class="navitem">Produkte</a>
+            <a href="../Warenkorb/Warenkorb.html" class="navitem icon-link">
+                <img src="../pictures/einkaufswagen.png" alt="Warenkorb">
+                Warenkorb (<span id="cart-count">0</span>)
+            </a>
+            <a href="../AdminAnsicht%20Produkte/ProductpageAdmin.html" id="account" class="navitem icon-link">
+                <img src="../pictures/account_icon.png" alt="Konto" class="profile-btn">
+            </a>
+            <a href="#" id="einkaufsliste" class="navitem icon-link" style="display: none;">
+                <img src="../pictures/einkaufswagen.png" alt="Einkaufsliste">
+            </a>
+            <a href="../KaufHistory/KaufHistory.html">History</a>
+        </div>
+    </div>
+</header>
+<main>
+    <h1>Warenkorb</h1>
+    <div class="cart-items"></div>
+    <div class="cart-summary">
+        <p>Gesamtsumme: <span id="total-price">€0.00</span></p>
+        <a href="../Checkout/Checkout.html"> <button id="checkout-button">Zur Kasse</button>
+        </a>
+    </div>
+</main>
+<div id="customNotification" class="custom-notification">
+</div>
+<script src="Warenkorb.js"></script>
+</body>
+
+</html>

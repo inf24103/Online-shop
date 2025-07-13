@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meine Bestellungen</title>
+    <link rel="stylesheet" href="KaufHistory.css">
+    <link rel="stylesheet" href="../Warenkorb/Warenkorb.css">
+    <link rel="stylesheet" href="../public/navbar.css">
+    <link rel="stylesheet" href="../public/page_layout.css">
+</head>
+<body>
+<header>
+    <div class="nav-inner">
+        <a href="../ProductPage/productpage.html" class="logo-link">
+            <img src="../pictures/fitura_logo_small.png" alt="Shop Logo" class="logo">
+        </a>
+        <div class="nav-links">
+            <a href="../ProductPage/productpage.html" class="navitem">Produkte</a>
+            <a href="../Warenkorb/Warenkorb.html" class="navitem icon-link">
+                <img src="../pictures/einkaufswagen.png" alt="Warenkorb">
+                Warenkorb (<span id="cart-count">0</span>)
+            </a>
+            <a href="../AdminAnsicht%20Produkte/ProductpageAdmin.html" id="account" class="navitem icon-link">
+                <img src="../pictures/account_icon.png" alt="Konto" class="profile-btn">
+            </a>
+            <a href="#" id="einkaufsliste" class="navitem icon-link" style="display: none;">
+                <img src="../pictures/einkaufswagen.png" alt="Einkaufsliste">
+            </a>
+            <a href="../KaufHistory/KaufHistory.html">History</a>
+        </div>
+    </div>
+</header>
+<h1>Meine Bestellungen</h1>
+<main class="purchase-history-container">
+    <div id="loading-message" class="hidden">Bestellungen werden geladen...</div>
+    <div id="no-orders-message" class="hidden">Sie haben noch keine Bestellungen getätigt.</div>
+    <div id="purchase-list">
+    </div>
+    <div id="error-message" class="hidden error-message">Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.</div>
+</main>
+
+<footer>
+</footer>
+
+<script src="KaufHistory.js"></script>
+</body>
+</html>

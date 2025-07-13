@@ -9,38 +9,58 @@
     <link rel="stylesheet" href="productstyle.css">
 </head>
 <body>
-<ul class="navbar">
-    <li><img class="logo" src="../pictures/fitura_logo.png" alt="logo"></li>
-    <li class="navitem"><a href="../LoginPage/loginpage.html">Sign in</a></li>
-    <li class="navitem"><a href="../SignUpPage/signup.html">Sign up</a></li>
-    <li class="navitem"><a href="../ProductPage/productpage.html">Products</a></li>
-    <li class="navitem"><a href="#about">About</a></li>
-    <li class="navitem"><a href="../user/index.html">Home</a></li>
-    <li class="navitem cart-icon">
-        <a href="../Warenkorb/Warenkorb.html">🛒
-            <span id="cart-count" class="cart-count">0</span>
+<header class="navbar">
+    <div class="nav-inner">
+        <a href="../ProductPage/productpage.html" class="logo-link">
+            <img src="../pictures/fitura_logo_small.png" alt="Shop Logo" class="logo">
         </a>
-    </li>
-</ul>
+        <div class="nav-links">
+            <a href="../ProductPage/productpage.html" class="navitem">Produkte</a>
+            <a href="../Warenkorb/Warenkorb.html" class="navitem icon-link">
+                <img src="../pictures/einkaufswagen.png" alt="Warenkorb">
+                Warenkorb (<span id="cart-count">0</span>)
+            </a>
+            <a href="../AdminAnsicht%20Produkte/ProductpageAdmin.html" id="account" class="navitem icon-link">
+                <img src="../pictures/account_icon.png" alt="Konto" class="profile-btn">
+            </a>
+            <a href="#" id="einkaufsliste" class="navitem icon-link" style="display: none;">
+                <img src="../pictures/einkaufswagen.png" alt="Einkaufsliste">
+            </a>
+            <a href="../KaufHistory/KaufHistory.html">History</a>
+        </div>
+    </div>
+</header>
+<aside id="sidebar" class="sidebar">
+    <button class="sidebar-close">&times;</button>
+    <ul id="sidebar-menu">
+    </ul>
+</aside>
 <h1>All Products</h1>
 <div class="filter">
     <form action="" method="get">
-        <input type="search" name="search" placeholder="Search Products">
-        <select name="category" id="kat_filter">
-            <option value="Category">Category</option>
-            <option value="All">All</option>
-            <option value="Supplements">Supplements</option>
-            <option value="Clothing">Clothing</option>
-            <option value="Style">Style</option>
+        <input type="search" name="name" placeholder="Filtern nach Name">
+        <select name="kategorie" id="kat_filter">
+            <option value="All">Alle Kategorien</option>
+            <option value="Sportbekleidung">Sportbekleidung</option>
+            <option value="Fitnesszubehör">Fitnesszubehör</option>
+            <option value="Trainingsgerät">Trainingsgerät</option>
+            <option value="Supplement">Supplement</option>
         </select>
-        <input type="number" name="price" min="1" max="100" placeholder="Max. Preis(€)"> <!--value="Preis"-->
-        <button type="submit">🔍</button>
+        <input type="number" name="maxPreis" min="1" placeholder="Max. Preis (€)">
+        <input type="number" name="minMenge" min="0" placeholder="Min. Menge">
+        <select name="sortierung" id="sort_filter">
+            <option value="">Sortieren nach</option>
+            <option value="preis_asc">Preis aufsteigend</option>
+            <option value="preis_desc">Preis absteigend</option>
+            <option value="name_asc">Name A-Z</option>
+            <option value="name_desc">Name Z-A</option>
+        </select>
+        <button type="submit">🔍 Filtern</button>
     </form>
 </div>
 <div class="product-card">
-    <!-- Hier werden die Produkte eingefügt -->
 </div>
-<div class="product-modal" id="product-detail-modal"> <!--Klasse um das modal Fenster öffnen zu können-->
+<div class="product-modal" id="product-detail-modal">
     <div class="modal-content">
         <span class="close-button">&times;</span>
         <div class="modal-image-area">
@@ -51,7 +71,7 @@
             <p class="description" id="modal-product-description"></p>
             <p class="category" id="modal-product-category"></p>
             <p class="price" id="modal-product-price"></p>
-            <button class="add-to-cart-modal">In den Warenkorb</button>
+            <p class="quantity" id="modal-product-quantity"></p> <button class="add-to-cart-modal">In den Warenkorb</button>
         </div>
     </div>
 </div>

@@ -1,37 +1,63 @@
-/* products.js – rendert die ersten 6 Produkte aus der API */
+const API_INV_BASE_URL = 'http://localhost:3000/api/inv';
+const BESTSELLER_API_URL = `${API_INV_BASE_URL}/product/search`;
+const IMAGE_BASE_URL = 'http://localhost:3000/';
+const bestsellerProductsWrapper = document.getElementById('bestseller-products-wrapper');
 
-async function renderProducts() {
-    const container = document.querySelector('.product-card');
-    if (!container) return;
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
 
-    container.innerHTML = 'Lade Produkte …';
-
+async function fetchAndRenderRandomBestsellers() {
     try {
-        const res = await fetch('http://localhost:3000/api/inv/product/all', {
-            credentials: 'include'          // Cookie mitsenden, falls nötig
+        const response = await fetch(`${BESTSELLER_API_URL}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
         });
-        if (!res.ok) throw new Error('API-Fehler ' + res.status);
 
-        const data = await res.json();      // Array wie in deinem Beispiel
-        const products = data.slice(0, 6);  // nur die ersten 6
+        if (!response.ok) {
+            throw new Error(`Fehler beim Laden der Produkte für Bestseller-Karussell: ${response.statusText}`);
+        }
 
-        container.innerHTML = '';
-        products.forEach(p => {
-            const card = document.createElement('div');
-            card.className = 'product';
-            card.innerHTML = `
-                ${p.bild ? `<img src="${p.bild}" alt="${p.produktname}">`
-                : '<img src="../pictures/placeholder.jpg" alt="Bild folgt">'}
-                <h3>${p.produktname}</h3>
-                <p>€ ${Number(p.preis).toFixed(2)}</p>
-                <p style="color:#777;">${p.kategorie}</p>
+        let allProducts = await response.json();
+
+        if (allProducts.length === 0) {
+            bestsellerProductsWrapper.innerHTML = "<p>Aktuell keine Produkte für das Karussell verfügbar.</p>";
+            return;
+        }
+
+        const shuffledProducts = shuffleArray(allProducts);
+
+        const numberOfBestsellersToShow = Math.min(10, shuffledProducts.length);
+        const randomBestsellers = shuffledProducts.slice(0, numberOfBestsellersToShow);
+
+        const clonedProductsForCarousel = [...randomBestsellers, ...randomBestsellers, ...randomBestsellers, ...randomBestsellers];
+
+        bestsellerProductsWrapper.innerHTML = '';
+
+        clonedProductsForCarousel.forEach(product => {
+            const productCard = document.createElement('div');
+            productCard.className = 'product-card';
+            const imageUrl = product.bild ? `${IMAGE_BASE_URL}${product.bild}` : 'https://via.placeholder.com/200?text=Kein Bild';
+
+            productCard.innerHTML = `
+                <img src="${imageUrl}" alt="${product.produktname}">
+                <h3>${product.produktname}</h3>
+                <p>€${parseFloat(product.preis).toFixed(2)}</p>
+                <a href="/ProductPage/productpage.html?id=${product.produktid}" class="btn-secondary">Details</a>
             `;
-            container.appendChild(card);
+            bestsellerProductsWrapper.appendChild(productCard);
         });
-    } catch (err) {
-        console.error(err);
-        container.innerHTML = '<p style="color:red">Produkte konnten nicht geladen werden.</p>';
+
+    } catch (error) {
+        console.error("Fehler beim Laden der Produkte für das Bestseller-Karussell:", error);
+        bestsellerProductsWrapper.innerHTML = "<p>Fehler beim Laden der Produkte für das Karussell. Bitte versuchen Sie es später erneut.</p>";
     }
 }
 
-window.addEventListener('DOMContentLoaded', renderProducts);
+window.addEventListener("DOMContentLoaded", fetchAndRenderRandomBestsellers);
