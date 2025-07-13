@@ -26,7 +26,11 @@ export const deleteProdukt = async (produktid) => {
 };
 
 /* Produkt aktualisieren */
-export const updateProdukt = async (produktname, preis, menge, kategorie, beschreibung, bild, produktid) => {
+export const updateProdukt = async (produktname, preis, menge, kategorie, beschreibung, bildFormat, produktid) => {
+    const safeKategorie = kategorie.replace(/[\/\\:*?"<>|]/g, '').trim().toLowerCase();
+
+    const productNr = produktid - 1
+    const bildPfad = `${safeKategorie}/${productNr}.${bildFormat}`;
     const sql = `
         UPDATE Produkt
         SET produktname      = $1,
@@ -37,7 +41,7 @@ export const updateProdukt = async (produktname, preis, menge, kategorie, beschr
             bild             = $6
         WHERE produktid = $7;
     `;
-    return await query(sql, [produktname, preis, menge, kategorie, beschreibung, bild, produktid]);
+    return await query(sql, [produktname, preis, menge, kategorie, beschreibung, bildPfad, produktid]);
 };
 
 export const createWarenkorb = async (benutzerid) => {
