@@ -20,7 +20,7 @@ const API_INV_BASE_URL = 'http://localhost:3000/api/inv';
 function updateCartCount() {
     const cartCountElement = document.getElementById("cart-count");
     if (cartCountElement) {
-        const count = currentCartItems.reduce((sum, item) => sum + (item.anzahl || item.quantity || 0), 0);
+        const count = currentCartItems.reduce((sum, item) => sum + (item.anzahl || 0), 0);
         cartCountElement.textContent = count;
     }
 }
@@ -135,7 +135,7 @@ async function fetchProducts(filters = {}) {
     }
 }
 
-async function addToCartAPI(productToAdd, anzahl = 1) {
+async function addToCartAPI(productToAdd, quantityToAdd = 1) {
     const isLoggedIn = document.cookie.includes('token=');
 
     const productInRawStock = allProductsWithRawStock.find(p => p.produktid === productToAdd.produktid);
@@ -145,12 +145,14 @@ async function addToCartAPI(productToAdd, anzahl = 1) {
     }
 
     const currentQuantityInCart = currentCartItems.find(item => item.produktid === productToAdd.produktid)?.anzahl || 0;
-    const remainingStockForUser = productInRawStock.originalMenge - currentQuantityInCart;
+    const projectedTotalQuantityInCart = currentQuantityInCart + quantityToAdd;
 
-    if (anzahl > remainingStockForUser) {
-        alert(`Nicht genügend Produkte auf Lager! Sie können maximal ${remainingStockForUser} weitere von diesem Produkt hinzufügen. (Insgesamt ${productInRawStock.originalMenge} verfügbar)`);
+
+    if (projectedTotalQuantityInCart > productInRawStock.originalMenge) {
+        alert(`Es können maximal ${productInRawStock.originalMenge} Stück dieses Produkts (inkl. bereits im Warenkorb) hinzugefügt werden. Aktuell im Warenkorb: ${currentQuantityInCart}`);
         return;
     }
+
 
     if (isLoggedIn) {
         try {
@@ -160,7 +162,7 @@ async function addToCartAPI(productToAdd, anzahl = 1) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ produktid: productToAdd.produktid, anzahl: currentQuantityInCart + anzahl })
+                body: JSON.stringify({ produktid: productToAdd.produktid, anzahl: quantityToAdd })
             });
 
             if (!response.ok) {
@@ -173,7 +175,7 @@ async function addToCartAPI(productToAdd, anzahl = 1) {
                     return;
                 }
                 const errorData = await response.json();
-                throw new Error(`Fehler beim Hinzufügen zum Warenkorb: ${errorData.message || response.statusText}`);
+                alert(`Fehler beim Hinzufügen zum Warenkorb: ${errorData.message || response.statusText}`);
             }
             await loadAndSyncCart();
             renderProducts(allProductsWithRawStock);
@@ -185,20 +187,23 @@ async function addToCartAPI(productToAdd, anzahl = 1) {
         let localCart = JSON.parse(localStorage.getItem("cart")) || [];
         const existingItemIndex = localCart.findIndex(item => item.produktid === productToAdd.produktid);
 
+        let newQuantityForLocalCart;
         if (existingItemIndex !== -1) {
-            const newLocalQuantity = localCart[existingItemIndex].quantity + anzahl;
-            if (newLocalQuantity > productInRawStock.originalMenge) {
-                alert(`Sie können nicht mehr als ${productInRawStock.originalMenge} dieses Produkts insgesamt hinzufügen.`);
-                return;
-            }
-            localCart[existingItemIndex].quantity = newLocalQuantity;
-            localCart[existingItemIndex].anzahl = newLocalQuantity;
+            newQuantityForLocalCart = localCart[existingItemIndex].anzahl + quantityToAdd;
         } else {
-            if (anzahl > productInRawStock.originalMenge) {
-                alert(`Nicht genügend Produkte auf Lager! Maximal verfügbar: ${productInRawStock.originalMenge}`);
-                return;
-            }
-            localCart.push({ ...productToAdd, quantity: anzahl, anzahl: anzahl, availableStock: productInRawStock.originalMenge });
+            newQuantityForLocalCart = quantityToAdd;
+        }
+
+        if (newQuantityForLocalCart > productInRawStock.originalMenge) {
+            alert(`Sie können nicht mehr als ${productInRawStock.originalMenge} dieses Produkts insgesamt hinzufügen (inkl. bereits im Warenkorb).`);
+            return;
+        }
+
+        if (existingItemIndex !== -1) {
+            localCart[existingItemIndex].quantity = newQuantityForLocalCart;
+            localCart[existingItemIndex].anzahl = newQuantityForLocalCart;
+        } else {
+            localCart.push({ ...productToAdd, quantity: newQuantityForLocalCart, anzahl: newQuantityForLocalCart, originalMenge: productInRawStock.originalMenge });
         }
         localStorage.setItem("cart", JSON.stringify(localCart));
 
@@ -243,7 +248,7 @@ async function loadAndSyncCart() {
                 localStorage.setItem("cart", JSON.stringify(currentCartItems));
 
             } else if (response.status === 401 || response.status === 403) {
-                console.warn("Sitzung abgelaufen oder nicht autorisiert während Warenkorb-Synchronisation. Lokaler Warenkorb wird geleert.");
+                console.warn("Session expired or not authorized during cart synchronization. Local cart will be cleared.");
                 localStorage.removeItem('cart');
                 currentCartItems = [];
                 allProductsWithRawStock = allProductsWithRawStock.map(product => ({ ...product, menge: product.originalMenge }));
@@ -261,7 +266,7 @@ async function loadAndSyncCart() {
         currentCartItems = JSON.parse(localStorage.getItem("cart")) || [];
         allProductsWithRawStock = allProductsWithRawStock.map(product => {
             const cartItem = currentCartItems.find(item => item.produktid === product.produktid);
-            const quantityInCart = cartItem ? (cartItem.quantity || 0) : 0;
+            const quantityInCart = cartItem ? (cartItem.anzahl || 0) : 0;
             const newDisplayMenge = product.originalMenge - quantityInCart;
             return { ...product, menge: Math.max(0, newDisplayMenge) };
         });
@@ -270,17 +275,22 @@ async function loadAndSyncCart() {
 }
 
 function openProductModal(product) {
-    currentProductInModal = product;
+    const productForModal = allProductsWithRawStock.find(p => p.produktid === product.produktid);
+    if (!productForModal) {
+        console.error("Fehler: Produkt für Modal nicht in der aktuellen Produktliste gefunden.");
+        return;
+    }
+    currentProductInModal = productForModal;
 
-    const imageUrl = product.bild ? `${IMAGE_BASE_URL}${product.bild}` : 'https://via.placeholder.com/200?text=No+Image';
+    const imageUrl = productForModal.bild ? `${IMAGE_BASE_URL}${productForModal.bild}` : 'https://via.placeholder.com/200?text=No+Image';
     modalImage.src = imageUrl;
-    modalImage.alt = product.produktname;
-    modalName.textContent = product.produktname;
-    modalDescription.textContent = product.beschreibung || 'Keine detaillierte Beschreibung verfügbar.';
-    modalCategory.textContent = `Kategorie: ${product.kategorie}`;
-    modalPrice.textContent = `Preis: €${parseFloat(product.preis).toFixed(2)}`;
+    modalImage.alt = productForModal.produktname;
+    modalName.textContent = productForModal.produktname;
+    modalDescription.textContent = productForModal.beschreibung || 'Keine detaillierte Beschreibung verfügbar.';
+    modalCategory.textContent = `Kategorie: ${productForModal.kategorie}`;
+    modalPrice.textContent = `Preis: €${parseFloat(productForModal.preis).toFixed(2)}`;
 
-    const availableQuantityForUser = product.menge;
+    const availableQuantityForUser = productForModal.menge;
 
     if (modalQuantity) {
         modalQuantity.textContent = `Verfügbare Menge: ${availableQuantityForUser}`;
@@ -330,7 +340,21 @@ if (addToCartModalButton) {
         if (currentProductInModal) {
             if (currentProductInModal.menge > 0) {
                 await addToCartAPI(currentProductInModal, 1);
-                openProductModal(allProductsWithRawStock.find(p => p.produktid === currentProductInModal.produktid));
+
+                const updatedProduct = allProductsWithRawStock.find(p => p.produktid === currentProductInModal.produktid);
+
+                if (updatedProduct) {
+                    currentProductInModal = updatedProduct;
+                    modalQuantity.textContent = `Verfügbare Menge: ${updatedProduct.menge}`;
+                    if (updatedProduct.menge <= 0) {
+                        addToCartModalButton.disabled = true;
+                        addToCartModalButton.textContent = 'Nicht vorrätig';
+                        addToCartModalButton.style.backgroundColor = '#ccc';
+                    }
+                } else {
+                    closeProductModal();
+                }
+
             } else {
                 alert("Dieses Produkt ist leider nicht mehr vorrätig oder die gewünschte Menge ist nicht verfügbar.");
             }
@@ -341,11 +365,27 @@ if (addToCartModalButton) {
 window.addEventListener('cartItemRemoved', async (event) => {
     await loadAndSyncCart();
     renderProducts(allProductsWithRawStock);
+    if (productDetailModal.classList.contains('is-expanded') && currentProductInModal && event.detail.productId === currentProductInModal.produktid) {
+        const updatedProduct = allProductsWithRawStock.find(p => p.produktid === currentProductInModal.produktid);
+        if (updatedProduct) {
+            openProductModal(updatedProduct);
+        } else {
+            closeProductModal();
+        }
+    }
 });
 
 window.addEventListener('cartCleared', async () => {
     await loadAndSyncCart();
     renderProducts(allProductsWithRawStock);
+    if (productDetailModal.classList.contains('is-expanded') && currentProductInModal) {
+        const updatedProduct = allProductsWithRawStock.find(p => p.produktid === currentProductInModal.produktid);
+        if (updatedProduct) {
+            openProductModal(updatedProduct);
+        } else {
+            closeProductModal();
+        }
+    }
 });
 
 window.addEventListener("DOMContentLoaded", () => {

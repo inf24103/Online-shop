@@ -10,17 +10,48 @@ const IMAGE_BASE_URL = 'http://localhost:3000/';
 const API_INV_BASE_URL = 'http://localhost:3000/api/inv';
 const API_USER_BASE_URL = 'http://localhost:3000/api/user';
 
-function updateCartCount() {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const count = cart.reduce((sum, item) => sum + (item.quantity || item.anzahl || 0), 0);
+function showNotification(message, isSuccess = true) {
+    const notificationElement = document.createElement('div');
+    notificationElement.className = `notification ${isSuccess ? 'success' : 'error'}`;
+    notificationElement.textContent = message;
+    document.body.appendChild(notificationElement);
+
+    setTimeout(() => {
+        notificationElement.classList.add('show');
+    }, 10);
+
+    setTimeout(() => {
+        notificationElement.classList.remove('show');
+        notificationElement.addEventListener('transitionend', () => notificationElement.remove());
+    }, 3000);
+}
+
+function updateCartCount(cartItems = []) {
+    const count = cartItems.reduce((sum, item) => sum + (item.anzahl || item.quantity || 0), 0);
     const cartCountElement = document.getElementById("cart-count");
     if (cartCountElement) {
         cartCountElement.textContent = count;
     }
 }
 
+async function checkLoginStatus() {
+    try {
+        const response = await fetch(`${API_USER_BASE_URL}/me`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        return response.ok;
+    } catch (error) {
+        console.error("Fehler beim Überprüfen des Login-Status:", error);
+        return false;
+    }
+}
+
 async function fetchCart() {
-    const isLoggedIn = document.cookie.includes('token=');
+    const isLoggedIn = await checkLoginStatus();
 
     if (isLoggedIn) {
         try {
@@ -36,7 +67,7 @@ async function fetchCart() {
                 if (response.status === 401 || response.status === 403) {
                     console.warn("Sitzung abgelaufen oder nicht autorisiert. Leere lokalen Warenkorb.");
                     localStorage.removeItem('cart');
-                    updateCartCount();
+                    updateCartCount([]);
                     return [];
                 }
                 throw new Error(`Fehler beim Laden des Backend-Warenkorbs: ${response.statusText}`);
@@ -57,28 +88,18 @@ async function fetchCart() {
             return backendCart;
         } catch (error) {
             console.error("Fehler beim Abrufen des Warenkorbs vom Backend:", error);
-            alert("Fehler beim Laden Ihres Warenkorbs. Bitte versuchen Sie es erneut.");
+            showNotification("Ein Fehler ist beim Laden Ihres Warenkorbs aufgetreten. Bitte versuchen Sie es später erneut.", false);
             const localCart = JSON.parse(localStorage.getItem("cart")) || [];
-            return localCart.map(item => ({
-                ...item,
-                anzahl: item.quantity || item.anzahl || 1,
-                quantity: item.quantity || item.anzahl || 1,
-                originalMenge: item.originalMenge || item.menge || Infinity
-            }));
+            return localCart;
         }
+    } else {
+        const localCart = JSON.parse(localStorage.getItem("cart")) || [];
+        return localCart;
     }
-
-    const localCart = JSON.parse(localStorage.getItem("cart")) || [];
-    return localCart.map(item => ({
-        ...item,
-        anzahl: item.quantity || item.anzahl || 1,
-        quantity: item.quantity || item.anzahl || 1,
-        originalMenge: item.originalMenge || item.menge || Infinity
-    }));
 }
 
 async function fetchUserData() {
-    const isLoggedIn = document.cookie.includes('token=');
+    const isLoggedIn = await checkLoginStatus();
     if (!isLoggedIn) {
         return null;
     }
@@ -101,12 +122,14 @@ async function fetchUserData() {
         return userData[0];
     } catch (error) {
         console.error("Fehler beim Abrufen der Benutzerdaten:", error);
+        showNotification("Fehler beim Laden Ihrer Profildaten.", false);
         return null;
     }
 }
 
 function fillAddressForm(userData) {
     const formFields = addressForm.querySelectorAll('input:not([type="hidden"])');
+    document.getElementById('country').value = 'Deutschland';
 
     if (userData) {
         document.getElementById('firstName').value = userData.vorname || '';
@@ -114,7 +137,6 @@ function fillAddressForm(userData) {
         document.getElementById('street').value = userData.strasse || '';
         document.getElementById('zipCode').value = userData.plz || '';
         document.getElementById('city').value = userData.ort || '';
-        document.getElementById('country').value = userData.land || 'Deutschland';
         document.getElementById('email').value = userData.email || '';
         document.getElementById('phone').value = userData.telefonnr || '';
 
@@ -132,18 +154,16 @@ function fillAddressForm(userData) {
             field.style.cursor = '';
             if (field.id !== 'country') {
                 field.value = '';
-            } else {
-                field.value = 'Deutschland';
             }
         });
         addressFormTitle.textContent = "Liefer- und Rechnungsadresse (Gast)";
-        placeOrderButton.textContent = "Als Gast Kauf abschließen";
+        placeOrderButton.textContent = "Bitte Anmelden zum Kauf";
     }
 }
 
 async function renderCheckoutSummary() {
     const cartItems = await fetchCart();
-    const isLoggedIn = document.cookie.includes('token=');
+    const isLoggedIn = await checkLoginStatus();
 
     checkoutItemsContainer.innerHTML = "";
     let total = 0;
@@ -160,13 +180,13 @@ async function renderCheckoutSummary() {
         `;
         checkoutTotalPriceElement.textContent = `€0.00`;
         placeOrderButton.disabled = true;
-        updateCartCount();
+        updateCartCount([]);
         fillAddressForm(null);
         return;
     }
 
     cartItems.forEach((product) => {
-        const itemQuantity = product.anzahl || 1;
+        const itemQuantity = product.anzahl || product.quantity || 1;
         const itemPrice = parseFloat(product.preis);
         const itemTotalPrice = itemPrice * itemQuantity;
         total += itemTotalPrice;
@@ -193,16 +213,19 @@ async function renderCheckoutSummary() {
 
     checkoutTotalPriceElement.textContent = `€${total.toFixed(2)}`;
     placeOrderButton.disabled = false;
-    updateCartCount();
+    updateCartCount(cartItems);
 
     if (isLoggedIn) {
         const userData = await fetchUserData();
         fillAddressForm(userData);
+        placeOrderButton.textContent = "Kauf abschließen";
+        placeOrderButton.onclick = null;
     } else {
         fillAddressForm(null);
         placeOrderButton.textContent = "Bitte Anmelden zum Kauf";
+        placeOrderButton.disabled = true;
         placeOrderButton.onclick = () => {
-            alert("Bitte melden Sie sich an, um den Kauf abzuschließen.");
+            showNotification("Bitte melden Sie sich an, um den Kauf abzuschließen.", false);
             window.location.href = "../LoginPage/loginpage.html";
         };
     }
@@ -220,14 +243,7 @@ function hideLoadingOverlay() {
 
 async function sendOrderToBackend() {
     try {
-        const isLoggedIn = document.cookie.includes('token=');
-        if (!isLoggedIn) {
-            throw new Error("Für diese Art des Checkouts ist eine Anmeldung erforderlich.");
-        }
-
-        const baseUrl = `${API_INV_BASE_URL}/kaeufe/kaufen`;
-
-        const response = await fetch(baseUrl, {
+        const response = await fetch(`${API_INV_BASE_URL}/kaeufe/kaufen`, {
             method: 'GET',
             credentials: 'include',
             headers: {
@@ -262,10 +278,10 @@ addressForm.addEventListener('submit', async (event) => {
 
     showLoadingOverlay();
 
-    const isLoggedIn = document.cookie.includes('token=');
+    const isLoggedIn = await checkLoginStatus();
 
     if (!isLoggedIn) {
-        alert("Bitte melden Sie sich an, um den Kauf abzuschließen.");
+        showNotification("Bitte melden Sie sich an, um den Kauf abzuschließen.", false);
         hideLoadingOverlay();
         window.location.href = "../LoginPage/loginpage.html";
         return;
@@ -273,29 +289,26 @@ addressForm.addEventListener('submit', async (event) => {
 
     const currentCartItems = await fetchCart();
     if (currentCartItems.length === 0) {
-        alert("Ihr Warenkorb ist leer. Bitte fügen Sie Produkte hinzu, um fortzufahren.");
+        showNotification("Ihr Warenkorb ist leer. Bitte fügen Sie Produkte hinzu, um fortzufahren.", false);
         hideLoadingOverlay();
         return;
     }
 
-    const addressData = {
-        firstName: document.getElementById('firstName').value.trim(),
-        lastName: document.getElementById('lastName').value.trim(),
-        street: document.getElementById('street').value.trim(),
-        zipCode: document.getElementById('zipCode').value.trim(),
-        city: document.getElementById('city').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        phone: document.getElementById('phone').value.trim()
-    };
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
+    const street = document.getElementById('street').value.trim();
+    const zipCode = document.getElementById('zipCode').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
 
-    if (!addressData.firstName || !addressData.lastName || !addressData.street ||
-        !addressData.zipCode || !addressData.city || !addressData.email) {
-        alert("Bitte füllen Sie alle erforderlichen Felder aus (Vorname, Nachname, Straße, PLZ, Ort, E-Mail).");
+    if (!firstName || !lastName || !street || !zipCode || !city || !email) {
+        showNotification("Bitte füllen Sie alle erforderlichen Felder aus (Vorname, Nachname, Straße, PLZ, Ort, E-Mail).", false);
         hideLoadingOverlay();
         return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(addressData.email)) {
-        alert("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showNotification("Bitte geben Sie eine gültige E-Mail-Adresse ein.", false);
         hideLoadingOverlay();
         return;
     }
@@ -308,34 +321,41 @@ addressForm.addEventListener('submit', async (event) => {
 
         await clearLocalCartAfterPurchase();
 
-        thankYouNotification.classList.add('show');
+        showNotification("Vielen Dank für Ihre Bestellung! Eine Bestätigung wurde per E-Mail versandt.", true);
+        if (thankYouNotification) {
+            thankYouNotification.classList.add('show');
+        }
 
         setTimeout(() => {
-            thankYouNotification.classList.remove('show');
-            window.location.href = "../SignUpPage/signup.html";
+            if (thankYouNotification) {
+                thankYouNotification.classList.remove('show');
+            }
+            window.location.href = "../user/index.html";
         }, 2000);
 
     } catch (error) {
         console.error("Fehler beim Abschließen der Bestellung:", error);
         let userErrorMessage = "Es gab ein Problem beim Abschließen Ihrer Bestellung. Bitte versuchen Sie es erneut.";
-        if (error.message.includes("401") || error.message.includes("403")) {
+
+        if (error.message.includes("401") || error.message.includes("403") || error.message.includes("Session")) {
             userErrorMessage = "Ihre Sitzung ist abgelaufen oder Sie sind nicht angemeldet. Bitte loggen Sie sich erneut ein.";
-        } else if (error.message.includes("400") || error.message.includes("Bestand")) {
+            setTimeout(() => window.location.href = "../LoginPage/loginpage.html", 1500);
+        } else if (error.message.includes("Bestand") || error.message.includes("400")) {
             userErrorMessage = "Einige Produkte im Warenkorb sind nicht mehr in ausreichender Menge verfügbar. Bitte überprüfen Sie Ihren Warenkorb.";
+            renderCheckoutSummary();
         } else if (error.message.includes("404")) {
-            userErrorMessage = "Der Server konnte die Bestellfunktion nicht finden. Bitte kontaktieren Sie den Support.";
+            userErrorMessage = "Die Bestellfunktion ist derzeit nicht erreichbar. Bitte kontaktieren Sie den Support.";
         }
-        alert(userErrorMessage + ` (Details: ${error.message})`);
+        showNotification(userErrorMessage, false);
     } finally {
         hideLoadingOverlay();
     }
 });
 
-window.addEventListener("DOMContentLoaded", () => {
-    renderCheckoutSummary();
+window.addEventListener("DOMContentLoaded", async () => {
+    await renderCheckoutSummary();
 });
 
 window.addEventListener('cartCleared', () => {
     renderCheckoutSummary();
-    updateCartCount();
 });
