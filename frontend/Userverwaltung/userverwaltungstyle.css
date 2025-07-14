@@ -9,6 +9,7 @@ body {
     padding: 0;
     background: #f4f4f4;
 }
+
 h1 {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     margin-top: 50px;
@@ -34,7 +35,8 @@ form {
     background-color: white;
     border-radius: 8px;
 }
-input {
+input,
+select {
     padding: 10px;
     border: 1px solid #aaa;
     border-radius: 4px;
@@ -47,6 +49,11 @@ button {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+}
+
+.user-card.gesperrt {
+    opacity: 0.5;
+    filter: grayscale(100%);
 }
 
 button:hover {
@@ -90,7 +97,8 @@ button:hover {
     color: #444;
 }
 
-.delete {
+.delete,
+.sperren {
     border: none;
     background: transparent;
     padding: 4px;
@@ -99,10 +107,118 @@ button:hover {
     justify-content: center;
 }
 
-.delete img {
+.delete img,
+.sperren img {
     width: 40px;
     height: 40px;
     object-fit: contain;
     filter: grayscale(100%);
     transition: filter 0.1s;
+}
+
+.delete:hover,
+.sperren:hover {
+    filter: none;
+}
+
+.delete:hover,
+.sperren:hover {
+    transform: translateY(-2px);
+}
+
+.btn-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.back-btn {
+    margin: 0 auto 24px;
+    display: block;
+    padding: 8px 18px;
+    font-size: 15px;
+    color: #fff;
+    background: #0a75c2;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.back-btn:hover {
+    background: #095a94;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    box-sizing: border-box;
+}
+
+.modal-content {
+    background: white;
+    padding: 32px;
+    border-radius: 8px;
+    width: 90vw;
+    height: 90vh;
+    max-width: 800px;
+    max-height: 810px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#admin-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+#admin-form input {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+#admin-form button {
+    padding: 10px;
+    font-size: 14px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+
+#admin-form button:hover {
+    background-color: #555;
+}
+
+.modal input {
+    padding: 8px;
+    font-size: 14px;
+    width: 100%;
+}
+
+.modal button {
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.hidden {
+    display: none;
 }

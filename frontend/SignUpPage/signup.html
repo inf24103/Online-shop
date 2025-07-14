@@ -2,26 +2,32 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../public/navbar.css">
-    <link rel="stylesheet" href="../public/page_layout.css">
-    <link rel="stylesheet" href="../public/footer.css">
-    <link rel="stylesheet" href="../SignUpPage/signupstyle.css">
+    <link rel="stylesheet" href="/public/navbar.css">
+    <link rel="stylesheet" href="/public/page_layout.css">
+    <link rel="stylesheet" href="/public/footer.css">
+    <link rel="stylesheet" href="/SignUpPage/signupstyle.css">
+    <link rel="stylesheet" href="/public/toast.css">
     <title>SignUp</title>
 </head>
 <body>
 <header class="navbar">
     <div class="nav-inner">
-        <a href="../user/index.html" class="logo-link">
-            <img src="../pictures/fitura_logo.png" alt="logo" class="logo">
+        <a href="/user/index.html" class="logo-link">
+            <img src="/pictures/fitura_logo.png" alt="Fitura Logo" class="logo">
         </a>
 
         <nav class="nav-links">
-            <a href="../ProductPage/productpage.html" class="navitem">Products</a>
-            <a href="../Warenkorb/Warenkorb.html" class="navitem icon-link" id="einkaufsliste">
-                <img src="../pictures/einkaufswagen.png">
+            <a href="/ProductPage/productpage.html" class="navitem" title="Produktpage">
+                <img src="/pictures/product_icon.png" alt="Produkte">
             </a>
-            <a href="../LoginPage/loginpage.html" class="navitem icon-link" id="account" title="Profil / Login">
-                <img src="../pictures/account_icon.png" alt="" class="account-icon">
+            <a href="/Wunschlisten/wunschliste.html" class="navitem" id="wunschlistenlink" style="display: none;" title="Wunschliste">
+                <img src="/pictures/wunschliste_icon.png" alt="Wunschliste">
+            </a>
+            <a href="/Warenkorb/Warenkorb.html" class="navitem icon-link" id="einkaufswagen-link" title="Warenkorb">
+                <img src="/pictures/einkaufswagen.png" alt="Warenkorb Icon">
+                <span id="cart-count" class="cart-count">0</span> </a>
+            <a href="/LoginPage/loginpage.html" class="navitem icon-link" id="account" title="Profil / Login">
+                <img src="/pictures/account_icon.png" alt="Account Icon" class="account-icon">
             </a>
         </nav>
     </div>
@@ -29,7 +35,6 @@
 <aside id="sidebar" class="sidebar">
     <button class="sidebar-close" aria-label="Schließen">&times;</button>
     <ul id="sidebar-menu">
-        <!--Hier werden Infos durch js angezeigt! -->
     </ul>
 </aside>
     <div class="signup-form">
@@ -51,10 +56,11 @@
                 </form>
             </div>
             <div class="form-img">
-                <img src="../pictures/login_page_pic.png" alt="">
+                <img src="/pictures/login_page_pic.png" alt="">
             </div>
         </div>
     </div>
-<script src="../SignUpPage/signup.js"></script>
-<script src="../public/sidebar.js"></script>
+<script src="/SignUpPage/signup.js"></script>
+<script src="/public/sidebar.js"></script>
+<script src="/public/toast.js"></script>
 </body>
