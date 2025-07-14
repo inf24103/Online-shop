@@ -84,6 +84,11 @@ function renderProducts(productList) {
 filterForm.addEventListener("submit", function (event) {
     event.preventDefault();
 
+    const filters = getFiltersFromForm();
+    fetchProducts(filters);
+});
+
+function getFiltersFromForm() {
     const filters = {};
 
     const nameFilter = filterForm.elements["name"].value.trim();
@@ -100,6 +105,11 @@ filterForm.addEventListener("submit", function (event) {
         delete filters.kategorie;
     }
 
+    const minMengeValue = filterForm.elements["minMenge"].value.trim();
+    const minMengeFilter = parseInt(minMengeValue, 10);
+    if (!isNaN(minMengeFilter) && minMengeValue !== '') filters.minMenge = minMengeFilter;
+
+
     const selectedSort = filterForm.elements["sortierung"].value;
     if (selectedSort && selectedSort !== "") {
         filters.sortierung = selectedSort;
@@ -107,8 +117,8 @@ filterForm.addEventListener("submit", function (event) {
         delete filters.sortierung;
     }
 
-    fetchProducts(filters);
-});
+    return filters;
+}
 
 async function fetchProducts(filters = {}) {
     const query = new URLSearchParams(filters).toString();
@@ -388,6 +398,37 @@ window.addEventListener('cartCleared', async () => {
     }
 });
 
-window.addEventListener("DOMContentLoaded", () => {
-    fetchProducts();
+function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    var results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+}
+
+const categoryFilter = document.getElementById('kat_filter');
+
+window.addEventListener("DOMContentLoaded", async () => {
+    const categoryFromUrl = getUrlParameter('category');
+
+    if (categoryFromUrl && categoryFilter) {
+        const formattedCategory = categoryFromUrl.charAt(0).toUpperCase() + categoryFromUrl.slice(1);
+
+        let categoryFound = false;
+        for (let i = 0; i < categoryFilter.options.length; i++) {
+            if (categoryFilter.options[i].value.toLowerCase() === formattedCategory.toLowerCase()) {
+                categoryFilter.value = categoryFilter.options[i].value;
+                categoryFound = true;
+                break;
+            }
+        }
+
+        if (categoryFound) {
+            const initialFilters = getFiltersFromForm();
+            await fetchProducts(initialFilters);
+        } else {
+            await fetchProducts();
+        }
+    } else {
+        await fetchProducts();
+    }
 });
