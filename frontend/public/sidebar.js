@@ -72,9 +72,10 @@ document.addEventListener("DOMContentLoaded", () => {
             loggedIn = false;
         }
 
-        if (loggedIn) {
+        if(loggedIn) {
             let html = `
                 <li><a href="/Profilverwaltung/profilverwaltung.html">Profilverwaltung</a></li>
+                <li><a href="/KaufHistory/KaufHistory.html">Bestellhistorie</a></li>
             `;
             if (rolle === "admin") {
                 html += `<li><a href="/Userverwaltung/userverwaltung.html">Userverwaltung</a></li>`;
