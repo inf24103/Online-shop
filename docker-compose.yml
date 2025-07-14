@@ -16,7 +16,7 @@ services:
       - DB_PORT=5432
       - JWT_SECRET=secret_key
       - GMAIL_USER=fituranoreply@gmail.com
-      - GMAIL_PASS=falschesPasswort
+      - GMAIL_PASS=
       - TZ=Europe/Berlin
     depends_on:
       - db

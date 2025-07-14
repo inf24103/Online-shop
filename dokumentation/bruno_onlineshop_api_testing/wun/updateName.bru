@@ -1,0 +1,32 @@
+meta {
+  name: updateName
+  type: http
+  seq: 7
+}
+
+post {
+  url: http://localhost:3000/api/wun/update
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "inhalt": "neuer name",
+    "aktion": "updateName",
+    "wunschlisteid": "1"
+  }
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/wun/update
+  
+  Parameter (im Body mitgeben): 
+  - "inhalt": "34",
+  - "aktion": Aktion, welche auf der Wunschliste ausgeführt werden soll. Zugelassen sind: addProdukt, removeProdukt, updateBeschreibung, updateName
+  - "wunschlisteid": "1"
+  
+  Bei Aufruf: Je nach angegbenen Parameter löscht man ein Produkt aus der Wunschliste (removeProdukt), fügt man ein hizu (addProdukt), ändert man die Beschreibung (updateBeschreibung) oder ändert man den Namen(updateNamen).
+  
+  Benötigte Berechtigungen: eingeloggt und mind. Schreibrecht auf der Wunschliste
+}

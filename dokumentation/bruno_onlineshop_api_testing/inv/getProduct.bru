@@ -1,0 +1,26 @@
+meta {
+  name: getProduct
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:3000/api/inv/product/:produktID
+  body: none
+  auth: inherit
+}
+
+params:path {
+  produktID: 2
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/inv/product/:produktid
+  
+  Parameter (in der URL mitgeben): 
+  - "produktID": Die ProduktID des benötigten Produktes
+  
+  Bei Aufruf: Man erhält die Informationen zu dem Produkt mit der angegebenen ID
+  
+  
+}

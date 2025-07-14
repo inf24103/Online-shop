@@ -1,0 +1,24 @@
+meta {
+  name: sendLoginLink
+  type: http
+  seq: 6
+}
+
+post {
+  url: http://localhost:3000/api/auth/login/withlink/:benutzername
+  body: none
+  auth: inherit
+}
+
+params:path {
+  benutzername: admin
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/auth/login/withlink/:benutzername
+  
+  Parameter (in der URL mitgeben): 
+  - "benutzername":Benutzerame des benötigten Benutzers
+  
+  Bei Aufruf: Der Benutzer zu der angegebenen BenutzerID bekommt eine Email mit einem einmaligen Anmdeldelink zugesendet.
+}

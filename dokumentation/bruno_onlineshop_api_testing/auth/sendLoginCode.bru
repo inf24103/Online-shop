@@ -1,0 +1,24 @@
+meta {
+  name: sendLoginCode
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:3000/api/auth/login/withcode/:benutzername
+  body: none
+  auth: inherit
+}
+
+params:path {
+  benutzername: admin
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/auth/login/withcode/:benutzername
+  
+  Parameter (in der URL mitgeben): 
+  - "benutzername":Benutzerame des benötigten Benutzers
+  
+  Bei Aufruf: Der Benutzer zu der angegebenen BenutzerID bekommt eine Email mit einem einmaligen Anmeldecode zugesendet.
+}

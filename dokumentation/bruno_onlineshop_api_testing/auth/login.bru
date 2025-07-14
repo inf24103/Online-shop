@@ -1,0 +1,32 @@
+meta {
+  name: login
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:3000/api/auth/login
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "password": "admin",
+    "username": "admin"
+  }
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/auth/login
+  
+  Parameter (im Body mitgeben):  
+  - "username": Benutzername eines Benutzers
+  - "password": Passwort des angegebenen Benutzers
+  
+  Bei Aufruf: Falls Passwort und Benutzername zusammenpassen, wird der Benutzer angemeldet.
+  
+  Parameter (im Body mitgeben): 
+  - "password": Passwort
+  - "username": Benutzername
+}

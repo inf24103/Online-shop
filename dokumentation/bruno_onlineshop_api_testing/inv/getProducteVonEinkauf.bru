@@ -1,0 +1,26 @@
+meta {
+  name: getProducteVonEinkauf
+  type: http
+  seq: 13
+}
+
+get {
+  url: http://localhost:3000/api/inv/kaeufe/:einkaufID
+  body: none
+  auth: inherit
+}
+
+params:path {
+  einkaufID: 1
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/inv/kaeufe/einkaufID
+  
+  Parameter (in der URL mitgeben): 
+  - "einkaufID" : Die ID des benötigten Kaufs
+  
+  Bei Aufruf: Man erhält alle Produkte des Kaufes mit der angegebenen KaufID
+  
+  Benötigte Berechtigung: eingeloggt und Inhaber des Kaufs.
+}

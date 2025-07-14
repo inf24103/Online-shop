@@ -1,0 +1,26 @@
+meta {
+  name: deleteProductWarenkorb
+  type: http
+  seq: 11
+}
+
+delete {
+  url: http://localhost:3000/api/inv/warenkorb/:produktId
+  body: none
+  auth: inherit
+}
+
+params:path {
+  produktId: 35
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/inv/warenkorb/:produktId
+  
+  Parameter (in der URL mitgeben): 
+  - "produktId" : die ID des benötigten Produktes
+  
+  benötigte Brechtigung: man muss eingeloggt sein
+  
+  Bei Aufruf: Man löscht eine Menge des Produktes mit der angegebenen ProduktID aus dem Warenkorb.
+}

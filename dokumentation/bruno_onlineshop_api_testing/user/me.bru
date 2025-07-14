@@ -1,0 +1,21 @@
+meta {
+  name: me
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:3000/api/user/me
+  body: none
+  auth: inherit
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/user/me
+  
+  Parameter: Keine benötigt
+  
+  Bei Aufruf: Man bekommt alle Informationen zum gerade eingeloggten Konto
+  
+  Berechtigung: Man muss eingeloggt sein.
+}

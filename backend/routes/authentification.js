@@ -153,7 +153,7 @@ router.post('/register', async (req, res) => {
         mail(email, "Regestrierungsbestätigung", generateRegistrationConfirmationTemplate(username, "http://localhost:3000/api/auth/register/confirm/"+user[0].benutzerid));
 
         res.cookie('token', token);
-        return res.redirect('http://localhost:5000');
+        res.status(200).json({message: "Successfully registered"});
     } catch (error) {
         console.log(error);
         return res.status(400).json({ error: 'Fehler beim Erstellen des Benutzers' });
@@ -231,9 +231,9 @@ router.get('/register/confirm/:userid', async (req, res) => {
             user[0].telefonnr,
             user[0].authentifizierung
         );
-        res.redirect('http://localhost:5000');
+        return res.status(200).json({message: "Successfully registered"});
     } else {
-        return res.status(403).json("User already authentifiziert")
+        return res.status(500).json({message: "Interner Server Error"});
     }
 })
 

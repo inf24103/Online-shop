@@ -1,0 +1,30 @@
+meta {
+  name: addProductToWarenkorb
+  type: http
+  seq: 10
+}
+
+post {
+  url: http://localhost:3000/api/inv/warenkorb/add
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "produktid": 70,
+    "anzahl": 2
+  }
+}
+
+docs {
+  URL-Format: 
+  
+  Parameter (im Body mitgeben): 
+  - "produktid": Die ID des Produktes
+  - "anzahl":Die Anzahl des Produktes.
+  
+  Bei Aufruf: Man fügt das Produkt mit der angegeben ID in der angegebenen Anzahl dem eigenen Warenkorb hinzu.
+  
+  Benötigte Brechtigung: man muss eingeloggt sein
+}

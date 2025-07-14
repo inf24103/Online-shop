@@ -1,0 +1,29 @@
+meta {
+  name: searchProduct
+  type: http
+  seq: 3
+}
+
+get {
+  url: http://localhost:3000/api/inv/product/search/?name=optimum
+  body: none
+  auth: inherit
+}
+
+params:query {
+  name: optimum
+  ~sortierung: preis_asc,name_desc
+  ~minMenge: 150
+  ~maxPreis: 1000
+  ~kategorie: Accessoires
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/inv/product/search/
+  
+  Parameter (als query Parameter an die URL anhängen): 
+  - "maxPreis":Maximaler Preis des Produkts
+  - "sortierung": Die Sortierung der Produkte. Mögliche Angaben isnd verfügbar: preis_asc, preis_desc, name_asc, name_desc. Es kann jeweils eine Name- und Preissortierung angegeben werden. Es wird dann zuerst nach der ersten soritert und dann nach der zweiten.
+  
+  Bei Aufruf: Man erhält alle Informationen zu allen Produkten, basierend auf den Filterkriterien
+}

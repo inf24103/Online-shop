@@ -1,0 +1,26 @@
+meta {
+  name: loginWithCode
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:3000/api/auth/login/code/:code/:benutzername
+  body: none
+  auth: inherit
+}
+
+params:path {
+  benutzername: admin
+  code: ungueltig
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/auth/login/code/:code/:benutzerid
+  
+  Parameter (in der URL mitgeben): 
+  - "benutzername":Benutzername des benötigten Benutzer
+  - "code": Code für den login
+  
+  Bei Aufruf: Man wird bei dem Account des angegebenen Benutzers angemelder, falls der code stimmt.
+}
