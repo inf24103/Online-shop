@@ -130,6 +130,8 @@ function bearbeiten(id) {
     const name = wunschliste?.querySelector("h3")?.innerText || "Unbekannt";
     const beschreibung = decodeURIComponent(wunschliste?.getAttribute("data-beschreibung") || "");
 
+    resetEditModalUI();
+
     currentBearbeiteId = id;
 
     document.getElementById("edit-title").innerHTML = name;
@@ -161,6 +163,8 @@ function bearbeiten(id) {
 
 function closeEditModal() {
     document.getElementById("edit-modal").style.display = "none";
+    document.getElementById("freigabe-liste").innerHTML = "";
+    document.getElementById("produkte-liste").innerHTML = "";
     currentBearbeiteId = null;
 }
 
@@ -440,6 +444,13 @@ async function speichereWunschlisteBearbeitung() {
         console.error(e);
         zeigeToast("Fehler beim Speichern", "error");
     }
+}
+
+function resetEditModalUI() {
+    document.getElementById("share-form").style.display = "block";
+    document.querySelector(".delete-btn").style.display = "inline-block";
+    document.getElementById("produkte-hinzufuegen-button-wrapper").style.display = "block";
+    document.getElementById("wunschliste-bearbeiten-btn").style.display = "block";
 }
 
 window.addEventListener("DOMContentLoaded", loadWunschlisten);
