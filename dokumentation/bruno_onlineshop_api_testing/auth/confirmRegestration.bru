@@ -5,7 +5,20 @@ meta {
 }
 
 get {
-  url: http://localhost:3000/api/auth/register/confirm/2
+  url: http://localhost:3000/api/auth/register/confirm/:benutzerid
   body: none
   auth: inherit
+}
+
+params:path {
+  benutzerid: 1
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/auth/register/confirm/:benutzerid
+  
+  Parameter (in der URL mitgeben): 
+  - "benutzerid":Benutzerid des benötigten Benutzers
+  
+  Bei Aufruf: Der Benutzer zu der angegebenen BenutzerID wird als authentifizeirt angesehen und darf von da an alle Aktionen, für die man eingeloggt sein muss, benutzen.
 }

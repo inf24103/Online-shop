@@ -17,3 +17,17 @@ body:json {
     "wunschlisteid": "1"
   }
 }
+
+docs {
+  URL-Format: http://localhost:3000/api/wun/authorize
+  
+  Parameter (im Body mitgeben): 
+  - "andererUserBenutzername": Benutzername des andreren Benutzer
+  - "berechtigung": Die Berechtigung für den anderen Benutzer. Möglich sind: read, write
+  - "wunschlisteid": Die ID der benötigten Wunschliste
+  }
+  
+  Bei Aufruf: Autorisiert einen Benutzer auf die eigene Wunschliste
+  
+  Benötigte Berechtigungen: eingeloggt und Inhaber der Wunschliste
+}

@@ -24,3 +24,23 @@ body:json {
     "telephone": "+1234567890"
   }
 }
+
+docs {
+  URL-Format: http://localhost:3000/api/auth/register
+  
+  Parameter (in dem Body mitgeben): 
+  - "username" : Benutzername des neuen Benutzers
+  - "lastname" : Nachname des neuen Benutzers
+  - "firstname": Vorname des neuen Benutzers
+  - "email"    : Email des neuen Benutzers
+  - "password": Passwort  des neuen Benutzers
+  - "zipcode": Postleitzahl des neuen Benutzers
+  - "village": Wohnort des neuen Benutzers
+  - "street": Straße  des neuen Benutzers
+  - "housenumber": Hausnummer  des neuen Benutzers
+  - "telephone": Telefonnummer des neuen Benutzers
+  
+  Bei Aufruf: Ein neuer Admin wird erstellt. Dieser ist dierekt authentifiziert und hat admin rechte.
+  
+  
+}

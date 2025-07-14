@@ -30,3 +30,22 @@ body:multipart-form {
   bild: @file(/Users/WALDMJA/Library/CloudStorage/OneDrive-Mercedes-Benz(corpdir.onmicrosoft.com)/Dokumente/Uni/Semester 2/Web_Engeneering/360_F_24042314_1ORW3tuCIUTeXX8ydIXX5Q3l5EbYoO9g.webp)
   beschreibung: ein TestProdukt
 }
+
+docs {
+  URL-Format: http://localhost:3000/api/inv/product/new
+  
+  Parameter (in der URL mitgeben):
+  - "produktID":ProduktID des benötigten Produktes.
+  
+  Parameter (im Body mitgeben):
+  - "produktname":Name des Proukts
+  - "beschreibung": Beschreibung des Produkts
+  - "preis":Preis des Produkts (Zahl)
+  - "verfuegbareMenge": Verfügbare Menge des Produkts  (Zahl)
+  - "kategorie": Die Kategorie des Produkts. Zugelassene Kategorien: Sportbekleidung, Fitnesszubehör, Trainingsgerät Supplement
+  - "Bild": Eine Bilddatei des Produkts. Zu gelassene Bildformate: jpeg, png, webp, jpg
+  
+  Bei Aufruf: Man ändert die Produktinformationen auf basis der mitgegebenen Parametern. Es ist nicht notwendig alle Parameter mitzu senden. Es reichen die, welche geändert werden sollen.
+  
+  Benötigte Berechtigungen: eingeloggt und Admin
+}

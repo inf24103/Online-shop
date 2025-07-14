@@ -13,8 +13,49 @@ post {
 body:json {
   {
     "userId": 1,
-    "aktion": "remove",
+    "aktion": "delete",
     "ressourceId": 1,
     "ressourceArt": "wishlist"
   }
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/auto
+  
+  Parameter (im Body mitgeben): 
+  - "userId": Id des Benutzers, welcher auf die Berechtigung geprüft werden soll.
+  - "aktion": die Aktion, welche auf die Ressource ausgeübt werden soll.
+  - "ressourceId":Die ID der Ressource, auf dei zugegriffen werden soll.
+  - "ressourceArt": die Art der Ressource. Mögliche Angaben sind: kauf, user, product, wishlist.
+  
+  Bei Aufruf: Falls das Benutzerkonto mit der angegebenen BenutzerID die angegebene Ressourcenart mit der angegebenen RessourceID die angebene Aktion auasführen darf erhält man true. Ansonsten, falls die benötigten Rechte fehlen, erhält man false
+  
+  Benötigte Berechtigungen: Admin
+  
+  Sonstiges:
+  
+  Mögliche Aktionen bei user: 
+  - sperren
+  - entsperren
+  - read
+  - delete
+  
+  Mögliche Aktionen bei kauf: 
+  - read
+  
+  Mögliche Aktionen bei wishlist:
+  - read
+  - delete
+  - write
+  - update
+  - authorizeUser
+  
+  Mögliche Aktionen bei product:
+  - read
+  - delete
+  - update
+  - create
+  
+  Ungültige Angaben resultieren in false.
+  
 }

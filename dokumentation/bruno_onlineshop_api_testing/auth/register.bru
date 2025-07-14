@@ -12,15 +12,35 @@ post {
 
 body:json {
   {
-    "username": "emi",
+    "username": "user2",
     "lastname": "Doe",
     "firstname": "John",
     "email": "user2",
-    "password": "emi",
+    "password": "user2",
     "zipcode": "12345",
     "village": "Sampleville",
     "street": "Main Street",
     "housenumber": "42",
     "telephone": "+1234567890"
   }
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/auth/register
+  
+  Parameter (in dem Body mitgeben): 
+  - "username" : Benutzername des neuen Benutzers
+  - "lastname" : Nachname des neuen Benutzers
+  - "firstname": Vorname des neuen Benutzers
+  - "email"    : Email des neuen Benutzers
+  - "password": Passwort  des neuen Benutzers
+  - "zipcode": Postleitzahl des neuen Benutzers
+  - "village": Wohnort des neuen Benutzers
+  - "street": Straße  des neuen Benutzers
+  - "housenumber": Hausnummer  des neuen Benutzers
+  - "telephone": Telefonnummer des neuen Benutzers
+  
+  Bei Aufruf: Der Benutzer zu der angegebenen BenutzerID bekommt eine Email mit einem einmaligen Anmeldecode zugesendet und ein neuer Benutzer wird erstellt.
+  
+  
 }

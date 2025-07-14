@@ -5,7 +5,22 @@ meta {
 }
 
 put {
-  url: http://localhost:3000/api/user/block/2
+  url: http://localhost:3000/api/user/block/:benutzerID
   body: none
   auth: inherit
+}
+
+params:path {
+  benutzerID: 2
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/user/block/:benutzerID
+  
+  Parameter (in der URL mitgeben): 
+  - "benutzerID":BenutzerID des benötigten Benutzers
+  
+  Bei Aufruf: Das Benutzerkonto mit der angegebenen ID wird entspeert. Somit kann dieses Konto wieder Aktionen ausführen.
+  
+  Benötigte Berechtigungen: eigeloggt und Admin
 }

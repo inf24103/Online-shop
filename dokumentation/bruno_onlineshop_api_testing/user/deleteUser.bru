@@ -5,7 +5,22 @@ meta {
 }
 
 delete {
-  url: http://localhost:3000/api/user/3
+  url: http://localhost:3000/api/user/:benutzerID
   body: none
   auth: inherit
+}
+
+params:path {
+  benutzerID: 2
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/user/:benutzerID
+  
+  Parameter (in der URL mitgeben): 
+  - "benutzerID": BenutzerID des benötigten Benutzers
+  
+  Bei Aufruf: Das Benutzerkonto mit der angegebenen ID wird gelöscht.
+  
+  Benötigte Berechtigungen: eingeloggt und Admin
 }

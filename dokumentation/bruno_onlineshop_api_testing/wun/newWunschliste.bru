@@ -12,7 +12,19 @@ post {
 
 body:json {
   {
-    "name": "wun3",
-    "beschreibung": "meine dritte Wunschliste"
+    "name": "wun2",
+    "beschreibung": "meine erste Wunschliste"
   }
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/wun/new
+  
+  Parameter: 
+  - "name": Name der neuen Wunschliste
+  - "beschreibung": Beschreibung der Wunschliste
+  
+  Bei Aufruf: Es wird eine neue Wunschliste für das gerade angemledete Benutzerkonto erstellt.
+  
+  Berechtigung: Man muss eingeloggt sein.
 }

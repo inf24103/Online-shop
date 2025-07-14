@@ -5,7 +5,22 @@ meta {
 }
 
 delete {
-  url: http://localhost:3000/api/inv/product/2
+  url: http://localhost:3000/api/inv/product/:produktID
   body: none
   auth: inherit
+}
+
+params:path {
+  produktID: 2
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/inv/product/:produktID
+  
+  Parameter (in der URL mitgeben): 
+  -"produktID":ProduktID des benötigten Produktes.
+  
+  Bei Aufruf: Man löscht das Produkt mit der angegebenen ProduktID.
+  
+  Benötigte Berechtigungen: eingeloggt und Admin
 }

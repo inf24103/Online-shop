@@ -16,3 +16,15 @@ body:json {
     "wunschlisteid": "1"
   }
 }
+
+docs {
+  URL-Format: 
+  
+  Parameter: 
+  - "wunschlisteid":Id der benötigten Wunschliste.
+  - "andererUserBenutzername":Benutzername des Benutzers, wessen Rechte zu der Wunschliste entzogen werden sollen.
+  
+  Bei Aufruf: Man löscht die Berechtigung des angegebenen Benutzers bei der angegebenen Wunschliste.
+  
+  Benötigte Berechtigungen: eingeloggt und Inhaber der Wunschliste
+}
