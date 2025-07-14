@@ -1,0 +1,26 @@
+meta {
+  name: producteWunschliste
+  type: http
+  seq: 11
+}
+
+get {
+  url: http://localhost:3000/api/wun/products/:wunschlisteID
+  body: json
+  auth: inherit
+}
+
+params:path {
+  wunschlisteID: 1
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/wun/products/:wunschlisteID
+  
+  Parameter: 
+  - "wunschlisteID":Id der benögigten Wunschliste
+  
+  Bei Aufruf: Man erhält die Produkte der Wunschliste mit der angegebenen ID 
+  
+  Benötigte Berechtigungen: eingeloggt und mind. Leserechte auf die Wunschliste
+}

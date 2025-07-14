@@ -1,0 +1,29 @@
+meta {
+  name: loginWithLink
+  type: http
+  seq: 7
+}
+
+get {
+  url: http://localhost:3000/api/auth/login/link/:code/:benutzername
+  body: none
+  auth: inherit
+}
+
+params:path {
+  benutzername: admin
+  code: ungueltig
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/auth/login/link/:code/:benutzerid
+  
+  Parameter (in der URL mitgeben): 
+  - "benutzername":Benutzername des benötigten Benutzer
+  - "code": Code für den Login
+  
+  Bei Aufruf: Man wird bei dem Account des angegebenen Benutzers angemelder, falls der code stimmt.
+  
+  Sontiges: I.d.F. ist der Link, welcher per Mail zugesendet wurde schon nach diesem Schema. D.h. wenn man den code direct angeben möchte, müsste man diesen direkt aus dem Link extrahieren.
+  
+}

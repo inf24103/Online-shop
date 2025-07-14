@@ -1,0 +1,23 @@
+meta {
+  name: kaufen
+  type: http
+  seq: 12
+}
+
+get {
+  url: http://localhost:3000/api/inv/kaeufe/kaufen
+  body: none
+  auth: inherit
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/inv/kaeufe/kaufen
+  
+  Parameter: keine benötigt
+  
+  Bei Aufruf: Es wird ein Einkauf simmuliert. Der Warenkorb wird geleert und ein neuer Kauf mit den Produkten im Warenkorb angelegt.
+  
+  benötigte Brechtigung: man muss eingeloggt sein
+  
+  Sonstiges: Es wird an den Benutzer eine Kaufbestätigung an seine Mail gesendet.
+}

@@ -1,0 +1,26 @@
+meta {
+  name: getUser
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:3000/api/user/:benutezerID
+  body: none
+  auth: inherit
+}
+
+params:path {
+  benutezerID: 2
+}
+
+docs {
+  URL-Format: http://localhost:3000/api/user/:benutezerID
+  
+  Parameter (in der URL mitgeben): 
+  - "benutezerID": BenutzerID des benötigten Benutzers
+  
+  Bei Aufruf: Man bekommt die Benutzerinformationen zu dem Benutzer mit der angebenen ID
+  
+  Benötigte Berechtigungen: eingeloggt und Admin
+}

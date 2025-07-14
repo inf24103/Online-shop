@@ -5,6 +5,7 @@ import {
     getAlleWunschlistenByBenutzer, getBerechtigungenByWunschlisteId,
     getEigeneWunschlistenByBenutzerId
 } from "../datenbank/wunschliste_verwaltung/wunschlisteDRL.js";
+import {getEinkaeufeByBenutzer} from "../datenbank/einkauf_verwaltung/einkaufDRL.js";
 
 const router = express.Router();
 // export our router to be mounted by the parent application
@@ -30,6 +31,9 @@ router.post("/", authenticateTokenAndAuthorizeRole(['admin']), async (req, res) 
     }
 
     if (ressourceArt === "user") {
+        if(aktion !== "read" && aktion === "delete" && aktion === "sperren" && aktion !== "entsperren") {
+            res.status(403).json(false)
+        }
         if (user[0].rolle === 'admin') return res.status(200).json(true);
         else if (aktion === "sperren" || aktion === "entsperren") {
             return res.status(403).json(false);
@@ -37,14 +41,19 @@ router.post("/", authenticateTokenAndAuthorizeRole(['admin']), async (req, res) 
         else if (ressourceId === user[0].benutzerid) return res.status(200).json(true);
         else return res.status(403).json(false);
 
-    } else if (ressourceArt === "product") {
-        if(aktion === "update" || aktion === "delete" || aktion === "remove" || aktion === "create") {
+    }
+    else if (ressourceArt === "product") {
+        if(aktion !== "read" && aktion !== "delete" && aktion !== "create" && aktion !== "update") {}
+        if(aktion === "update" || aktion === "delete" || aktion === "create") {
             if (user[0].rolle === 'admin') return res.status(200).json(true);
             else return res.status(403).json(false);
         } else return res.status(200).json(true);
-
-    } else if (ressourceArt === "wishlist") {
-        if(aktion === "remove"){
+    }
+    else if (ressourceArt === "wishlist") {
+        if(aktion !== "read" && aktion !== "delete" && aktion !== "update" && aktion !== "authorizeUser" && aktion !== "write") {
+            res.status(403).json(false);
+        }
+        if( aktion === "delete" || aktion === "authorizeUser") {
             const eigeneWunschlisten = await getEigeneWunschlistenByBenutzerId(userId);
             for(let i = 0; i < eigeneWunschlisten.length; i++) {
                 if(eigeneWunschlisten[i].wunschlisteid === ressourceId){
@@ -60,7 +69,7 @@ router.post("/", authenticateTokenAndAuthorizeRole(['admin']), async (req, res) 
                 }
             }
             return res.status(403).json(false);
-        } else if (aktion === "write"){
+        } else if (aktion === "write" || aktion === "update") {
             const alleWunschlistenVonUser = await getAlleWunschlistenByBenutzer(userId);
 
             for(let i = 0; i < alleWunschlistenVonUser.length; i++) {
@@ -83,7 +92,20 @@ router.post("/", authenticateTokenAndAuthorizeRole(['admin']), async (req, res) 
         } else {
             res.send(false)
         }
-    } else {
-        res.status(400).json({message: "Unknown ressourceArt"})
+    }
+    else if (ressourceArt === "kauf"){
+        if(aktion === "read"){
+            const myEinkaeufe = await getEinkaeufeByBenutzer(userId);
+            for (let i = 0; i < myEinkaeufe.length; i++) {
+                if(myEinkaeufe[i].einkaufid === ressourceId){
+                    return res.status(200).json(true);
+                }
+            }
+            return res.status(403).json(false);
+        }
+        return res.status(403).json(false);
+    }
+    else {
+        res.status(400).json(false)
     }
 })
