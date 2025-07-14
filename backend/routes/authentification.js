@@ -180,7 +180,6 @@ router.post('/registeradmin', authenticateTokenAndAuthorizeRole(['admin']) ,asyn
 
         await createBenutzer(username, lastname, firstname, email, passwordHashed, zipcode, village, street, housenumber, telephone, 'admin');
         const user = await getUserByUsername(username);
-        const token = createJWTToken(user);
         await createWarenkorb(user[0].benutzerid);
         await updateBenutzer(
             user[0].benutzerid,
@@ -189,18 +188,16 @@ router.post('/registeradmin', authenticateTokenAndAuthorizeRole(['admin']) ,asyn
             user[0].vorname,
             user[0].email,
             user[0].rolle,
-            true,
+            user[0].kontostatus,
             user[0].plz,
             user[0].ort,
             user[0].strasse,
             user[0].hausnummer,
             user[0].telefonnr,
-            user[0].authentifizierung
+            true
         );
 
         mail(email, "Regestrierungsbestätigung", generateRegistrationConfirmationTemplate(username, "http://localhost:3000/api/auth/register/confirm/"+user[0].benutzerid));
-
-        res.cookie('token', token);
         return res.json({ message: 'Register successful', user: user });
     } catch (error) {
         console.log(error);
