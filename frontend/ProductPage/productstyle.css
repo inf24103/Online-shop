@@ -10,6 +10,17 @@ body {
     background: #f4f4f4;
 }
 
+body.modal-open {
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding-right: 17px;
+    box-sizing: border-box;
+}
+
 h1 {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     margin-top: 50px;
@@ -195,14 +206,14 @@ button:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: gray;
     display: flex;
     justify-content: center;
     align-items: center;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
-    z-index: 1000;
+    z-index: 100;
 }
 
 .product-modal.is-expanded{
@@ -308,7 +319,7 @@ button:hover {
     border: none;
     line-height: 1;
     padding: 5px;
-    z-index: 1001;
+    z-index: 101;
     transition: color 0.2s ease;
 }
 
