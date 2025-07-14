@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             try {
 
-                const res = await fetch(`http://localhost:3000/api/auth/login/withcode/${encodeURIComponent(username)}`);
+                const res = await fetch(`http://localhost:3000/api/auth/login/withlink/${encodeURIComponent(username)}`);
 
                 if (res.status === 404) {
                     zeigeToast("Benutzer nicht gefunden!", "error");
