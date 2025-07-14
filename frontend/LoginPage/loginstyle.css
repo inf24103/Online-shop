@@ -108,3 +108,41 @@ p {
     border-radius: 10px;
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
+
+@media (max-width: 770px) {
+    .section {
+        flex-direction: column;
+        padding: 20px;
+        gap: 20px;
+    }
+    .content,
+    .form-img {
+        flex: 1 1 100%;
+        max-width: 100%;
+        padding: 10px;
+    }
+
+    .content h2 {
+        font-size: 20px;
+    }
+    #button {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+    .form-img {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .content input {
+        font-size: 14px;
+        padding: 12px 16px;
+    }
+    .content h2 {
+        font-size: 18px;
+    }
+    p {
+        font-size: 14px;
+    }
+}

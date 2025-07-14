@@ -27,17 +27,18 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             if(!res.ok) {
                 if(res.status === 401) {
-                    alert("Es existiert bereits ein Account");
+                    zeigeToast("Es existiert bereits ein Account", "error");
                 } else {
                     throw new Error("Fehler beim Senden der Daten")
                 }
             } else {
-                alert("Registrierung erfolgreich. Bitte bestätige deine Email");
+                window.location.href = "/user/index.html"
+                zeigeToast("Registrierung erfolgreich. Bitte bestätige deine Email", "success");
                 form.reset();
             }
         } catch (e) {
             console.error(e);
-            alert("Es ist ein Fehler aufgetreten!");
+            zeigeToast("Es ist ein Fehler aufgetreten!", "error");
         }
 
     })

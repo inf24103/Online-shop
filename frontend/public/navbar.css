@@ -50,10 +50,12 @@
     vertical-align: middle;
     filter: grayscale(100%);
     transition: 0.2s;
+    transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 .navitem img:hover {
     filter: none;
+    transform: scale(1.2);
 }
 
 .navitem:hover {
@@ -131,4 +133,22 @@
     color: #333;
     text-decoration: none;
     transition: color 0.2s;
+}
+
+.hamburger {
+    display: none;
+    background-color: transparent;
+    border: none;
+    font-size: 32px;
+    cursor: pointer;
+    color: #555;
+}
+
+@media (max-width: 770px) {
+    .nav-links {
+        display: none;
+    }
+    .hamburger {
+        display: block;
+    }
 }

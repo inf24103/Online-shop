@@ -1,0 +1,41 @@
+Index: frontend/Product_test.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/frontend/Product_test.html b/frontend/Product Test/Product_test.html
+rename from frontend/Product_test.html
+rename to frontend/Product Test/Product_test.html
+--- a/frontend/Product_test.html	(revision c24230798114d86e46720187cdabc3176379a035)
++++ b/frontend/Product Test/Product_test.html	(date 1750787157590)
+@@ -1,0 +1,29 @@
++<!DOCTYPE html>
++<html lang="de">
++<head>
++    <meta charset="UTF-8">
++    <title>Produkt Test</title>
++    <link rel="stylesheet" href="Product.css">
++</head>
++
++<body>
++    <div class="card">
++        <div class="main-content">
++            <img src="https://scitecshop.de/images/product_images/4810_2275fdf657a2.webp" style="width: 100%;">
++            <h4 style="text-align: center;">Strawberry Whey</h4>
++            <a href="Test.html">
++                <button>In den Einkaufswagen</button>
++            </a>
++        </div>
++
++        <div class="more-info">
++            <strong>Strawberry Designer Whey</strong>
++            <p>Deutschlands beliebtestes Whey-Proteinpulver mit Whey-Konzentrat und Whey-Isolat</p>
++            <p><strong>Inhaltsgröße: </strong>1 Tonne</p>
++            <p class="price">999€</p>
++        </div>
++    </div>
++
++
++</body>
++</html>
+\ No newline at end of file

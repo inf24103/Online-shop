@@ -7,23 +7,30 @@
     <link rel="stylesheet" href="/public/page_layout.css" type="text/css">
     <link rel="stylesheet" href="/public/footer.css" type="text/css">
     <link rel="stylesheet" href="/user/main_page.css" type="text/css">
-    <title>Onlineshop</title>
+    <title>Fitura Onlineshop</title>
 </head>
 <body>
 <div class="layout">
     <header class="navbar">
         <div class="nav-inner">
             <a href="/user/index.html" class="logo-link">
-                <img src="/pictures/fitura_logo.png" alt="logo" class="logo">
+                <img src="/pictures/fitura_logo.png" alt="Fitura Logo" class="logo">
             </a>
 
+            <!-- Button für kleinere Ansicht-->
+            <button class="hamburger" aria-label="Menü öffnen">&#9776;</button>
+
             <nav class="nav-links">
-                <a href="/ProductPage/productpage.html" class="navitem">Products</a>
-                <a href="#Einkaufsliste" class="navitem icon-link" id="einkaufsliste">
-                    <img src="/pictures/einkaufswagen.png" alt="">
+                <a href="/ProductPage/productpage.html" class="navitem" title="Produktpage">
+                    <img src="/pictures/product_icon.png" alt="Produkte">
                 </a>
+                <a href="/Wunschlisten/wunschliste.html" class="navitem" id="wunschlistenlink" style="display: none;" title="Wunschliste">
+                    <img src="/pictures/wunschliste_icon.png" alt="Wunschliste">
+                </a>
+                <a href="/Warenkorb/Warenkorb.html" class="navitem icon-link" id="einkaufswagen-link" title="Warenkorb">
+                    <img src="/pictures/einkaufswagen.png" alt="Warenkorb Icon"></a>
                 <a href="/LoginPage/loginpage.html" class="navitem icon-link" id="account" title="Profil / Login">
-                    <img src="/pictures/account_icon.png" alt="" class="account-icon">
+                    <img src="/pictures/account_icon.png" alt="Account Icon" class="account-icon">
                 </a>
             </nav>
         </div>
@@ -31,32 +38,90 @@
     <aside id="sidebar" class="sidebar">
         <button class="sidebar-close" aria-label="Schließen">&times;</button>
         <ul id="sidebar-menu">
-            <!--Hier werden Infos durch js angezeigt! -->
         </ul>
     </aside>
     <main>
-        <div class="bild_container">
-            <img class="background" src="/pictures/Background.jpg" alt="background">
+        <div class="hero-section">
+            <img class="background-hero" src="/pictures/Background.jpg" alt="Fitness Hintergrund">
+            <div class="hero-overlay">
+                <h1>Dein Weg zum besten Ich beginnt hier.</h1>
+                <p>Entdecke hochwertige Fitness-Produkte, die dich wirklich weiterbringen.</p>
+                <a href="/ProductPage/productpage.html" class="btn-primary">Jetzt shoppen</a>
+            </div>
         </div>
-        <section class="bestseller">
+
+        <section class="bestseller-section">
             <h2>Unsere Bestseller</h2>
-            <div class="bestseller_layout">
-                <div class="product-card">
-                    <!-- Hier werden die Produkte eingefügt -->
+            <p class="section-description">Entdecke die Produkte, die unsere Community liebt und die Dich auf Deinem Weg unterstützen!</p>
+            <div class="bestseller-carousel-container">
+                <div class="bestseller-products-wrapper" id="bestseller-products-wrapper">
                 </div>
             </div>
         </section>
-        <hr>
-        <div class="about">
+
+        <hr class="section-divider">
+
+        <section class="categories-showcase">
+            <h2>Unsere Produktkategorien</h2>
+            <p class="section-description">Qualität, die überzeugt – für jeden Aspekt deines Trainings.</p>
+
+            <div class="category-item category-left">
+                <div class="category-image-wrapper">
+                    <img src="/pictures/Supplements.png" alt="Supplements">
+                </div>
+                <div class="category-text">
+                    <h3>Premium Supplements</h3>
+                    <p>Optimiere deine Leistung und Regeneration mit unseren wissenschaftlich fundierten Supplements. Von Proteinpulvern über Vitamine bis hin zu speziellen Leistungsboostern – wir setzen auf Reinheit und maximale Wirksamkeit, damit du deine Ziele schneller erreichst. Jedes Produkt ist sorgfältig ausgewählt und auf Qualität geprüft.</p>
+                    <a href="/ProductPage/productpage.html?category=supplement" class="btn-secondary">Supplements entdecken</a>
+                </div>
+            </div>
+
+            <div class="category-item category-right">
+                <div class="category-text">
+                    <h3>Innovative Trainingsgeräte</h3>
+                    <p>Verwandle dein Zuhause in ein vollwertiges Fitnessstudio mit unseren hochwertigen Trainingsgeräten. Ob platzsparende Hanteln, Widerstandsbänder oder fortschrittliche Cardio-Geräte – wir bieten langlebige Lösungen, die perfekt in deinen Alltag passen. Erlebe effektives Training, wann und wo du willst.</p>
+                    <a href="/ProductPage/productpage.html?category=trainingsgerät" class="btn-secondary">Geräte ansehen</a>
+                </div>
+                <div class="category-image-wrapper">
+                    <img src="/pictures/Kraftmaschine.jpg" alt="Trainingsgerät">
+                </div>
+            </div>
+
+            <div class="category-item category-left">
+                <div class="category-image-wrapper">
+                    <img src="/pictures/Fitnesszubehör.jpg" alt="Fitnesszubehör">
+                </div>
+                <div class="category-text">
+                    <h3>Praktisches Fitnesszubehör</h3>
+                    <p>Das richtige Zubehör macht den Unterschied! Unser Sortiment umfasst alles, was du für ein effizientes und komfortables Workout brauchst – von ergonomischen Yogamatten über robuste Handschuhe bis hin zu smarten Trackern. Steigere deine Effektivität und schütze dich optimal bei jeder Übung.</p>
+                    <a href="/ProductPage/productpage.html?category=fitnesszubehör" class="btn-secondary">Zubehör finden</a>
+                </div>
+            </div>
+
+            <div class="category-item category-right">
+                <div class="category-text">
+                    <h3>Stylische Sportbekleidung</h3>
+                    <p>Fühl dich wohl und sieh gut aus, während du trainierst. Unsere Sportbekleidung kombiniert modernstes Design mit höchster Funktionalität. Atmungsaktive Stoffe, optimale Passformen und langlebige Materialien sorgen für maximalen Komfort und Bewegungsfreiheit bei jeder Aktivität.</p>
+                    <a href="/ProductPage/productpage.html?category=sportbekleidung" class="btn-secondary">Bekleidung shoppen</a>
+                </div>
+                <div class="category-image-wrapper">
+                    <img src="/pictures/Sportkleidung.jpg" alt="Sportbekleidung">
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="about-us-section">
             <h2>Über Fitura</h2>
-            <p id="about">Über Fitura
-                Bei Fitura dreht sich alles um dein bestes Ich.
-                Wir bieten hochwertige Produkte rund um Fitness, Gesundheit und einen aktiven Lebensstil – von smartem
-                Home-Gym-Equipment bis hin zu gezielt ausgewählten Supplements. Egal ob du gerade erst startest oder
-                schon voll im Training bist: Fitura liefert dir das passende Werkzeug, um dranzubleiben.
-                Funktional. Durchdacht. Fitura.
-            </p>
-        </div>
+            <div class="about-content">
+                <p>Bei Fitura dreht sich alles um <strong>dein bestes Ich</strong>. Wir sind dein engagierter Partner auf dem Weg zu einem gesünderen und aktiveren Leben. Unsere Mission ist es, dir nicht nur Produkte, sondern <strong>echte Mehrwerte</strong> zu bieten, die dich inspirieren und motivieren.</p>
+                <p>Wir verstehen, dass jeder Fitnessweg einzigartig ist. Deshalb bieten wir ein sorgfältig kuratiertes Sortiment an hochwertigen Produkten rund um Fitness, Gesundheit und einen aktiven Lebensstil. Von <strong>smartem Home-Gym-Equipment, das sich nahtlos in dein Zuhause integriert</strong>, bis hin zu <strong>gezielt ausgewählten Supplements, deren Wirksamkeit und Reinheit wir garantieren</strong> – bei Fitura findest du nur Produkte, denen wir selbst vertrauen.</p>
+                <p>Unsere Stärke liegt in unserem Engagement für <strong>Qualität und Kundenzufriedenheit</strong>. Wir arbeiten direkt mit führenden Herstellern zusammen und überprüfen jedes Produkt auf Herz und Nieren, bevor es in unser Sortiment aufgenommen wird. Dies sichert dir nicht nur Top-Produkte, sondern auch ein unschlagbares Preis-Leistungs-Verhältnis.</p>
+                <p>Egal ob du gerade erst startest oder schon voll im Training bist: Fitura liefert dir das passende Werkzeug, um dranzubleiben und deine persönlichen Bestleistungen zu übertreffen. <strong>Funktional. Durchdacht. Fitura. – Dein Partner für dauerhaften Erfolg.</strong></p>
+                <p class="call-to-action">Bereit, deine Fitnessreise auf das nächste Level zu heben? Entdecke jetzt unser Sortiment!</p>
+            </div>
+        </section>
     </main>
     <footer>
         <p>Copyright © 2025 Fitura GmbH & Co. KG</p>
@@ -64,5 +129,6 @@
 </div>
 <script src="/user/products.js"></script>
 <script src="/public/sidebar.js"></script>
+<script src="/public/ResponsiveNavbar.js"></script>
 </body>
 </html>

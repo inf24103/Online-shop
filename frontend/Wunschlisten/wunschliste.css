@@ -1,0 +1,461 @@
+html {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+}
+h1 {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    margin-top: 50px;
+    color: #333;
+    text-align: center;
+}
+
+.freigabe-formular {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.freigabe-formular input,
+.freigabe-formular select {
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.freigabe-formular button {
+    padding: 6px 12px;
+    border-radius: 6px;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.freigabe-liste {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.freigabe-item select {
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.freigabe-item .icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#share-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-schwarz {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type="text"], select {
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#produkte-liste {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.produkt-hinzufuegen-content {
+    max-width: 1000px;
+    max-height: 810px;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.filterbereich {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filterbereich input,
+.filterbereich select {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.filterbereich button {
+    padding: 8px 16px;
+    border: none;
+    background-color: #0a75c2;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.filterbereich button:hover {
+    background-color: #095a9f;
+}
+
+.produkte-grid-scroll {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.sticky-buttons {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding: 10px 0;
+    text-align: right;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.produkt-card {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 12px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.freigabe-item img {
+    width: 20px;
+    height: 20px;
+}
+
+#produkte-hinzufuegen-button-wrapper {
+    text-align: right;
+    margin-bottom: 10px;
+}
+
+.filter {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+    padding: 20px;
+}
+form#share-form {
+    display: flex;
+    margin-top: 10px;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 0;
+    text-align: center;
+    width: 100%;
+    height: auto;
+    border: 1px solid #ccc;
+    background-color: white;
+    border-radius: 8px;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}
+
+input {
+    padding: 10px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    font-size: 14px;
+}
+button {
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.actions button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.actions img {
+    height: 24px;
+    width: 24px;
+    display: block;
+}
+
+.actions button:hover img {
+    opacity: 0.8;
+}
+
+button:hover {
+    background-color: #555;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0, 0.4);
+}
+
+.modal-content {
+    background-color: #ffffff;
+    position: relative;
+    margin: 10% auto;
+    padding: 20px 25px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 700px;
+    color: #333;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.modal-content input,
+.modal-content textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #f9f9f9;
+    box-sizing: border-box;
+    resize: vertical;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.modal-buttons button {
+    flex: 1;
+    margin: 0 5px;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1001;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #444;
+}
+
+.close-button:hover {
+    color: #000;
+}
+
+
+
+.wunschlisten-wrapper {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    padding: 40px;
+    flex-wrap: wrap;
+}
+
+.wunschlisten-spalte {
+    flex: 1;
+    min-width: 300px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.wunschlisten-spalte h2 {
+    margin-top: 0;
+    font-size: 18px;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.wunschliste-card {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 15px;
+    margin-top: 15px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.wunschliste-card h3 {
+    margin: 0 0 5px;
+    font-size: 16px;
+    color: #222;
+}
+
+.wunschliste-card p {
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.edit-modal-content {
+    max-width: 900px;
+    max-height: 810px;
+    overflow-y: auto;
+    padding: 25px;
+    gap: 20px;
+}
+
+.edit-modal-content p {
+    font-size: 15px;
+    color: #444;
+}
+
+.edit-actions {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.settings-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.settings-btn img {
+    width: 24px;
+    height: 24px;
+}
+
+.delete-btn {
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background-color: #c9302c;
+}
+
+#alle-produkte-liste {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+@media (max-width: 600px) {
+    .modal-content,
+    .edit-modal-content,
+    .produkte-hinzufuegen-content {
+        width: 95%;
+        margin: 20% auto;
+        padding: 15px;
+        max-height: 810px;
+        overflow-y: auto;
+    }
+
+    .modal-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .modal-buttons button {
+        width: 100%;
+        margin: 0;
+    }
+
+    .close-button {
+        top: 5px;
+        right: 5px;
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .modal-content,
+    .edit-modal-content {
+        width: 95%;
+        max-width: none;
+    }
+
+    #produkte-liste {
+        grid-template-columns: 1fr;
+    }
+}

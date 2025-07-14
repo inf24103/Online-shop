@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/Profilverwaltung/profilstyle.css">
+  <link rel="stylesheet" href="/public/toast.css">
   <link rel="stylesheet" href="/public/navbar.css">
   <title>Profilverwaltung</title>
 </head>
@@ -9,25 +12,44 @@
 <header class="navbar">
   <div class="nav-inner">
     <a href="/user/index.html" class="logo-link">
-      <img src="/pictures/fitura_logo.png" alt="logo" class="logo">
+      <img src="/pictures/fitura_logo.png" alt="Fitura Logo" class="logo">
     </a>
 
+    <!-- Button für kleinere Ansicht-->
+    <button class="hamburger" aria-label="Menü öffnen">&#9776;</button>
+
     <nav class="nav-links">
-      <a href="/ProductPage/productpage.html" class="navitem">Products</a>
-      <a href="#Einkaufsliste" class="navitem icon-link" id="einkaufsliste">
-        <img src="/pictures/einkaufswagen.png">
+      <a href="/ProductPage/productpage.html" class="navitem" title="Produktpage">
+        <img src="/pictures/product_icon.png" alt="Produkte">
       </a>
+      <a href="/Wunschlisten/wunschliste.html" class="navitem" id="wunschlistenlink" style="display: none;" title="Wunschliste">
+        <img src="/pictures/wunschliste_icon.png" alt="Wunschliste">
+      </a>
+      <a href="/Warenkorb/Warenkorb.html" class="navitem icon-link" id="einkaufswagen-link" title="Warenkorb">
+        <img src="/pictures/einkaufswagen.png" alt="Warenkorb Icon"></a>
       <a href="/LoginPage/loginpage.html" class="navitem icon-link" id="account" title="Profil / Login">
-        <img src="/pictures/account_icon.png" alt="" class="account-icon">
+        <img src="/pictures/account_icon.png" alt="Account Icon" class="account-icon">
       </a>
     </nav>
   </div>
 </header>
-<!-- Sidebar – direkt unter </header> -->
 <aside id="sidebar" class="sidebar">
   <button class="sidebar-close" aria-label="Schließen">&times;</button>
-  <ul id="sidebar-menu"></ul>
+  <ul id="sidebar-menu">
+  </ul>
 </aside>
-</body>
+<div class="profile-wrapper">
+  <div class="profile-container">
+
+    <section id="profile-content" class="profile-left">
+      <p>Lade Profil...</p>
+    </section>
+  </div>
+</div>
+<script src="/Profilverwaltung/profile.js"></script>
+<script src="/public/toast.js"></script>
 <script src="/public/sidebar.js"></script>
+<script src="/Warenkorb/Warenkorb.js"></script>
+<script src="/public/ResponsiveNavbar.js"></script>
+</body>
 </html>
