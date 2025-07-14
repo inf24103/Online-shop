@@ -38,6 +38,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.getElementById("wunschlistenlink").style.display = loggedIn ? "inline-block" : "none";
         document.getElementById("einkaufswagen-link").style.display = loggedIn ? "inline-block" : "none";
+
+        //Admin Icon anzeigen
+        const adminLink = document.getElementById("admin-link");
+        if(adminLink) {
+            adminLink.style.display = rolle === "admin" ? "inline-flex" : "none";
+        }
+
     })();
 
     // Klick auf Account-Link öffnet Sidebar

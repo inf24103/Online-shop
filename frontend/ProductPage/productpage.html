@@ -15,15 +15,18 @@
             <img src="/pictures/fitura_logo.png" alt="Fitura Logo" class="logo">
         </a>
 
+        <!-- Button für kleinere Ansicht-->
+        <button class="hamburger" aria-label="Menü öffnen">&#9776;</button>
+
         <nav class="nav-links">
+            <a href="/AdminAnsicht%20Produkte/ProductpageAdmin.html" class="navitem icon-link">
+                <img src="/pictures/benutzer.png" alt="Konto" class="profile-btn", id="admin-link">
+            </a>
             <a href="/ProductPage/productpage.html" class="navitem" title="Produktpage">
                 <img src="/pictures/product_icon.png" alt="Produkte">
             </a>
             <a href="/Wunschlisten/wunschliste.html" class="navitem" id="wunschlistenlink" style="display: none;" title="Wunschliste">
                 <img src="/pictures/wunschliste_icon.png" alt="Wunschliste">
-            </a>
-            <a href="../AdminAnsicht%20Produkte/ProductpageAdmin.html" class="navitem icon-link">
-                <img src="../pictures/benutzer.png" alt="Konto" class="profile-btn">
             </a>
             <a href="/Warenkorb/Warenkorb.html" class="navitem icon-link" id="einkaufswagen-link" title="Warenkorb">
                 <img src="/pictures/einkaufswagen.png" alt="Warenkorb Icon"></a>
@@ -38,7 +41,7 @@
     <ul id="sidebar-menu">
     </ul>
 </aside>
-<h1>Alle Produkte</h1>
+<h1>All Products</h1>
 <div class="filter">
     <form action="" method="get">
         <input type="search" name="name" placeholder="Filtern nach Name">
@@ -80,5 +83,6 @@
 </div>
 <script src="/ProductPage/Product.js"></script>
 <script src="/public/sidebar.js"></script>
+<script src="/public/ResponsiveNavbar.js"></script>
 </body>
 </html>
