@@ -2,8 +2,6 @@ import {query} from '../index.js';
 import {getAllProdukte} from "./produktDRL.js";
 
 export const createProdukt = async (produktname, preis, menge, kategorie, beschreibung, bildFormat) => {
-    const safeKategorie = kategorie.replace(/[\/\\:*?"<>|]/g, '').trim().toLowerCase();
-
     const allProducts = await getAllProdukte()
     let maxProduktId = 0
     for (const produkt of allProducts) {
@@ -12,7 +10,7 @@ export const createProdukt = async (produktname, preis, menge, kategorie, beschr
         }
     }
     const productNr = maxProduktId
-    const bildPfad = `${safeKategorie}/${productNr}.${bildFormat}`;
+    const bildPfad = `${productNr}.${bildFormat}`;
 
     const sql = `
         INSERT INTO Produkt (produktname, preis, menge, kategorie, beschreibung, bild)
@@ -29,9 +27,7 @@ export const deleteProdukt = async (produktid) => {
 };
 
 export const updateProdukt = async (produktname, preis, menge, kategorie, beschreibung, bildFormat, produktid) => {
-    const safeKategorie = kategorie.replace(/[\/\\:*?"<>|]/g, '').trim().toLowerCase();
-
-    const bildPfad = `${safeKategorie}/${produktid}.${bildFormat}`;
+    const bildPfad = `${produktid}.${bildFormat}`;
     const sql = `
         UPDATE Produkt
         SET produktname      = $1,

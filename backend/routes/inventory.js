@@ -190,15 +190,28 @@ router.patch("/product/:id",
                 return res.status(404).json({message: 'Produkt nicht gefunden'});
             }
 
-            const {produktname, preis, menge, kategorie, beschreibung} = req.body;
+            let {produktname, preis, menge, kategorie, beschreibung} = req.body;
             const product = produkt[0];
             if (produktname !== undefined) product.produktname = produktname;
             if (preis !== undefined) product.preis = preis;
             if (menge !== undefined) product.menge = menge;
             if (kategorie !== undefined) product.kategorie = kategorie;
             if (beschreibung !== undefined) product.beschreibung = beschreibung;
+            const erlaubteKategorien = ["supplement", "trainingsgerät", "fitnesszubehör", "sportbekleidung"];
+            if (!erlaubteKategorien.includes(kategorie.toLowerCase())) {
+                return res.status(400).json({
+                    error: `Ungültige Kategorie. Erlaubte Kategorien sind: ${erlaubteKategorien.join(", ")}`
+                });
+            }
+            if(menge < 1){
+                product.menge = 1;
+            }
+            if (preis <= 0){
+                product.preis = 1;
+            }
             let bildFormat = "jpg";
-            if(req.file) {
+            if(req.file !== undefined) {
+                console.log(req.file);
                 const alterBildPfad = path.resolve("productBilder", product.bild);
                 if (fs.existsSync(alterBildPfad)) {
                     try {
@@ -229,8 +242,10 @@ router.patch("/product/:id",
                 bildFormat,
                 id,
             );
-            if (req.file) {
-                const aktualisiertesProduktNachUpdate = await getProduktById(id);
+            const aktualisiertesProduktNachUpdate = await getProduktById(id);
+            console.log(req.file !== undefined);
+            console.log(aktualisiertesProduktNachUpdate);
+            if (req.file !== undefined) {
                 const absoluterBildPfad = "productBilder/" + aktualisiertesProduktNachUpdate[0].bild;
                 const zielPfad = path.resolve(absoluterBildPfad);
                 fs.mkdirSync(path.dirname(zielPfad), {recursive: true});
