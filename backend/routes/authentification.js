@@ -95,7 +95,7 @@ router.get('/login/link/:token/:username', async (req, res) => {
     }
 })
 
-router.post('/login/:method/:username', async (req, res) => {
+router.get('/login/:method/:username', async (req, res) => {
     try {
         const method = req.params.method;
         const username = req.params.username;
