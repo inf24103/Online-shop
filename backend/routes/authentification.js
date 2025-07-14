@@ -11,7 +11,8 @@ import {generateOneTimeLoginCodeTemplate} from "../mailService/oneTimeLoginCode.
 import crypto from "crypto";
 import {generateOneTimeLoginLinkTemplate} from "../mailService/oneTimeLoginLink.js";
 import {
-    deleteLoginCode, deleteLoginToken,
+    deleteLoginCode,
+    deleteLoginToken,
     getLoginCode,
     getLoginToken,
     saveLoginCode,
@@ -73,7 +74,7 @@ router.post('/login/code/:code/:username', async (req, res) => {
     }
 })
 
-router.post('/login/link/:token/:username', async (req, res) => {
+router.get('/login/link/:token/:username', async (req, res) => {
     try {
         const token = req.params.token;
         const username = req.params.username;
@@ -87,7 +88,7 @@ router.post('/login/link/:token/:username', async (req, res) => {
         await deleteLoginToken(username, token);
         const jwtToken = createJWTToken(await getUserByUsername(username));
         res.cookie('token', jwtToken);
-        return res.json({message: 'Login with link successful'});
+        return res.redirect('http://localhost:5000');
     } catch (error) {
         console.log("Login with link failed:\n"+error);
         return res.status(500).json({ message: 'Login with link failed' });
@@ -152,7 +153,7 @@ router.post('/register', async (req, res) => {
         mail(email, "Regestrierungsbestätigung", generateRegistrationConfirmationTemplate(username, "http://localhost:3000/api/auth/register/confirm/"+user[0].benutzerid));
 
         res.cookie('token', token);
-        return res.json({ message: 'Register successful', user: user });
+        return res.redirect('http://localhost:5000');
     } catch (error) {
         console.log(error);
         return res.status(400).json({ error: 'Fehler beim Erstellen des Benutzers' });
@@ -179,12 +180,24 @@ router.post('/registeradmin', authenticateTokenAndAuthorizeRole(['admin']) ,asyn
 
         await createBenutzer(username, lastname, firstname, email, passwordHashed, zipcode, village, street, housenumber, telephone, 'admin');
         const user = await getUserByUsername(username);
-        const token = createJWTToken(user);
         await createWarenkorb(user[0].benutzerid);
+        await updateBenutzer(
+            user[0].benutzerid,
+            user[0].benutzername,
+            user[0].nachname,
+            user[0].vorname,
+            user[0].email,
+            user[0].rolle,
+            user[0].kontostatus,
+            user[0].plz,
+            user[0].ort,
+            user[0].strasse,
+            user[0].hausnummer,
+            user[0].telefonnr,
+            true
+        );
 
         mail(email, "Regestrierungsbestätigung", generateRegistrationConfirmationTemplate(username, "http://localhost:3000/api/auth/register/confirm/"+user[0].benutzerid));
-
-        res.cookie('token', token);
         return res.json({ message: 'Register successful', user: user });
     } catch (error) {
         console.log(error);
@@ -218,7 +231,7 @@ router.get('/register/confirm/:userid', async (req, res) => {
             user[0].telefonnr,
             user[0].authentifizierung
         );
-        res.status(200).json({message: "user successfully authentifizieren"});
+        res.redirect('http://localhost:5000');
     } else {
         return res.status(403).json("User already authentifiziert")
     }

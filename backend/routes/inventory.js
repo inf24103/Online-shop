@@ -30,7 +30,7 @@ const router = express.Router();
 const upload = multer({
     dest: "tmp/",
     fileFilter: (req, file, cb) => {
-        const allowed = ["image/jpeg", "image/png", "image/webp", "image/jpeg"];
+        const allowed = ["image/jpeg", "image/png", "image/webp"];
         if (allowed.includes(file.mimetype)) {
             cb(null, true);
         } else {
@@ -112,7 +112,6 @@ router.post('/product/new', authenticateTokenAndAuthorizeRole(['admin']), (req, 
         else if (mime === "image/jpeg") bildFormat = "jpg";
         else if (mime === "image/jpg") bildFormat = "jpg";
         else {
-            // optional: Unbekanntes Format abfangen
             console.warn("Unbekanntes Bildformat:", mime);
         }
 
@@ -168,73 +167,93 @@ router.delete('/product/:id', authenticateTokenAndAuthorizeRole(['admin']), asyn
     res.status(200).json({message: 'Produkt wurde gelöscht'});
 });
 
-router.patch('/product/:id', authenticateTokenAndAuthorizeRole(['admin']), (req, res, next) => {
-    upload.single("bild")(req, res, function (err) {
-        if (err instanceof multer.MulterError || err instanceof Error) {
-            console.log("Error bei ermittlung des Bidls:", err);
-            return res.status(400).json({message: "Interner Serverfehler. Vermutlich falsches Bildformat. Nur Bildformate (jpg, png, webp, jpeg) sind erlaubt. Es braucht ein File names \"bild\""});
-        }
-        next();
-    });
-}, async (req, res) => {
-    const id = parseInt(req.params.id);
-    if (isNaN(id)) {
-        return res.status(400).json({message: 'Ungültige Produkt-ID'});
-    }
-    const produkt = await getProduktById(id);
-    if (produkt.length === 0) {
-        return res.status(404).json({message: 'Produkt nicht gefunden'});
-    }
-
-    const {produktname, preis, menge, kategorie, beschreibung} = req.body;
-    const updatedProduct = produkt[0];
-    if (produktname !== undefined) updatedProduct.produktname = produktname;
-    if (preis !== undefined) updatedProduct.preis = preis;
-    if (menge !== undefined) updatedProduct.menge = menge;
-    if (kategorie !== undefined) updatedProduct.kategorie = kategorie;
-    if (beschreibung !== undefined) updatedProduct.beschreibung = beschreibung;
-    if (!req.file) {
-        return res.status(400).json({
-            error: 'A bild is required'
-        });
-    }
-    if (updatedProduct.bild) {
-        const alterBildPfad = path.resolve("productBilder", updatedProduct.bild);
-        if (fs.existsSync(alterBildPfad)) {
-            try {
-                fs.unlinkSync(alterBildPfad);
-                console.log("Altes Bild gelöscht:", alterBildPfad);
-            } catch (err) {
-                console.error("Fehler beim Löschen des alten Bilds:", err);
+router.patch("/product/:id",
+    authenticateTokenAndAuthorizeRole(["admin"]),
+    (req, res, next) => {
+        upload.single("bild")(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+                return res.status(400).json({message: "Upload-Fehler: " + err.message});
+            } else if (err) {
+                return res.status(400).json({message: err.message});
             }
+            next();
+        });
+    },
+    async (req, res) => {
+        try {
+            const id = parseInt(req.params.id);
+            if (isNaN(id)) {
+                return res.status(400).json({message: 'Ungültige Produkt-ID'});
+            }
+            const produkt = await getProduktById(id);
+            if (produkt.length === 0) {
+                return res.status(404).json({message: 'Produkt nicht gefunden'});
+            }
+
+            let {produktname, preis, menge, kategorie, beschreibung} = req.body;
+            const product = produkt[0];
+            if (produktname !== undefined) product.produktname = produktname;
+            if (preis !== undefined) product.preis = preis;
+            if (menge !== undefined) product.menge = menge;
+            if (kategorie !== undefined) product.kategorie = kategorie;
+            if (beschreibung !== undefined) product.beschreibung = beschreibung;
+            const erlaubteKategorien = ["supplement", "trainingsgerät", "fitnesszubehör", "sportbekleidung"];
+            if (!erlaubteKategorien.includes(kategorie.toLowerCase())) {
+                return res.status(400).json({
+                    error: `Ungültige Kategorie. Erlaubte Kategorien sind: ${erlaubteKategorien.join(", ")}`
+                });
+            }
+            if(menge < 1){
+                product.menge = 1;
+            }
+            if (preis <= 0){
+                product.preis = 1;
+            }
+            let bildFormat = "jpg";
+            if(req.file !== undefined) {
+                const alterBildPfad = path.resolve("productBilder", product.bild);
+                if (fs.existsSync(alterBildPfad)) {
+                    try {
+                        fs.unlinkSync(alterBildPfad);
+                        console.log("Altes Bild gelöscht:", alterBildPfad);
+                    } catch (err) {
+                        console.error("Fehler beim Löschen des alten Bilds:", err);
+                        res.status(500).json({message: "Interner Serverfehler"});
+                    }
+                }
+
+                const mime = req.file.mimetype;
+                if (mime === "image/png") bildFormat = "png";
+                else if (mime === "image/webp") bildFormat = "webp";
+                else if (mime === "image/jpeg") bildFormat = "jpg";
+                else if (mime === "image/jpg") bildFormat = "jpg";
+                else {
+                    console.warn("Unbekanntes Bildformat:", mime);
+                }
+            }
+
+            await updateProdukt(
+                product.produktname,
+                product.preis,
+                product.menge,
+                product.kategorie,
+                product.beschreibung,
+                bildFormat,
+                id,
+            );
+            const aktualisiertesProduktNachUpdate = await getProduktById(id);
+            if (req.file !== undefined) {
+                const absoluterBildPfad = "productBilder/" + aktualisiertesProduktNachUpdate[0].bild;
+                const zielPfad = path.resolve(absoluterBildPfad);
+                fs.mkdirSync(path.dirname(zielPfad), {recursive: true});
+                fs.renameSync(req.file.path, zielPfad);
+            }
+            res.status(200).json(aktualisiertesProduktNachUpdate);
+        } catch (error) {
+            console.error("Fehler bei aktualisierne des Produkts:\n", error);
+            res.status(500).json({message: "Interner Serverfehler"});
         }
-    }
-    const mime = req.file.mimetype; // z. B. "image/jpeg"
-    let bildFormat = "jpg"; // Default fallback
-    if (mime === "image/png") bildFormat = "png";
-    else if (mime === "image/webp") bildFormat = "webp";
-    else if (mime === "image/jpeg") bildFormat = "jpg";
-    else if (mime === "image/jpg") bildFormat = "jpg";
-    else {
-        // optional: Unbekanntes Format abfangen
-        console.warn("Unbekanntes Bildformat:", mime);
-    }
-    await updateProdukt(
-        updatedProduct.produktname,
-        updatedProduct.preis,
-        updatedProduct.menge,
-        updatedProduct.kategorie,
-        updatedProduct.beschreibung,
-        bildFormat,
-        id,
-    );
-    const aktualisiertesProduktNachUpdate = await getProduktById(id);
-    const absoluterBildPfad = "productBilder/" + aktualisiertesProduktNachUpdate[0].bild;
-    const zielPfad = path.resolve(absoluterBildPfad);
-    fs.mkdirSync(path.dirname(zielPfad), {recursive: true});
-    fs.renameSync(req.file.path, zielPfad);
-    res.status(200).json(aktualisiertesProduktNachUpdate);
-})
+    })
 
 router.post('/warenkorb/add', authenticateToken, async (req, res) => {
     const {produktid, anzahl} = req.body;
