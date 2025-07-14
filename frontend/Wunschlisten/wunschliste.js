@@ -156,7 +156,7 @@ function bearbeiten(id) {
             console.error(err);
             zeigeToast("Fehler beim Laden der Freigabe", "error");
         });
-    zeigeProdukteDerWunschliste(id);
+    zeigeProdukteDerWunschliste(id, "owner");
 }
 
 function closeEditModal() {

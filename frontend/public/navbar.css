@@ -134,3 +134,21 @@
     text-decoration: none;
     transition: color 0.2s;
 }
+
+.hamburger {
+    display: none;
+    background-color: transparent;
+    border: none;
+    font-size: 32px;
+    cursor: pointer;
+    color: #555;
+}
+
+@media (max-width: 770px) {
+    .nav-links {
+        display: none;
+    }
+    .hamburger {
+        display: block;
+    }
+}

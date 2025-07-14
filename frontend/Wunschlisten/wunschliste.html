@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Wunschlisten</title>
   <link rel="stylesheet" href="/Wunschlisten/wunschliste.css">
   <link rel="stylesheet" href="/public/toast.css">
@@ -13,6 +14,9 @@
     <a href="/user/index.html" class="logo-link">
       <img src="/pictures/fitura_logo.png" alt="Fitura Logo" class="logo">
     </a>
+
+    <!-- Button für kleinere Ansicht-->
+    <button class="hamburger" aria-label="Menü öffnen">&#9776;</button>
 
     <nav class="nav-links">
       <a href="/ProductPage/productpage.html" class="navitem" title="Produktpage">
@@ -29,11 +33,11 @@
     </nav>
   </div>
 </header>
-<aside id="sidebar" class="sidebar">
-  <button class="sidebar-close" aria-label="Schließen">&times;</button>
-  <ul id="sidebar-menu">
-  </ul>
-</aside>
+    <aside id="sidebar" class="sidebar">
+        <button class="sidebar-close" aria-label="Schließen">&times;</button>
+        <ul id="sidebar-menu">
+        </ul>
+    </aside>
 
 <h1>Deine Wunschlisten</h1>
 <button class="back-btn" onclick="history.back()">← Zurück</button>
@@ -166,4 +170,5 @@
 <script src="/Wunschlisten/addProduct.js"></script>
 <script src="/public/toast.js"></script>
 <script src="/public/sidebar.js"></script>
+<script src="/public/ResponsiveNavbar.js"></script>
 </html>
