@@ -20,9 +20,13 @@ export const createProdukt = async (produktname, preis, menge, kategorie, beschr
 };
 
 export const deleteProdukt = async (produktid) => {
-    const sql = `DELETE
-                 FROM Produkt
-                 WHERE produktid = $1;`;
+    await query(`DELETE FROM Product_Warenkorb WHERE produktid = $1;`, [produktid]);
+
+    await query(`DELETE FROM Einkauf_Produkt WHERE produktid = $1;`, [produktid]);
+
+    await query(`DELETE FROM Wunschliste_Produkt WHERE produktid = $1;`, [produktid]);
+
+    const sql = `DELETE FROM Produkt WHERE produktid = $1;`;
     return await query(sql, [produktid]);
 };
 

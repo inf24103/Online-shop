@@ -405,6 +405,8 @@ router.get("/kaeufe/kaufen", authenticateToken, async (req, res) => {
             updatedProduct.produktname = products[i].produktname;
             updatedProduct.preis = products[i].preis;
             updatedProduct.menge = products[i].menge - products[i].anzahl;
+            const input = products[i].bild
+            const bildFormat = input.split('.')[1];
             updatedProduct.bild = products[i].bild;
             updatedProduct.kategorie = products[i].kategorie;
             updatedProduct.beschreibung = products[i].beschreibung;
@@ -416,7 +418,7 @@ router.get("/kaeufe/kaufen", authenticateToken, async (req, res) => {
                 updatedProduct.menge,
                 updatedProduct.kategorie,
                 updatedProduct.beschreibung,
-                updatedProduct.bild,
+                bildFormat,
                 updatedProduct.produktid,
             );
 
