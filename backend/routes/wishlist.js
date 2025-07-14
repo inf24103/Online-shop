@@ -7,17 +7,21 @@ import {
     deleteAllPermissionsFromWunschliste,
     deleteAllProductsFromWunschliste,
     deleteProduktFromWunschliste,
-    deleteWunschliste, removeBenutzer,
-    updateBerechtigung
+    deleteWunschliste,
+    removeBenutzer,
+    updateBerechtigung,
+    updateBeschreibung,
+    updateName
 } from "../datenbank/wunschliste_verwaltung/wunschlisteDML.js";
 import {getUserById, getUserByUsername} from "../datenbank/user_verwaltung/userDRL.js";
 import {
     getAlleWunschlistenByBenutzer,
     getBerechtigungenByWunschlisteId,
-    getEigeneWunschlistenByBenutzerId, getFremdeWunschlistenByBenutzer, getProdukteByWunschliste
+    getEigeneWunschlistenByBenutzerId,
+    getFremdeWunschlistenByBenutzer,
+    getProdukteByWunschliste
 } from "../datenbank/wunschliste_verwaltung/wunschlisteDRL.js";
 import {getProduktById} from "../datenbank/produkt_verwaltung/produktDRL.js";
-import user from "./user.js";
 
 const router = express.Router();
 
@@ -255,26 +259,18 @@ router.get("/others", authenticateToken, async (req, res) => {
 
 router.post("/update", authenticateToken, async (req, res) => {
     try {
-        let {productID, aktion, wunschlisteid} = req.body;
-        if (!productID || !aktion || !wunschlisteid) {
+        let {inhalt, aktion, wunschlisteid} = req.body;
+        if (!inhalt || !aktion || !wunschlisteid) {
             return res.status(400).json({
-                error: 'All fields are required: productID, aktion, wunschlisteid'
+                error: 'All fields are required: inhalt, aktion, wunschlisteid'
             });
         }
         wunschlisteid = parseInt(wunschlisteid);
-        productID = parseInt(productID);
         if (isNaN(wunschlisteid)) {
             return res.status(400).json({message: "Ungültige wunschlisteid"});
         }
-        if (aktion !== "add" && aktion !== "remove") {
-            return res.status(400).json({message: "Ungültige Aktion"})
-        }
-        if (isNaN(productID)) {
-            return res.status(400).json({message: "Ungültige Produktid"});
-        }
-        const product = await getProduktById(productID);
-        if (product.length === 0) {
-            res.status(404).json({message: "Produkt nicht gefunden"});
+        if (aktion !== "addProdukt" && aktion !== "removeProdukt" && aktion !== "updateName" && aktion !== "updateBeschreibung") {
+            return res.status(400).json({message: "Ungültige Aktion. Gültige Aktionen: addProdukt, removeProdukt, updateName, updateBeschreibung"});
         }
 
         const userid = req.jwtpayload.userid;
@@ -306,28 +302,44 @@ router.post("/update", authenticateToken, async (req, res) => {
         if (berechtigung !== "owner" && berechtigung !== "write") {
             res.status(403).json({message: "Falsche Berechtigung"})
         }
-        const produkteWunschliste = await getProdukteByWunschliste(wunschlisteid);
-        if (aktion === "add") {
-            for (let i = 0; i < produkteWunschliste.length; i++) {
-                if (produkteWunschliste[i].produktid === productID) {
-                    return res.status(400).json({message: "Produkt bereits in der Wunschliste"})
+        if(aktion === "addProdukt" || aktion === "removeProdukt") {
+            const productID = parseInt(inhalt)
+            if (isNaN(productID)) {
+                return res.status(400).json({message: "Ungültige Produktid"});
+            }
+            const product = await getProduktById(productID);
+            if (product.length === 0) {
+                res.status(404).json({message: "Produkt nicht gefunden"});
+            }
+            const produkteWunschliste = await getProdukteByWunschliste(wunschlisteid);
+            if (aktion === "addProdukt") {
+                for (let i = 0; i < produkteWunschliste.length; i++) {
+                    if (produkteWunschliste[i].produktid === productID) {
+                        return res.status(400).json({message: "Produkt bereits in der Wunschliste"})
+                    }
                 }
-            }
-            await addProduktToWunschliste(wunschlisteid, productID);
-            return res.status(200).json({message: "Produkt erfolgreich hinzugefügt"});
-        } else if (aktion === "remove") {
-            let found = false;
-            for (let i = 0; i < produkteWunschliste.length; i++) {
-                if (produkteWunschliste[i].produktid === productID) {
-                    found = true;
-                    break;
+                await addProduktToWunschliste(wunschlisteid, productID);
+                return res.status(200).json({message: "Produkt erfolgreich hinzugefügt"});
+            } else if (aktion === "removeProdukt") {
+                let found = false;
+                for (let i = 0; i < produkteWunschliste.length; i++) {
+                    if (produkteWunschliste[i].produktid === productID) {
+                        found = true;
+                        break;
+                    }
                 }
+                if (found) {
+                    await deleteProduktFromWunschliste(wunschlisteid, productID);
+                    return res.status(200).json({message: "Produkt erfolgreich entfernt"});
+                }
+                return res.status(400).json({message: "Produkt nicht in der Wunschliste"});
             }
-            if (found) {
-                await deleteProduktFromWunschliste(wunschlisteid, productID);
-                return res.status(200).json({message: "Produkt erfolgreich entfernt"});
-            }
-            return res.status(400).json({message: "Produkt nicht in der Wunschliste"});
+        } else if(aktion === "updateBeschreibung") {
+            await updateBeschreibung(wunschlisteid,inhalt);
+            return res.status(200).json({message: "Beschreibung erfolgreich geändert"});
+        } else if (aktion === "updateName") {
+            await updateName(wunschlisteid,inhalt);
+            return res.status(200).json({message: "Name erfolgreich geändert"});
         }
     } catch (error) {
         console.error("err in wishlist add/remove: \n", error);
