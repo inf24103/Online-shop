@@ -211,7 +211,6 @@ router.patch("/product/:id",
             }
             let bildFormat = "jpg";
             if(req.file !== undefined) {
-                console.log(req.file);
                 const alterBildPfad = path.resolve("productBilder", product.bild);
                 if (fs.existsSync(alterBildPfad)) {
                     try {
@@ -243,8 +242,6 @@ router.patch("/product/:id",
                 id,
             );
             const aktualisiertesProduktNachUpdate = await getProduktById(id);
-            console.log(req.file !== undefined);
-            console.log(aktualisiertesProduktNachUpdate);
             if (req.file !== undefined) {
                 const absoluterBildPfad = "productBilder/" + aktualisiertesProduktNachUpdate[0].bild;
                 const zielPfad = path.resolve(absoluterBildPfad);

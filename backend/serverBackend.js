@@ -762,7 +762,7 @@ async function createSeedData() {
 }
 
 async function createAdminAccount() {
-    await createBenutzer("admin", "admin", "amdin", "admin", "$2b$12$i2V4lHexLcYzjcUXo30ywuFyRlznGMFNr96T0XqHqgPsF1tJjXl3y", "12345", "admin", "admin", "admin", "admin", 'admin');
+    await createBenutzer("admin", "admin", "amdin", "admin@admin.admin", "$2b$12$i2V4lHexLcYzjcUXo30ywuFyRlznGMFNr96T0XqHqgPsF1tJjXl3y", "12345", "admin", "admin", "admin", "admin", 'admin');
     const user = await getUserByUsername("admin");
     user[0].authentifizierung = true
     await updateBenutzer(
