@@ -585,7 +585,7 @@ async function createSeedData() {
         100,
         "Supplement",
         "Hersteller: Optimum Nutrition. Hochwertiges Molkenproteinpulver mit 24g Eiweiß pro Portion – ideal zur Unterstützung des Muskelaufbaus nach dem Training.",
-        "jpg"
+        "webp"
     );
 
     await createProdukt(
