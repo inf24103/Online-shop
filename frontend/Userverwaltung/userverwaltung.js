@@ -32,11 +32,6 @@ async function loadUserData(filtered = false) {
             cache: "no-store"
         });
 
-        //Keine Berechtigung
-        if(res.status === 403) {
-            window.location.href = "../unauthorized/unauthorized.html";
-            return;
-        }
         if(!res.ok) zeigeToast("Es ist ein Fehler aufgetreten!", "error");
 
         const users = await res.json();

@@ -422,6 +422,34 @@ button:hover {
 
 @media (max-width: 600px) {
     .modal-content,
+    .edit-modal-content,
+    .produkte-hinzufuegen-content {
+        width: 95%;
+        margin: 20% auto;
+        padding: 15px;
+        max-height: 810px;
+        overflow-y: auto;
+    }
+
+    .modal-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .modal-buttons button {
+        width: 100%;
+        margin: 0;
+    }
+
+    .close-button {
+        top: 5px;
+        right: 5px;
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .modal-content,
     .edit-modal-content {
         width: 95%;
         max-width: none;
