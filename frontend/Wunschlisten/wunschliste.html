@@ -95,6 +95,9 @@
     <div id="produkte-hinzufuegen-button-wrapper">
       <button class="hinzufuegen-btn" onclick="zeigeProduktHinzufuegenModal(currentBearbeiteId)">Produkte hinzufügen</button>
     </div>
+    <div id="wunschliste-bearbeiten-button-wrapper">
+      <button onclick="oeffneWunschlisteBearbeitenModal()" class="btn-schwarz" id="wunschliste-bearbeiten-btn">Wunschliste bearbeiten</button>
+    </div>
     <h3>Meine Produkte</h3>
     <div id="produkte-liste" class="produkte-grid">
       <!--Hier werden die Produkte geladen-->
@@ -140,6 +143,19 @@
 
     <div id="alle-produkte-liste" class="produkte-grid-scroll">
       <!--Hier werden alle Produkte angezeigt-->
+    </div>
+  </div>
+</div>
+
+<!--Wunschliste bearbeiten Modal-->
+<div id="wunschliste-bearbeiten-modal" class="modal">
+  <div class="modal-content">
+    <h3>Wunschliste bearbeiten</h3>
+    <input type="text" id="bearbeiten-titel" placeholder="Titel">
+    <textarea id="bearbeiten-beschreibung" placeholder="Beschreibung" rows="3"></textarea>
+    <div class="modal-buttons">
+      <button onclick="speichereWunschlisteBearbeitung()">Speichern</button>
+      <button onclick="schliesseWunschlisteBearbeitenModal()">Abbrechen</button>
     </div>
   </div>
 </div>

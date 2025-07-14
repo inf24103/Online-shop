@@ -163,8 +163,6 @@ function render (users) {
         });
 
         deleteBtn.addEventListener("click", async () => {
-            const ok = confirm(`Benutzer: ${user.benutzername} wirklich löschen?`);
-            if(!ok) return;
             try {
                 const res = await fetch(`http://localhost:3000/api/user/${user.benutzerid}`, {
                     credentials: "include",
@@ -172,6 +170,7 @@ function render (users) {
                 });
                 if(res.ok) {
                     card.remove();
+                    zeigeToast("User erfolgreich gelöscht", "success");
                 } else {
                     zeigeToast("Löschen fehlgeschlagen", "error");
                 }

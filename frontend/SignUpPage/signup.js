@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error("Fehler beim Senden der Daten")
                 }
             } else {
+                window.location.href = "/user/index.html"
                 zeigeToast("Registrierung erfolgreich. Bitte bestätige deine Email", "success");
                 form.reset();
             }
