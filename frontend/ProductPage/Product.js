@@ -319,9 +319,9 @@ function openProductModal(product) {
 
     scrollPosition = window.scrollY;
 
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
     document.body.style.top = `-${scrollPosition}px`;
+
+    document.body.classList.add('modal-open');
 
     productDetailModal.classList.add('is-expanded');
 }
@@ -329,8 +329,8 @@ function openProductModal(product) {
 function closeProductModal() {
     productDetailModal.classList.remove('is-expanded');
 
-    document.body.style.overflow = '';
-    document.body.style.position = '';
+    document.body.classList.remove('modal-open');
+
     document.body.style.top = '';
 
     window.scrollTo(0, scrollPosition);
@@ -409,8 +409,18 @@ const categoryFilter = document.getElementById('kat_filter');
 
 window.addEventListener("DOMContentLoaded", async () => {
     const categoryFromUrl = getUrlParameter('category');
+    const productIdFromUrl = getUrlParameter('id');
 
-    if (categoryFromUrl && categoryFilter) {
+    await fetchProducts();
+
+    if (productIdFromUrl) {
+        const productToOpen = allProductsWithRawStock.find(p => p.produktid === parseInt(productIdFromUrl));
+        if (productToOpen) {
+            openProductModal(productToOpen);
+        } else {
+            console.warn(`Product with ID ${productIdFromUrl} not found after initial fetch.`);
+        }
+    } else if (categoryFromUrl && categoryFilter) {
         const formattedCategory = categoryFromUrl.charAt(0).toUpperCase() + categoryFromUrl.slice(1);
 
         let categoryFound = false;
@@ -425,10 +435,6 @@ window.addEventListener("DOMContentLoaded", async () => {
         if (categoryFound) {
             const initialFilters = getFiltersFromForm();
             await fetchProducts(initialFilters);
-        } else {
-            await fetchProducts();
         }
-    } else {
-        await fetchProducts();
     }
 });
