@@ -49,14 +49,31 @@
                 <button id="button">Login</button>
             </form>
             <p>You dont have an account? Klick <a href="/SignUpPage/signup.html">hier</a></p>
+
+            <button id="send-login-link-btn" type="button">Sende Login Link</button>
+
         </div>
         <div class="form-img">
             <img src="/pictures/loginpage.png" alt="">
         </div>
     </div>
 </div>
-<script src="/LoginPage/login.js"></script>
-<script src="/public/sidebar.js"></script>
+
+<!--PopUP für Login Link-->
+
+<div id="login-link-popup" style="display: none;" class="popup-overlay">
+    <div class="popup-box">
+        <h3>Login-Link anfordern</h3>
+        <input type="text" id="popup-username" placeholder="Benutzername">
+        <button id="send-link-confirm-btn">Absenden</button>
+        <button id="cancel-popup-btn">Abbrechen</button>
+    </div>
+</div>
+
+
 <script src="/public/toast.js"></script>
+<script src="/LoginPage/login-form.js"></script>
+<script src="/LoginPage/login-link.js"></script>
+<script src="/public/sidebar.js"></script>
 <script src="/public/ResponsiveNavbar.js"></script>
 </body>
