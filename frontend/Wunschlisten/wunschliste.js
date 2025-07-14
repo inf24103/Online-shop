@@ -109,9 +109,11 @@ async function submitWunschliste() {
         });
 
         if (res.ok) {
+            const data = await res.json();
             closeModal();
-            loadWunschlisten();
+            await loadWunschlisten();
             zeigeToast("Wunschliste erstellt", "success");
+
         } else {
             zeigeToast("Fehler beim Erstellen der Wunschliste.", "error");
         }
@@ -293,11 +295,9 @@ function zeigeProduktZuWunschlistenModal(produktId) {
         .then(res => res.json())
         .then(async listen => {
             for (const w of listen) {
-                const resProdukte = await fetch("http://localhost:3000/api/wun/products", {
+                const resProdukte = await fetch(`http://localhost:3000/api/wun/products/${w.wunschlisteid}`, {
                     method: "GET",
-                    credentials: "include",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({wunschlisteid: w.wunschlisteid})
+                    credentials: "include"
                 });
                 const produkte = await resProdukte.json();
                 const istDrin = produkte.some(p => p.produktid === produktId);
@@ -348,6 +348,8 @@ function toggleProduktInWunschliste(wunschlisteid, produktId, hinzufuegen) {
 
 function zeigeGeteilteWunschliste(wunschlisteid, berechtigung, beschreibung, titel) {
 
+    console.log("Aufgerufen");
+
     currentBearbeiteId = wunschlisteid;
 
     //Modal vorbereiten
@@ -363,12 +365,81 @@ function zeigeGeteilteWunschliste(wunschlisteid, berechtigung, beschreibung, tit
     const addBtnWrapper = document.getElementById("produkte-hinzufuegen-button-wrapper");
     addBtnWrapper.style.display = (berechtigung === "write") ? "block" : "none";
 
+    //Nicht anzeigen
+    const bearbeiteBtn = document.getElementById("wunschliste-bearbeiten-btn");
+    bearbeiteBtn.style.display = (berechtigung === "owner") ? "block" : "none";
+
     //Modal anzeigen
     modal.style.display = "block";
 
     //Produkte laden
     zeigeProdukteDerWunschliste(wunschlisteid, berechtigung);
 
+}
+
+function oeffneWunschlisteBearbeitenModal() {
+    const titel = document.getElementById("edit-title")?.textContent || "";
+    const beschreibung = document.getElementById("edit-beschreibung")?.textContent || "";
+
+    document.getElementById("bearbeiten-titel").value = titel;
+    document.getElementById("bearbeiten-beschreibung").value = beschreibung;
+
+    document.getElementById("wunschliste-bearbeiten-modal").style.display = "block";
+}
+
+function schliesseWunschlisteBearbeitenModal() {
+    document.getElementById("wunschliste-bearbeiten-modal").style.display = "none";
+}
+
+async function speichereWunschlisteBearbeitung() {
+    const titel = document.getElementById("bearbeiten-titel").value.trim();
+    const beschreibung = document.getElementById("bearbeiten-beschreibung").value.trim();
+
+    if(!titel || !beschreibung) {
+        zeigeToast("Bitte beide Felder ausfüllen", "error");
+        return;
+    }
+
+    try {
+
+        //Beschreibung aktualisieren
+        const res = await fetch("http://localhost:3000/api/wun/update", {
+            method: "POST",
+            credentials: "include",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                inhalt: beschreibung,
+                aktion: "updateBeschreibung",
+                wunschlisteid: currentBearbeiteId
+            })
+        });
+
+        //Titel aktualisieren
+        const res2 = await fetch("http://localhost:3000/api/wun/update", {
+           method: "POST",
+           credentials: "include",
+           headers: {"Content-Type": "application/json"},
+           body: JSON.stringify({
+               inhalt: titel,
+               aktion: "updateName",
+               wunschlisteid: currentBearbeiteId
+           })
+        });
+
+        if(res.ok && res2.ok) {
+            zeigeToast("Wunschliste aktualisiert", "success");
+            schliesseWunschlisteBearbeitenModal();
+            bearbeiten(currentBearbeiteId);
+            loadWunschlisten();
+        } else {
+            zeigeToast("Speichern fehlgeschlagen", "error");
+        }
+
+
+    } catch (e) {
+        console.error(e);
+        zeigeToast("Fehler beim Speichern", "error");
+    }
 }
 
 window.addEventListener("DOMContentLoaded", loadWunschlisten);

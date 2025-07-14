@@ -22,7 +22,7 @@ h1 {
     margin-top: 25px;
     padding: 20px;
 }
-form {
+.filter-form {
     display: flex;
     gap: 15px;
     align-items: center;
@@ -31,10 +31,12 @@ form {
     text-align: center;
     width: 100%;
     height: 80px;
-    border: 1px solid #ccc;
     background-color: white;
     border-radius: 8px;
+    border: none;
+    box-shadow: none;
 }
+
 input,
 select {
     padding: 10px;
@@ -160,7 +162,7 @@ button:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 999;
+    z-index: 9999;
     box-sizing: border-box;
 }
 

@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 } catch (e) {
                     console.log(e);
                 }
-                location.reload();
+                window.location.href = "/user/index.html";
             });
         } else {
             menu.innerHTML = `
