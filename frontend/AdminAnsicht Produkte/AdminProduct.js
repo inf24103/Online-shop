@@ -125,11 +125,6 @@ form.addEventListener("submit", async (e) => {
 
             if (imageFile) {
                 patchFormData.append("bild", imageFile);
-            } else if (downloadedImageFile) {
-                patchFormData.append("bild", downloadedImageFile);
-            } else {
-                showAdminNotification("Fehler: Es muss ein Bild ausgewählt oder ein vorhandenes beibehalten werden.", 'error');
-                return;
             }
 
             res = await fetch(`http://localhost:3000/api/inv/product/${editingProductId}`, {
@@ -280,7 +275,7 @@ async function editProduct(id) {
                     const blob = await imageRes.blob();
                     const filename = currentProductImage.substring(currentProductImage.lastIndexOf('/') + 1);
                     downloadedImageFile = new File([blob], filename, { type: blob.type });
-                    console.log("Altes Bild erfolgreich heruntergeladen:", downloadedImageFile);
+                    console.log("Altes Bild erfolgreich heruntergeladen (optional für Vorschau):", downloadedImageFile);
                 } else {
                     console.warn("Konnte altes Bild nicht herunterladen:", imageRes.statusText);
                     downloadedImageFile = null;
