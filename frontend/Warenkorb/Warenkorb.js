@@ -330,4 +330,4 @@ async function removeItemCompletely(produktid) {
         alert("Ein Fehler ist beim vollständigen Entfernen des Produkts aufgetreten: " + error.message);
         await renderCart();
     }
-}
+}//Test
