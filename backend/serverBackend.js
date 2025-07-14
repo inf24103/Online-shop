@@ -6,17 +6,15 @@ import cors from "cors";
 import * as path from "node:path";
 import {
     createProductWarenkorbTable,
-    createProduktTable, createWarenkorbTable,
+    createProduktTable,
+    createWarenkorbTable,
     deleteProductTable,
     deleteWarenkorbProduktTable,
     deleteWarenkorbTable
 } from "./datenbank/produkt_verwaltung/produktDDL.js";
 import {createBenutzerTable, deleteBenutzerTable} from "./datenbank/user_verwaltung/userDDL.js";
 import {createEinkaufTables, deleteEinkaufTables} from "./datenbank/einkauf_verwaltung/einkaufDDL.js";
-import {
-    createWunschlisteTables,
-    deleteWunschlisteTables
-} from "./datenbank/wunschliste_verwaltung/wunschlisteDDL.js";
+import {createWunschlisteTables, deleteWunschlisteTables} from "./datenbank/wunschliste_verwaltung/wunschlisteDDL.js";
 import {createOneTimeLoginTable, dropOneTimeLoginTable} from "./datenbank/auth/authAllMethods.js";
 import {createBenutzer, updateBenutzer} from "./datenbank/user_verwaltung/userDML.js";
 import {getUserByUsername} from "./datenbank/user_verwaltung/userDRL.js";
@@ -116,8 +114,7 @@ async function createSeedData() {
         85,
         "Sportbekleidung",
         "Hersteller: DECALVIBES. Material: 78 % Polyester / 22 % Elastan. Sportlicher BH mit Kompression und atmungsaktivem Stoff – eng anliegend und bequem."
-        , "DECALVIBES Longline Sports Bra Sport BH Pro.png",
-        "jpg"
+        ,"jpg"
     );
 
     await createProdukt(
@@ -579,7 +576,7 @@ async function createSeedData() {
         14,
         "Trainingsgerät",
         "Hersteller: YOLEO. Multifunktionale Bank mit Neigungsoptionen für Oberkörper-Workouts. Ideal für kleine Trainingsbereiche.",
-        "webp"
+        "jpg"
     );
 
     await createProdukt(
@@ -687,7 +684,7 @@ async function createSeedData() {
         50,
         "Supplement",
         "Hersteller: Bare Performance Nutrition. Starker Pre-Workout mit Koffein, Beta-Alanin & L-Citrullin – für maximale Trainingsleistung.",
-        "jpg"
+        "webp"
     );
 
     await createProdukt(
@@ -696,7 +693,7 @@ async function createSeedData() {
         85,
         "Supplement",
         "Hersteller: GN Labs. Arginin-Komplex zur Förderung der Durchblutung und Leistungssteigerung beim Training.",
-        "jpg"
+        "webp"
     );
 
     await createProdukt(

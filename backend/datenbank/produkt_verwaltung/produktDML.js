@@ -1,13 +1,17 @@
 import {query} from '../index.js';
 import {getAllProdukte} from "./produktDRL.js";
 
-/* Produkt erstellen */
 export const createProdukt = async (produktname, preis, menge, kategorie, beschreibung, bildFormat) => {
-    // Kategorie säubern
     const safeKategorie = kategorie.replace(/[\/\\:*?"<>|]/g, '').trim().toLowerCase();
 
     const allProducts = await getAllProdukte()
-    const productNr = allProducts.length
+    let maxProduktId = 0
+    for (const produkt of allProducts) {
+        if(produkt.produktid > maxProduktId) {
+            maxProduktId = produkt.produktid;
+        }
+    }
+    const productNr = maxProduktId
     const bildPfad = `${safeKategorie}/${productNr}.${bildFormat}`;
 
     const sql = `
@@ -17,7 +21,6 @@ export const createProdukt = async (produktname, preis, menge, kategorie, beschr
     return await query(sql, [produktname, preis, menge, kategorie, beschreibung, bildPfad]);
 };
 
-/* Produkt löschen */
 export const deleteProdukt = async (produktid) => {
     const sql = `DELETE
                  FROM Produkt
@@ -25,12 +28,10 @@ export const deleteProdukt = async (produktid) => {
     return await query(sql, [produktid]);
 };
 
-/* Produkt aktualisieren */
 export const updateProdukt = async (produktname, preis, menge, kategorie, beschreibung, bildFormat, produktid) => {
     const safeKategorie = kategorie.replace(/[\/\\:*?"<>|]/g, '').trim().toLowerCase();
 
-    const productNr = produktid - 1
-    const bildPfad = `${safeKategorie}/${productNr}.${bildFormat}`;
+    const bildPfad = `${safeKategorie}/${produktid}.${bildFormat}`;
     const sql = `
         UPDATE Produkt
         SET produktname      = $1,
